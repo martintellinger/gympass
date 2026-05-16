@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
+import '../../core/utils/haptics.dart';
 
 enum BtnVariant { primary, ghost, secondary, danger }
 
 /// Btn — shared.jsx Btn. height 52, radius 14, 16/600, gap 8.
-class AppButton extends StatelessWidget {
+///
+/// Adds a subtle press-scale + a light haptic so every primary action in the
+/// app feels physical, without each call site repeating the boilerplate.
+class AppButton extends StatefulWidget {
   final String label;
   final BtnVariant variant;
   final Widget? icon;
@@ -25,7 +29,21 @@ class AppButton extends StatelessWidget {
   });
 
   @override
+  State<AppButton> createState() => _AppButtonState();
+}
+
+class _AppButtonState extends State<AppButton> {
+  bool _pressed = false;
+
+  void _setPressed(bool v) {
+    if (_pressed != v) setState(() => _pressed = v);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final variant = widget.variant;
+    final icon = widget.icon;
+    final onTap = widget.onTap;
     final (Color bg, Color fg, Border? bd) = switch (variant) {
       BtnVariant.primary => (T.accent, Colors.white, null),
       BtnVariant.ghost => (
@@ -38,16 +56,16 @@ class AppButton extends StatelessWidget {
     };
 
     final content = Row(
-      mainAxisSize: full ? MainAxisSize.max : MainAxisSize.min,
+      mainAxisSize: widget.full ? MainAxisSize.max : MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         if (icon != null) ...[
-          IconTheme(data: IconThemeData(color: fg), child: icon!),
+          IconTheme(data: IconThemeData(color: fg), child: icon),
           const SizedBox(width: 8),
         ],
         Flexible(
           child: Text(
-            label,
+            widget.label,
             overflow: TextOverflow.ellipsis,
             style: AppType.ui(
               size: 16,
@@ -60,22 +78,37 @@ class AppButton extends StatelessWidget {
       ],
     );
 
-    return Material(
-      color: bg,
-      borderRadius: BorderRadius.circular(14),
-      child: InkWell(
-        onTap: onTap,
+    final enabled = onTap != null;
+
+    return AnimatedScale(
+      scale: _pressed ? 0.97 : 1.0,
+      duration: const Duration(milliseconds: 110),
+      curve: Curves.easeOut,
+      child: Material(
+        color: bg,
         borderRadius: BorderRadius.circular(14),
-        child: Container(
-          height: height,
-          width: full ? double.infinity : null,
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          decoration: BoxDecoration(
-            border: bd,
-            borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          onTap: enabled
+              ? () {
+                  Haptics.tap();
+                  onTap();
+                }
+              : null,
+          onTapDown: enabled ? (_) => _setPressed(true) : null,
+          onTapUp: enabled ? (_) => _setPressed(false) : null,
+          onTapCancel: enabled ? () => _setPressed(false) : null,
+          borderRadius: BorderRadius.circular(14),
+          child: Container(
+            height: widget.height,
+            width: widget.full ? double.infinity : null,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            decoration: BoxDecoration(
+              border: bd,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            alignment: Alignment.center,
+            child: content,
           ),
-          alignment: Alignment.center,
-          child: content,
         ),
       ),
     );

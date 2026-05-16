@@ -100,6 +100,7 @@
   "histFilterKey": "Key · {count}",
   "histFilterAccount": "Account · {count}",
   "histEndNote": "That's all. Your account dates back to September 2025.",
+  "histEmptyFilter": "Nothing here for this filter yet.",
   "profMemberSince": "member since 9 · 2025",
   "profActiveDays": "Active · 23 days",
   "profSectionContact": "Contact",

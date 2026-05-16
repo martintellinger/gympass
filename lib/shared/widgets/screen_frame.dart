@@ -22,7 +22,19 @@ class ScreenFrame extends StatelessWidget {
       ),
       child: Scaffold(
         backgroundColor: T.bg,
-        body: SafeArea(bottom: false, child: child),
+        body: SafeArea(
+          bottom: false,
+          // A one-shot, barely-there entrance: content settles in rather than
+          // snapping. Cheap (single opacity tween, no rebuilds) and applied
+          // once here so every screen inherits the same calm transition.
+          child: TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0, end: 1),
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOut,
+            child: child,
+            builder: (_, t, c) => Opacity(opacity: t, child: c),
+          ),
+        ),
       ),
     );
   }

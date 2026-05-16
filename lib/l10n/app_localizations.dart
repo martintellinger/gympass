@@ -655,6 +655,12 @@ abstract class L {
   /// **'To je všechno. Účet máš od září 2025.'**
   String get histEndNote;
 
+  /// No description provided for @histEmptyFilter.
+  ///
+  /// In cs, this message translates to:
+  /// **'Pro tento filtr tu zatím nic není.'**
+  String get histEmptyFilter;
+
   /// No description provided for @profMemberSince.
   ///
   /// In cs, this message translates to:

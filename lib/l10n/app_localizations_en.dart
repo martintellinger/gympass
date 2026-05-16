@@ -320,6 +320,9 @@ class LEn extends L {
       'That\'s all. Your account dates back to September 2025.';
 
   @override
+  String get histEmptyFilter => 'Nothing here for this filter yet.';
+
+  @override
   String get profMemberSince => 'member since 9 · 2025';
 
   @override

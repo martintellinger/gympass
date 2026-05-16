@@ -207,7 +207,20 @@ class _HistoryScreenViewState extends ConsumerState<HistoryScreenView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      for (final entry in byMonth.entries) ...[
+                      if (byMonth.isEmpty)
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 48, horizontal: 12),
+                          child: Center(
+                            child: Text(
+                              L.of(context).histEmptyFilter,
+                              textAlign: TextAlign.center,
+                              style: AppType.ui(size: 13, color: T.text3),
+                            ),
+                          ),
+                        )
+                      else
+                        for (final entry in byMonth.entries) ...[
                         const SizedBox(height: 18),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 8),
@@ -244,20 +257,22 @@ class _HistoryScreenViewState extends ConsumerState<HistoryScreenView> {
                           ),
                         ),
                       ],
-                      const SizedBox(height: 18),
-                      SizedBox(
-                        width: double.infinity,
-                        child: Text(
-                          L.of(context).histEndNote,
-                          textAlign: TextAlign.center,
-                          style: AppType.ui(
-                            size: 12,
-                            weight: FontWeight.w400,
-                            color: T.text3,
-                            height: 1.5,
+                      if (byMonth.isNotEmpty) ...[
+                        const SizedBox(height: 18),
+                        SizedBox(
+                          width: double.infinity,
+                          child: Text(
+                            L.of(context).histEndNote,
+                            textAlign: TextAlign.center,
+                            style: AppType.ui(
+                              size: 12,
+                              weight: FontWeight.w400,
+                              color: T.text3,
+                              height: 1.5,
+                            ),
                           ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ),

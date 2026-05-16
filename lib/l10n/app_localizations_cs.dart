@@ -319,6 +319,9 @@ class LCs extends L {
   String get histEndNote => 'To je všechno. Účet máš od září 2025.';
 
   @override
+  String get histEmptyFilter => 'Pro tento filtr tu zatím nic není.';
+
+  @override
   String get profMemberSince => 'člen od 9 · 2025';
 
   @override

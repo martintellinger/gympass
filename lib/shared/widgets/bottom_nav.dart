@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
+import '../../core/utils/haptics.dart';
 import '../../l10n/app_localizations.dart';
 import 'app_icon.dart';
 
@@ -48,24 +49,41 @@ class BottomNav extends StatelessWidget {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(999),
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+          filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
           child: Container(
             padding:
                 const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(999),
-              // Translucent "glass" — lets blurred content show through.
+              // iOS 26 "liquid glass": translucent enough that the 40px
+              // backdrop blur reads as frost, a bright sheen across the
+              // top edge, and a deep ambient drop shadow so it floats.
               gradient: const LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xC2141416), Color(0xE60F0F10)],
+                colors: [
+                  Color(0x2EFFFFFF), // top specular sheen
+                  Color(0x0FFFFFFF),
+                  Color(0x66141618), // translucent dark base
+                ],
+                stops: [0.0, 0.5, 1.0],
               ),
-              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+              border: Border.all(
+                color: Colors.white.withValues(alpha: 0.20),
+                width: 0.8,
+              ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.45),
-                  blurRadius: 28,
-                  offset: const Offset(0, 10),
+                  color: Colors.black.withValues(alpha: 0.50),
+                  blurRadius: 32,
+                  spreadRadius: -4,
+                  offset: const Offset(0, 14),
+                ),
+                // Faint inner-top rim light (the "liquid" edge highlight).
+                BoxShadow(
+                  color: Colors.white.withValues(alpha: 0.05),
+                  blurRadius: 0,
+                  offset: const Offset(0, 0.6),
                 ),
               ],
             ),
@@ -91,11 +109,32 @@ class BottomNav extends StatelessWidget {
                           width: capsuleW,
                           height: capsuleH,
                           decoration: BoxDecoration(
-                            color: T.accentSoft,
                             borderRadius: BorderRadius.circular(capsuleH / 2),
-                            border: Border.all(
-                              color: T.accent.withValues(alpha: 0.22),
+                            // Lit glass: white specular at the top, accent
+                            // tint through the body — reads as a glowing
+                            // liquid pill rather than a flat fill.
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.white.withValues(alpha: 0.28),
+                                T.accent.withValues(alpha: 0.32),
+                                T.accent.withValues(alpha: 0.16),
+                              ],
+                              stops: const [0.0, 0.4, 1.0],
                             ),
+                            border: Border.all(
+                              color: T.accent.withValues(alpha: 0.50),
+                              width: 0.8,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: T.accent.withValues(alpha: 0.35),
+                                blurRadius: 18,
+                                spreadRadius: -3,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
                           ),
                         ),
                       ),
@@ -108,7 +147,10 @@ class BottomNav extends StatelessWidget {
                             behavior: HitTestBehavior.opaque,
                             onTap: onItemClick == null
                                 ? null
-                                : () => onItemClick!(i),
+                                : () {
+                                    if (i != active) Haptics.selection();
+                                    onItemClick!(i);
+                                  },
                             child: AnimatedScale(
                               duration: const Duration(milliseconds: 260),
                               curve: Curves.easeOutBack,
@@ -163,7 +205,9 @@ class BottomNav extends StatelessWidget {
                                     it.label,
                                     style: AppType.ui(
                                       size: 10.5,
-                                      weight: FontWeight.w500,
+                                      weight: isActive
+                                          ? FontWeight.w600
+                                          : FontWeight.w500,
                                       color: isActive ? T.text : T.text3,
                                       letterSpacing: -0.1,
                                     ),
