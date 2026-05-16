@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/routing/nav.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
-import '../../shared/widgets/bottom_nav.dart';
 import '../../shared/widgets/screen_frame.dart';
 
-const Color _eventColor = Color(0xFF5AC8FA);
+const Color _eventColor = T.event;
 
 class _PostType {
   final String label;
@@ -27,6 +26,45 @@ const Map<String, _PostType> _postTypes = {
   'fixed': _PostType('Opraveno', T.ok, 'check'),
   'info': _PostType('Info', T.text2, 'megaphone'),
 };
+
+String _postTypeLabel(BuildContext context, String type) {
+  final l = L.of(context);
+  switch (type) {
+    case 'pinned':
+      return l.boardTypePinned;
+    case 'outage':
+      return l.boardTypeOutage;
+    case 'warning':
+      return l.boardTypeWarning;
+    case 'promo':
+      return l.boardTypePromo;
+    case 'event':
+      return l.boardTypeEvent;
+    case 'fixed':
+      return l.boardTypeFixed;
+    case 'info':
+    default:
+      return l.boardTypeInfo;
+  }
+}
+
+String _filterLabel(BuildContext context, String key) {
+  final l = L.of(context);
+  switch (key) {
+    case 'all':
+      return l.boardFilterAll;
+    case 'outage':
+      return l.boardFilterOutage;
+    case 'warning':
+      return l.boardFilterWarning;
+    case 'promo':
+      return l.boardFilterPromo;
+    case 'event':
+      return l.boardFilterEvent;
+    default:
+      return key;
+  }
+}
 
 class _Post {
   final int id;
@@ -135,8 +173,6 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
 
   @override
   Widget build(BuildContext context) {
-    final nav = navCb(context);
-
     final filtered = _posts.where((p) {
       if (_filter == 'all') return true;
       if (_filter == 'pinned') return p.pinned;
@@ -147,11 +183,9 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
     filtered.sort((a, b) => (b.pinned ? 1 : 0) - (a.pinned ? 1 : 0));
 
     return ScreenFrame(
-      child: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 110),
-            child: Column(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 110),
+        child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // Header block
@@ -169,7 +203,7 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Nástěnka',
+                                L.of(context).boardTitle,
                                 style: AppType.ui(
                                   size: 28,
                                   weight: FontWeight.w700,
@@ -179,7 +213,7 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                'Co se děje v Klubu',
+                                L.of(context).boardSubtitle,
                                 style: AppType.ui(
                                   size: 13.5,
                                   color: T.text2,
@@ -200,7 +234,7 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                'otevřeno',
+                                L.of(context).boardStatusOpen,
                                 style: AppType.ui(size: 12, color: T.text2),
                               ),
                             ],
@@ -217,7 +251,7 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
                             for (var i = 0; i < _filters.length; i++) ...[
                               if (i > 0) const SizedBox(width: 6),
                               _BChip(
-                                label: _filters[i].label,
+                                label: _filterLabel(context, _filters[i].key),
                                 dot: _filters[i].dot,
                                 active: _filter == _filters[i].key,
                                 onTap: () =>
@@ -242,7 +276,7 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
                           padding: const EdgeInsets.symmetric(
                               vertical: 40, horizontal: 12),
                           child: Text(
-                            'Pro tento filtr nic není.',
+                            L.of(context).boardEmptyFilter,
                             textAlign: TextAlign.center,
                             style: AppType.ui(size: 13, color: T.text3),
                           ),
@@ -257,14 +291,6 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
               ],
             ),
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: MemberBottomNav(active: 3, onNav: nav),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -375,7 +401,8 @@ class _BoardPost extends StatelessWidget {
                                 size: 11, color: c, stroke: 2.2),
                             const SizedBox(width: 6),
                             Text(
-                              meta.label.toUpperCase(),
+                              _postTypeLabel(context, post.type)
+                                  .toUpperCase(),
                               style: AppType.ui(
                                 size: 10.5,
                                 weight: FontWeight.w700,

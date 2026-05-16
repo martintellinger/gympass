@@ -49,15 +49,35 @@ String routeToPath(String route, {Object? arg}) {
   }
 }
 
+/// Persistent tab destinations — switching between these *replaces* the stack
+/// (`go`) so tabs never pile up on top of each other. Everything else is a
+/// drill-in (`push`) so the hardware / on-screen back button can pop it.
+const _tabRoutes = {
+  'dashboard', 'card', 'history', 'board', 'profile', // member
+  'admin', 'list', 'payments', 'messages', 'adminMore', // admin
+};
+
 /// Builds the [NavCb] bound to a [BuildContext]; surfaces `toast` via a
 /// SnackBar so prototype `onNav('x', { toast })` calls keep working.
 NavCb navCb(BuildContext context) {
   return (String route, {Object? arg, String? toast}) {
     if (route == 'back') {
-      if (context.canPop()) context.pop();
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        // Nothing to pop (e.g. deep-linked / stack already replaced): fall
+        // back to the persona's home tab instead of a dead button.
+        final loc = GoRouterState.of(context).uri.path;
+        context.go(loc.startsWith('/admin') ? '/admin' : '/member/dashboard');
+      }
       return;
     }
-    context.go(routeToPath(route, arg: arg));
+    final path = routeToPath(route, arg: arg);
+    if (_tabRoutes.contains(route)) {
+      context.go(path);
+    } else {
+      context.push(path);
+    }
     if (toast != null && toast.isNotEmpty) {
       // Defer so the new route is mounted before showing the toast.
       WidgetsBinding.instance.addPostFrameCallback((_) {

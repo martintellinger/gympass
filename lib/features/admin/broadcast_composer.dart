@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/routing/nav.dart';
 import '../../core/store/store.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../shared/widgets/app_button.dart';
@@ -49,11 +50,12 @@ class _BroadcastComposerScreenState
     final active = store.members.where((m) => m.state != 'muted').length;
     final overdue = store.members.where((m) => m.state == 'error').length;
     final ending = store.members.where((m) => m.state == 'warn').length;
+    final l = L.of(context);
     final targets = <(String, int)>[
-      ('Všem aktivním', active),
-      ('Dlužníkům', overdue),
-      ('Končícím', ending),
-      ('Všem členům', store.members.length),
+      (l.bcastTargetActive, active),
+      (l.bcastTargetOverdue, overdue),
+      (l.bcastTargetEnding, ending),
+      (l.bcastTargetAll, store.members.length),
     ];
     final recipients = targets[_target].$2;
     final canSend = _body.text.trim().isNotEmpty && recipients > 0;
@@ -69,7 +71,7 @@ class _BroadcastComposerScreenState
               children: [
                 _RoundBtn(icon: 'back', onTap: () => nav('back')),
                 const Spacer(),
-                Text('Hromadná zpráva',
+                Text(l.bcastHeader,
                     style: AppType.ui(
                         size: 14, weight: FontWeight.w600, color: T.text2)),
                 const Spacer(),
@@ -81,7 +83,7 @@ class _BroadcastComposerScreenState
             child: ListView(
               padding: const EdgeInsets.fromLTRB(20, 4, 20, 28),
               children: [
-                _label('PŘÍJEMCI'),
+                _label(l.bcastSectionRecipients),
                 const SizedBox(height: 10),
                 Wrap(
                   spacing: 8,
@@ -121,7 +123,7 @@ class _BroadcastComposerScreenState
                   }),
                 ),
                 const SizedBox(height: 22),
-                _label('ZPRÁVA'),
+                _label(l.bcastSectionMessage),
                 const SizedBox(height: 10),
                 AppCard(
                   padding: const EdgeInsets.all(4),
@@ -131,7 +133,7 @@ class _BroadcastComposerScreenState
                         controller: _title,
                         onChanged: (_) => setState(() {}),
                         style: AppType.ui(size: 15, weight: FontWeight.w600),
-                        decoration: _dec('Titulek (volitelné)'),
+                        decoration: _dec(l.bcastTitleHint),
                       ),
                       const Divider(height: 1, color: T.divider),
                       TextField(
@@ -140,13 +142,13 @@ class _BroadcastComposerScreenState
                         minLines: 4,
                         maxLines: 8,
                         style: AppType.ui(size: 14, height: 1.5),
-                        decoration: _dec('Napiš zprávu členům…'),
+                        decoration: _dec(l.bcastBodyHint),
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 16),
-                _label('ŠABLONY'),
+                _label(l.bcastSectionTemplates),
                 const SizedBox(height: 10),
                 Wrap(
                   spacing: 8,
@@ -175,7 +177,7 @@ class _BroadcastComposerScreenState
                   }).toList(),
                 ),
                 const SizedBox(height: 22),
-                _label('NÁHLED'),
+                _label(l.bcastSectionPreview),
                 const SizedBox(height: 10),
                 AppCard(
                   child: Column(
@@ -186,7 +188,7 @@ class _BroadcastComposerScreenState
                           const AppIcon('megaphone',
                               size: 14, color: T.text2),
                           const SizedBox(width: 6),
-                          Text('INFO · NÁSTĚNKA',
+                          Text(l.bcastPreviewBadge,
                               style: AppType.ui(
                                   size: 10.5,
                                   weight: FontWeight.w700,
@@ -197,14 +199,14 @@ class _BroadcastComposerScreenState
                       const SizedBox(height: 8),
                       Text(
                         _title.text.trim().isEmpty
-                            ? 'Bez titulku'
+                            ? l.bcastPreviewNoTitle
                             : _title.text.trim(),
                         style: AppType.ui(size: 16, weight: FontWeight.w600),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         _body.text.trim().isEmpty
-                            ? 'Tady se zobrazí text zprávy.'
+                            ? l.bcastPreviewBodyPlaceholder
                             : _body.text.trim(),
                         style: AppType.ui(
                             size: 13.5, color: T.text2, height: 1.5),
@@ -219,12 +221,11 @@ class _BroadcastComposerScreenState
           Container(
             padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
             decoration: const BoxDecoration(
-              color: Color(0xF20F0F10),
+              color: T.glassBar,
               border: Border(top: BorderSide(color: T.border)),
             ),
             child: AppButton(
-              label: 'Odeslat · $recipients '
-                  '${_plural(recipients, 'člen', 'členům', 'členům')}',
+              label: l.bcastSendLabel(recipients),
               full: true,
               variant:
                   canSend ? BtnVariant.primary : BtnVariant.secondary,
@@ -239,7 +240,7 @@ class _BroadcastComposerScreenState
                             from: 'olda');
                       }
                       nav('messages',
-                          toast: 'Odesláno · $recipients členům');
+                          toast: l.bcastSentToast(recipients));
                     },
             ),
           ),
@@ -260,9 +261,6 @@ class _BroadcastComposerScreenState
         return store.members.where((m) => m.state != 'muted');
     }
   }
-
-  String _plural(int n, String one, String few, String many) =>
-      n == 1 ? one : (n >= 2 && n <= 4 ? few : many);
 
   Widget _label(String s) => Text(s,
       style: AppType.ui(

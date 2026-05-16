@@ -5,10 +5,10 @@ import '../../core/routing/nav.dart';
 import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_button.dart';
 import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/app_icon.dart';
-import '../../shared/widgets/bottom_nav.dart';
 import '../../shared/widgets/screen_frame.dart';
 import '../../shared/widgets/status_pill.dart';
 
@@ -25,10 +25,7 @@ class MemberDashboardScreen extends ConsumerWidget {
     final firstName = (member?.name ?? 'Pavel Novák').split(' ').first;
 
     return ScreenFrame(
-      child: Stack(
-        children: [
-          // ── Scrollable body ──────────────────────────────────────
-          SingleChildScrollView(
+      child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -59,7 +56,7 @@ class MemberDashboardScreen extends ConsumerWidget {
                     children: [
                       // Greeting
                       Text(
-                        'Ahoj, $firstName.',
+                        L.of(context).dashGreeting(firstName),
                         style: AppType.ui(
                           size: 15,
                           color: T.text2,
@@ -75,7 +72,7 @@ class MemberDashboardScreen extends ConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Do posilovny můžeš ještě',
+                              L.of(context).dashStatusHeadline,
                               style: AppType.ui(
                                 size: 32,
                                 weight: FontWeight.w700,
@@ -103,7 +100,7 @@ class MemberDashboardScreen extends ConsumerWidget {
                                   ),
                                   const SizedBox(width: 12),
                                   Text(
-                                    'dní',
+                                    L.of(context).dashDaysUnit,
                                     style: AppType.ui(
                                       size: 28,
                                       weight: FontWeight.w500,
@@ -128,7 +125,7 @@ class MemberDashboardScreen extends ConsumerWidget {
                                 size: 14, color: T.text2),
                             const SizedBox(width: 6),
                             Text(
-                              'do 23. 6. 2026',
+                              L.of(context).dashExpiryDate,
                               style: AppType.mono(
                                 size: 14,
                                 weight: FontWeight.w500,
@@ -142,7 +139,7 @@ class MemberDashboardScreen extends ConsumerWidget {
                       // Primary CTA
                       const SizedBox(height: 24),
                       AppButton(
-                        label: 'Prodloužit členství',
+                        label: L.of(context).dashExtendMembership,
                         full: true,
                         onTap: () => nav('qr'),
                       ),
@@ -150,7 +147,7 @@ class MemberDashboardScreen extends ConsumerWidget {
                       // Secondary CTA — report fault
                       const SizedBox(height: 10),
                       AppButton(
-                        label: 'Nahlásit závadu',
+                        label: L.of(context).dashReportFault,
                         variant: BtnVariant.ghost,
                         full: true,
                         height: 44,
@@ -160,16 +157,16 @@ class MemberDashboardScreen extends ConsumerWidget {
 
                       // Member card preview
                       const SizedBox(height: 28),
-                      _SectionLabel(text: 'Tvoje karta'),
+                      _SectionLabel(text: L.of(context).dashYourCard),
                       const SizedBox(height: 12),
                       _MemberCardPreview(onTap: () => nav('card')),
 
                       // Poslední aktivity
                       const SizedBox(height: 24),
                       _SectionLabel(
-                        text: 'Poslední aktivity',
+                        text: L.of(context).dashRecentActivity,
                         right: Text(
-                          'Vše',
+                          L.of(context).dashAll,
                           style: AppType.ui(
                             size: 12.5,
                             color: T.text2,
@@ -213,11 +210,11 @@ class MemberDashboardScreen extends ConsumerWidget {
                       // Nástěnka preview
                       const SizedBox(height: 24),
                       _SectionLabel(
-                        text: 'Nástěnka',
+                        text: L.of(context).dashBoard,
                         right: GestureDetector(
                           onTap: () => nav('board'),
                           child: Text(
-                            'vše →',
+                            L.of(context).dashBoardAll,
                             style: AppType.ui(
                               size: 12.5,
                               color: T.accent,
@@ -233,16 +230,6 @@ class MemberDashboardScreen extends ConsumerWidget {
                 ),
               ],
             ),
-          ),
-
-          // ── Floating bottom nav ──────────────────────────────────
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: MemberBottomNav(active: 0, onNav: nav),
-          ),
-        ],
       ),
     );
   }
@@ -338,7 +325,7 @@ class _MemberCardPreview extends StatelessWidget {
             gradient: const LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFF1E1E20), Color(0xFF161618)],
+              colors: T.cardSheenSoft,
             ),
             border: Border.all(color: T.border),
             borderRadius: BorderRadius.circular(18),
@@ -355,7 +342,7 @@ class _MemberCardPreview extends StatelessWidget {
                   decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: RadialGradient(
-                      colors: [Color(0x2EFF4D2E), Color(0x00FF4D2E)],
+                      colors: T.accentGlow,
                       stops: [0.0, 0.7],
                     ),
                   ),
@@ -394,13 +381,14 @@ class _MemberCardPreview extends StatelessWidget {
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              const StatusPill(
-                                  state: StatusState.ok, label: 'Aktivní'),
+                              StatusPill(
+                                  state: StatusState.ok,
+                                  label: L.of(context).dashStatusActive),
                               const SizedBox(width: 6),
                               const AppIcon('key', size: 12, color: T.text2),
                               const SizedBox(width: 4),
                               Text(
-                                'klíč u tebe',
+                                L.of(context).dashKeyWithYou,
                                 style: AppType.ui(
                                   size: 12,
                                   color: T.text2,
@@ -569,7 +557,7 @@ class _BoardPreview extends StatelessWidget {
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            'PŘIPNUTO',
+                            L.of(context).dashPinned,
                             style: AppType.ui(
                               size: 9.5,
                               weight: FontWeight.w700,
@@ -580,7 +568,7 @@ class _BoardPreview extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          'před 2 h',
+                          L.of(context).dashBoardTimeAgo,
                           style: AppType.mono(
                             size: 11.5,
                             weight: FontWeight.w500,
@@ -591,7 +579,7 @@ class _BoardPreview extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      'Zítra zavřeno do 14:00',
+                      L.of(context).dashBoardPostTitle,
                       style: AppType.ui(
                         size: 15,
                         weight: FontWeight.w600,
@@ -601,7 +589,7 @@ class _BoardPreview extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Revize elektroinstalace. Otevíráme po obědě. — Olda',
+                      L.of(context).dashBoardPostBody,
                       style: AppType.ui(
                         size: 13.5,
                         color: T.text2,

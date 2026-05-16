@@ -190,7 +190,7 @@ lib/
 > port `store.jsx`). Backend (Supabase), auth, l10n, notifikace, migrace a
 > data-ops zatím nejsou — vyžadují credentials / produktová rozhodnutí.
 
-- [~] **Fáze 0 — Setup**: ✅ Flutter projekt, theme (z `shared.jsx`), go_router, Riverpod, sdílené primitivy · ⬜ Supabase, l10n (texty zatím hardcoded CZ)
+- [~] **Fáze 0 — Setup**: ✅ Flutter projekt, theme (z `shared.jsx`), **go_router se `StatefulShellRoute` (perzistentní iOS 26 nav)**, Riverpod, sdílené primitivy, **design tokeny + spacing/radius škála**, **light/dark `ThemeMode` (živý přepínač)**, **l10n (cs/en, ~389 ARB klíčů, všech 18 obrazovek + nav/persona, živé přepínání jazyka i tématu)** · ⬜ Supabase · ℹ️ l10n: záměrně odloženo — řetězce s českým pluralem (jeden/dva/pět) a mock data (jména, částky, ukázkové posty) zůstávají; patří do datové/backend vrstvy nebo potřebují ICU plural
 - [~] **Fáze 1 — Auth**: ⬜ obrazovky 01–03 (nejsou v design bundlu) · ✅ persona switcher místo auth (dev)
 - [x] **Fáze 2 — Member core**: Dashboard (04), karta (09), historie (06), profil (08) — UI na mock datech
 - [x] **Fáze 3 — Payment**: QR Payment (05) flexibilní grid tarifů, „Zaplatil jsem" — UI

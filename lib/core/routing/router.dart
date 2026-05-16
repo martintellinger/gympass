@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/admin/add_member.dart';
@@ -17,38 +18,77 @@ import '../../features/member/member_card.dart';
 import '../../features/member/member_dashboard.dart';
 import '../../features/member/profile_screen.dart';
 import '../../features/member/qr_payment.dart';
+import '../../shared/widgets/app_shell.dart';
 import 'persona_picker.dart';
+
+final _memberKeys = List.generate(5, (_) => GlobalKey<NavigatorState>());
+final _adminKeys = List.generate(5, (_) => GlobalKey<NavigatorState>());
+
+StatefulShellBranch _branch(GlobalKey<NavigatorState> key, String path,
+        Widget Function(BuildContext, GoRouterState) builder) =>
+    StatefulShellBranch(
+      navigatorKey: key,
+      routes: [GoRoute(path: path, builder: builder)],
+    );
 
 final appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(path: '/', builder: (c, s) => const PersonaPicker()),
 
-    // ── Member ──
-    GoRoute(path: '/member/dashboard', builder: (c, s) => const MemberDashboardScreen()),
-    GoRoute(path: '/member/card', builder: (c, s) => const MemberCardScreen()),
-    GoRoute(path: '/member/history', builder: (c, s) => const HistoryScreenView()),
-    GoRoute(path: '/member/board', builder: (c, s) => const BoardScreenView()),
-    GoRoute(path: '/member/profile', builder: (c, s) => const ProfileScreenView()),
+    // ── Member tab shell — persistent nav, state preserved per branch ──
+    StatefulShellRoute.indexedStack(
+      builder: (c, s, shell) => MemberShell(navigationShell: shell),
+      branches: [
+        _branch(_memberKeys[0], '/member/dashboard',
+            (c, s) => const MemberDashboardScreen()),
+        _branch(_memberKeys[1], '/member/card',
+            (c, s) => const MemberCardScreen()),
+        _branch(_memberKeys[2], '/member/history',
+            (c, s) => const HistoryScreenView()),
+        _branch(_memberKeys[3], '/member/board',
+            (c, s) => const BoardScreenView()),
+        _branch(_memberKeys[4], '/member/profile',
+            (c, s) => const ProfileScreenView()),
+      ],
+    ),
+
+    // ── Admin tab shell ──
+    StatefulShellRoute.indexedStack(
+      builder: (c, s, shell) => AdminShell(navigationShell: shell),
+      branches: [
+        _branch(_adminKeys[0], '/admin',
+            (c, s) => const AdminDashboardScreen()),
+        _branch(_adminKeys[1], '/admin/list',
+            (c, s) => const MemberListScreen()),
+        _branch(_adminKeys[2], '/admin/payments',
+            (c, s) => const AdminPaymentsScreen()),
+        _branch(_adminKeys[3], '/admin/messages',
+            (c, s) => const AdminMessagesScreen()),
+        _branch(_adminKeys[4], '/admin/more',
+            (c, s) => const AdminMoreScreen()),
+      ],
+    ),
+
+    // ── Full-screen sub-pages (push above the shell, no tab bar) ──
     GoRoute(path: '/member/qr', builder: (c, s) => const QrPaymentScreen()),
     GoRoute(path: '/member/fault', builder: (c, s) => const FaultReportScreen()),
-
-    // ── Admin ──
-    GoRoute(path: '/admin', builder: (c, s) => const AdminDashboardScreen()),
-    GoRoute(path: '/admin/list', builder: (c, s) => const MemberListScreen()),
-    GoRoute(path: '/admin/payments', builder: (c, s) => const AdminPaymentsScreen()),
-    GoRoute(path: '/admin/messages', builder: (c, s) => const AdminMessagesScreen()),
-    GoRoute(path: '/admin/more', builder: (c, s) => const AdminMoreScreen()),
-    GoRoute(path: '/admin/approval', builder: (c, s) => const ApprovalQueueScreen()),
+    GoRoute(
+        path: '/admin/approval',
+        builder: (c, s) => const ApprovalQueueScreen()),
     GoRoute(path: '/admin/add', builder: (c, s) => const AddMemberScreen()),
-    GoRoute(path: '/admin/broadcast', builder: (c, s) => const BroadcastComposerScreen()),
+    GoRoute(
+        path: '/admin/broadcast',
+        builder: (c, s) => const BroadcastComposerScreen()),
     GoRoute(
       path: '/admin/member/:id',
-      builder: (c, s) => MemberDetailScreen(memberId: s.pathParameters['id'] ?? ''),
+      builder: (c, s) =>
+          MemberDetailScreen(memberId: s.pathParameters['id'] ?? ''),
     ),
     GoRoute(
       path: '/admin/thread/:id',
-      builder: (c, s) => AdminThreadScreen(memberId: s.pathParameters['id'] ?? ''),
+      builder: (c, s) =>
+          AdminThreadScreen(memberId: s.pathParameters['id'] ?? ''),
     ),
   ],
 );

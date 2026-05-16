@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/routing/nav.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/screen_frame.dart';
@@ -162,7 +163,7 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
-                        'Schvalování',
+                        L.of(context).apprTitle,
                         style: AppType.ui(
                           size: 14,
                           weight: FontWeight.w600,
@@ -200,7 +201,7 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'NOVÝ ŽADATEL',
+                            L.of(context).apprNewApplicant,
                             style: AppType.ui(
                               size: 13,
                               weight: FontWeight.w600,
@@ -235,18 +236,21 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
                       padding: EdgeInsets.zero,
                       child: Column(
                         children: [
-                          _kv2(label: 'E-mail', value: a.email),
-                          _divider(),
-                          _kv2(label: 'Telefon', value: a.phone, mono: true),
+                          _kv2(label: L.of(context).apprEmail, value: a.email),
                           _divider(),
                           _kv2(
-                            label: 'Tarif',
+                              label: L.of(context).apprPhone,
+                              value: a.phone,
+                              mono: true),
+                          _divider(),
+                          _kv2(
+                            label: L.of(context).apprTariff,
                             value: a.tarif,
                             pill: a.pill.isEmpty ? null : a.pill,
                           ),
                           _divider(),
                           _kv2(
-                            label: 'GDPR souhlas',
+                            label: L.of(context).apprGdprConsent,
                             value: a.gdpr,
                             tinyMono: true,
                             last: true,
@@ -258,7 +262,7 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
                     // ISIC
                     const SizedBox(height: 20),
                     Text(
-                      'ISIC PRŮKAZ',
+                      L.of(context).apprIsicCard,
                       style: AppType.ui(
                         size: 12.5,
                         weight: FontWeight.w600,
@@ -275,7 +279,7 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
                           gradient: const LinearGradient(
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [Color(0xFF1A1A1C), Color(0xFF232326)],
+                            colors: T.cardSheenRaised,
                           ),
                           border: Border.all(color: T.border),
                           borderRadius: BorderRadius.circular(14),
@@ -334,11 +338,11 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 8, vertical: 4),
                                 decoration: BoxDecoration(
-                                  color: const Color(0x99000000),
+                                  color: T.scrimMedium,
                                   borderRadius: BorderRadius.circular(6),
                                 ),
                                 child: Text(
-                                  'tap pro zvětšení',
+                                  L.of(context).apprTapToEnlarge,
                                   style: AppType.mono(
                                     size: 10.5,
                                     color: T.text,
@@ -373,7 +377,7 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
                               TextSpan(
                                 children: [
                                   TextSpan(
-                                    text: 'Zkontroluj: ',
+                                    text: L.of(context).apprCheckPrefix,
                                     style: AppType.ui(
                                       size: 12.5,
                                       weight: FontWeight.w600,
@@ -400,7 +404,7 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
                     // Note from applicant
                     const SizedBox(height: 20),
                     Text(
-                      'POZNÁMKA OD ŽADATELE',
+                      L.of(context).apprApplicantNote,
                       style: AppType.ui(
                         size: 12.5,
                         weight: FontWeight.w600,
@@ -434,7 +438,7 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
           // Sticky action bar
           Container(
             decoration: const BoxDecoration(
-              color: Color(0xF20F0F10), // rgba(15,15,16,0.95)
+              color: T.glassBar,
               border: Border(top: BorderSide(color: T.border)),
             ),
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 32),
@@ -443,25 +447,25 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
                 Expanded(
                   flex: 100,
                   child: _ActionButton(
-                    label: 'Zamítnout',
+                    label: L.of(context).apprReject,
                     ghost: true,
                     fg: T.error,
                     borderColor: const Color(0x4DFF3B30), // rgba(255,59,48,0.3)
-                    onTap: () =>
-                        _decide(toast: 'Zamítnuto · ${a.shortName}'),
+                    onTap: () => _decide(
+                        toast: L.of(context).apprRejectedToast(a.shortName)),
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   flex: 160,
                   child: _ActionButton(
-                    label: 'Schválit',
+                    label: L.of(context).apprApprove,
                     ghost: false,
                     fg: Colors.white,
                     bg: T.accent,
                     icon: AppIcon('check', size: 18, color: Colors.white),
                     onTap: () => _decide(
-                        toast: '${a.shortName} přidána mezi členy'),
+                        toast: L.of(context).apprApprovedToast(a.shortName)),
                   ),
                 ),
               ],

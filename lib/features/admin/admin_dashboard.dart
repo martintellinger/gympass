@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/routing/nav.dart';
-import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/theme/tokens.dart';
 import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/app_icon.dart';
-import '../../shared/widgets/bottom_nav.dart';
 import '../../shared/widgets/screen_frame.dart';
 
 /// Admin Dashboard 10 — denní pohled majitele.
@@ -16,13 +15,10 @@ class AdminDashboardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final store = ref.watch(storeProvider);
     final nav = navCb(context);
 
     return ScreenFrame(
-      child: Stack(
-        children: [
-          SingleChildScrollView(
+      child: SingleChildScrollView(
             padding: const EdgeInsets.only(
               left: 24,
               right: 24,
@@ -42,7 +38,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'BÝTFIT ADMIN',
+                            L.of(context).adashKicker,
                             style: AppType.ui(
                               size: 12.5,
                               weight: FontWeight.w600,
@@ -52,7 +48,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Dobré ráno, Oldo.',
+                            L.of(context).adashGreeting,
                             style: AppType.ui(
                               size: 22,
                               weight: FontWeight.w700,
@@ -83,14 +79,18 @@ class AdminDashboardScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Expanded(
-                      child: _Stat(label: 'AKTIVNÍCH', value: '34', sub: 'z 34'),
+                      child: _Stat(
+                        label: L.of(context).adashStatActive,
+                        value: '34',
+                        sub: L.of(context).adashStatActiveSub('34'),
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: _Stat(
-                        label: 'KONČÍ ≤ 7 DNÍ',
+                        label: L.of(context).adashStatEndingSoon,
                         value: '5',
-                        sub: 'vyhraj výročí',
+                        sub: L.of(context).adashStatEndingSoonSub,
                         color: T.warn,
                       ),
                     ),
@@ -102,18 +102,18 @@ class AdminDashboardScreen extends ConsumerWidget {
                   children: [
                     Expanded(
                       child: _Stat(
-                        label: 'PO LHŮTĚ',
+                        label: L.of(context).adashStatOverdue,
                         value: '2',
-                        sub: 'urgent',
+                        sub: L.of(context).adashStatOverdueSub,
                         color: T.error,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: _Stat(
-                        label: 'PŘÍJEM 5/26',
+                        label: L.of(context).adashStatRevenue('5/26'),
                         value: '28 950',
-                        sub: 'Kč',
+                        sub: L.of(context).adashCurrencyCzk,
                       ),
                     ),
                   ],
@@ -121,7 +121,7 @@ class AdminDashboardScreen extends ConsumerWidget {
 
                 // Vyžaduje pozornost
                 const SizedBox(height: 24),
-                _SectionLabel('Vyžaduje pozornost'),
+                _SectionLabel(L.of(context).adashNeedsAttention),
                 const SizedBox(height: 12),
                 AppCard(
                   padding: EdgeInsets.zero,
@@ -129,7 +129,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                     children: [
                       _AttentionRow(
                         icon: 'user_check',
-                        title: '2 čekající registrace',
+                        title: L.of(context).adashAttnPending('2'),
                         sub: 'Jana K., Tomáš H.',
                         accent: true,
                         onTap: () => nav('approval'),
@@ -137,16 +137,16 @@ class AdminDashboardScreen extends ConsumerWidget {
                       _divider(),
                       _AttentionRow(
                         icon: 'alert',
-                        title: '2 po lhůtě',
-                        sub: 'David, Petr · zaplať co nejdřív',
+                        title: L.of(context).adashAttnOverdue('2'),
+                        sub: L.of(context).adashAttnOverdueSub('David, Petr'),
                         warn: true,
                         onTap: () => nav('list', arg: {'filterPreset': 'error'}),
                       ),
                       _divider(),
                       _AttentionRow(
                         icon: 'calendar',
-                        title: '5 končí brzy',
-                        sub: 'Tento týden',
+                        title: L.of(context).adashAttnEndingSoon('5'),
+                        sub: L.of(context).adashAttnEndingSoonSub,
                         onTap: () => nav('list', arg: {'filterPreset': 'warn'}),
                       ),
                     ],
@@ -155,7 +155,7 @@ class AdminDashboardScreen extends ConsumerWidget {
 
                 // Quick actions
                 const SizedBox(height: 24),
-                _SectionLabel('Rychlé akce'),
+                _SectionLabel(L.of(context).adashQuickActions),
                 const SizedBox(height: 12),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -163,7 +163,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                     Expanded(
                       child: _QuickAction(
                         icon: 'message',
-                        label: 'Poslat zprávu',
+                        label: L.of(context).adashActionSendMessage,
                         onTap: () => nav('messages'),
                       ),
                     ),
@@ -171,7 +171,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                     Expanded(
                       child: _QuickAction(
                         icon: 'cash',
-                        label: 'Platby',
+                        label: L.of(context).adashActionPayments,
                         onTap: () => nav('payments'),
                       ),
                     ),
@@ -179,7 +179,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                     Expanded(
                       child: _QuickAction(
                         icon: 'user_plus',
-                        label: 'Přidat člena',
+                        label: L.of(context).adashActionAddMember,
                         onTap: () => nav('addMember'),
                       ),
                     ),
@@ -189,9 +189,9 @@ class AdminDashboardScreen extends ConsumerWidget {
                 // Revenue chart
                 const SizedBox(height: 24),
                 _SectionLabel(
-                  'Příjem',
+                  L.of(context).adashRevenue,
                   right: Text(
-                    '6 měsíců',
+                    L.of(context).adashRevenueRange,
                     style: AppType.ui(size: 12.5, color: T.text2),
                   ),
                 ),
@@ -215,7 +215,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                           ),
                           const SizedBox(width: 8),
                           Text(
-                            'Kč · květen',
+                            L.of(context).adashRevenueMonth('květen'),
                             style: AppType.ui(size: 13, color: T.text2),
                           ),
                           const Spacer(),
@@ -259,18 +259,6 @@ class AdminDashboardScreen extends ConsumerWidget {
               ],
             ),
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: AdminBottomNav(
-              active: 0,
-              onNav: (route) => nav(route),
-              unread: store.totalUnread(),
-            ),
-          ),
-        ],
-      ),
     );
   }
 

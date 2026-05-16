@@ -8,6 +8,7 @@ import '../../core/theme/tokens.dart';
 import '../../shared/widgets/app_button.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/screen_frame.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Nahlásit závadu — bottom-sheet-style formulář (text + fotky).
 /// Ported 1:1 from FaultReport.jsx (rendered as a full screen here).
@@ -54,8 +55,12 @@ class _FaultReportScreenState extends ConsumerState<FaultReportScreen> {
     final photoSuffix = _photoCount > 0 ? '  (${_photoLabel(_photoCount)})' : '';
     ref
         .read(storeProvider)
-        .sendMessage('pavel', 'Závada: $text$photoSuffix', from: 'pavel');
-    navCb(context)('board', toast: 'Závada odeslána');
+        .sendMessage(
+          'pavel',
+          L.of(context).faultMessageBody('$text$photoSuffix'),
+          from: 'pavel',
+        );
+    navCb(context)('board', toast: L.of(context).faultSentToast);
   }
 
   @override
@@ -69,7 +74,7 @@ class _FaultReportScreenState extends ConsumerState<FaultReportScreen> {
           Positioned.fill(
             child: GestureDetector(
               onTap: () => nav('back'),
-              child: const ColoredBox(color: Color(0xA6000000)),
+              child: const ColoredBox(color: T.scrim),
             ),
           ),
           // Sheet pinned to the bottom of the screen.
@@ -87,7 +92,7 @@ class _FaultReportScreenState extends ConsumerState<FaultReportScreen> {
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Color(0x66000000),
+                      color: T.scrimLight,
                       blurRadius: 40,
                       offset: Offset(0, -20),
                     ),
@@ -123,7 +128,7 @@ class _FaultReportScreenState extends ConsumerState<FaultReportScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Nahlásit závadu',
+                                    L.of(context).faultTitle,
                                     style: AppType.ui(
                                       size: 20,
                                       weight: FontWeight.w700,
@@ -133,7 +138,7 @@ class _FaultReportScreenState extends ConsumerState<FaultReportScreen> {
                                   ),
                                   const SizedBox(height: 4),
                                   Text(
-                                    'Co se pokazilo, co nejde? Pošli to Oldovi, on vyřídí.',
+                                    L.of(context).faultSubtitle,
                                     style: AppType.ui(
                                       size: 13,
                                       color: T.text2,
@@ -186,8 +191,7 @@ class _FaultReportScreenState extends ConsumerState<FaultReportScreen> {
                             decoration: InputDecoration(
                               isCollapsed: true,
                               border: InputBorder.none,
-                              hintText:
-                                  'Třeba: bench č. 2 má rozsekané lano nebo ve sprše č. 3 protéká kohoutek.',
+                              hintText: L.of(context).faultHint,
                               hintStyle: AppType.ui(
                                 size: 14,
                                 color: T.text3,
@@ -208,7 +212,7 @@ class _FaultReportScreenState extends ConsumerState<FaultReportScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'FOTKY',
+                                L.of(context).faultPhotosLabel,
                                 style: AppType.ui(
                                   size: 11.5,
                                   weight: FontWeight.w600,
@@ -253,7 +257,7 @@ class _FaultReportScreenState extends ConsumerState<FaultReportScreen> {
                                     AppIcon('plus', size: 18, color: T.text2),
                                     const SizedBox(height: 4),
                                     Text(
-                                      'fotka',
+                                      L.of(context).faultAddPhoto,
                                       style: AppType.ui(
                                         size: 10,
                                         color: T.text2,
@@ -272,7 +276,7 @@ class _FaultReportScreenState extends ConsumerState<FaultReportScreen> {
                         Opacity(
                           opacity: _canSubmit ? 1 : 0.4,
                           child: AppButton(
-                            label: 'Odeslat',
+                            label: L.of(context).faultSubmit,
                             full: true,
                             onTap: _canSubmit ? _submit : null,
                           ),
@@ -323,7 +327,7 @@ class _PhotoTile extends StatelessWidget {
                 width: 18,
                 height: 18,
                 decoration: const BoxDecoration(
-                  color: Color(0xB3000000),
+                  color: T.scrimStrong,
                   shape: BoxShape.circle,
                 ),
                 alignment: Alignment.center,

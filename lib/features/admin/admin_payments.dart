@@ -7,8 +7,8 @@ import '../../core/store/models.dart';
 import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_icon.dart';
-import '../../shared/widgets/bottom_nav.dart';
 import '../../shared/widgets/screen_frame.dart';
 
 /// Admin Payments 14 — monthly summary, status filters, search, payment list.
@@ -76,11 +76,9 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
     }
 
     return ScreenFrame(
-      child: Stack(
+      child: ListView(
+        padding: const EdgeInsets.only(bottom: 110),
         children: [
-          ListView(
-            padding: const EdgeInsets.only(bottom: 110),
-            children: [
               // Header + summary + search + filter chips
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
@@ -92,7 +90,7 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Platby',
+                          L.of(context).apayTitle,
                           style: AppType.ui(
                             size: 28,
                             weight: FontWeight.w700,
@@ -105,14 +103,14 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                             _RoundBtn(
                               icon: 'download',
                               onTap: () => nav('payments',
-                                  toast: 'Export připraven'),
+                                  toast: L.of(context).apayToastExportReady),
                             ),
                             const SizedBox(width: 8),
                             _RoundBtn(
                               icon: 'plus',
                               primary: true,
                               onTap: () => nav('payments',
-                                  toast: 'Přidat platbu'),
+                                  toast: L.of(context).apayToastAddPayment),
                             ),
                           ],
                         ),
@@ -138,7 +136,7 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                                 MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'KVĚTEN 2026',
+                                L.of(context).apayMonthLabel,
                                 style: AppType.ui(
                                   size: 11.5,
                                   weight: FontWeight.w600,
@@ -147,7 +145,7 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                                 ),
                               ),
                               Text(
-                                'YTD ${groupThousands(ytdRevenue)}',
+                                L.of(context).apayYtd(groupThousands(ytdRevenue)),
                                 style: AppType.mono(
                                   size: 11.5,
                                   color: T.text3,
@@ -187,16 +185,18 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                             children: [
                               _SummaryStat(
                                 color: T.ok,
-                                label: '${counts['ok']} přijato',
+                                label: L.of(context)
+                                    .apayStatReceived(counts['ok']!),
                               ),
                               _SummaryStat(
                                 color: T.warn,
-                                label: '${counts['pending']} čeká',
+                                label: L.of(context)
+                                    .apayStatPending(counts['pending']!),
                               ),
                               _SummaryStat(
                                 color: T.error,
-                                label:
-                                    '${groupThousands(overdueTotal)} Kč dluh',
+                                label: L.of(context).apayStatDebt(
+                                    groupThousands(overdueTotal)),
                               ),
                             ],
                           ),
@@ -227,7 +227,7 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                               decoration: InputDecoration(
                                 isCollapsed: true,
                                 border: InputBorder.none,
-                                hintText: 'Hledat člena…',
+                                hintText: L.of(context).apaySearchHint,
                                 hintStyle:
                                     AppType.ui(size: 14, color: T.text3),
                               ),
@@ -257,20 +257,23 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                       child: Row(
                         children: [
                           _PChip(
-                            label: 'Vše · ${counts['all']}',
+                            label: L.of(context)
+                                .apayFilterAll(counts['all']!),
                             active: _filter == 'all',
                             onTap: () => setState(() => _filter = 'all'),
                           ),
                           const SizedBox(width: 6),
                           _PChip(
-                            label: 'Přijato · ${counts['ok']}',
+                            label: L.of(context)
+                                .apayFilterReceived(counts['ok']!),
                             active: _filter == 'ok',
                             dot: T.ok,
                             onTap: () => setState(() => _filter = 'ok'),
                           ),
                           const SizedBox(width: 6),
                           _PChip(
-                            label: 'Čeká · ${counts['pending']}',
+                            label: L.of(context)
+                                .apayFilterPending(counts['pending']!),
                             active: _filter == 'pending',
                             dot: T.warn,
                             onTap: () =>
@@ -278,7 +281,8 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                           ),
                           const SizedBox(width: 6),
                           _PChip(
-                            label: 'Po lhůtě · ${counts['overdue']}',
+                            label: L.of(context)
+                                .apayFilterOverdue(counts['overdue']!),
                             active: _filter == 'overdue',
                             dot: T.error,
                             onTap: () =>
@@ -316,7 +320,7 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                           ),
                           if (_q.isNotEmpty)
                             Text(
-                              'filtr: „$_q"',
+                              L.of(context).apayFilterActive(_q),
                               style: AppType.ui(
                                 size: 11.5,
                                 weight: FontWeight.w600,
@@ -333,7 +337,7 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                             const EdgeInsets.symmetric(vertical: 40),
                         child: Center(
                           child: Text(
-                            'Žádné platby pro vybraný filtr.',
+                            L.of(context).apayEmpty,
                             style:
                                 AppType.ui(size: 13, color: T.text3),
                           ),
@@ -349,29 +353,18 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                             onRemind: () {
                               store.sendMessage(
                                 p.memberId,
-                                'Připomínka platby ${groupThousands(p.amount)} Kč — pošlu QR. Dík.',
+                                L.of(context).apayReminderMessage(
+                                    groupThousands(p.amount)),
                               );
                               nav('thread',
                                   arg: p.memberId,
-                                  toast: 'Připomínka odeslána');
+                                  toast: L.of(context)
+                                      .apayToastReminderSent);
                             },
                           )),
                   ],
                 ),
               ),
-            ],
-          ),
-
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: AdminBottomNav(
-              active: 2,
-              onNav: (route) => nav(route),
-              unread: store.totalUnread(),
-            ),
-          ),
         ],
       ),
     );
@@ -640,7 +633,7 @@ class _PaymentRow extends StatelessWidget {
                               size: 12, color: T.accent),
                           const SizedBox(width: 6),
                           Text(
-                            'Připomenout',
+                            L.of(context).apayRemind,
                             style: AppType.ui(
                               size: 12.5,
                               weight: FontWeight.w600,
@@ -668,7 +661,7 @@ class _PaymentRow extends StatelessWidget {
                             size: 12, color: T.text),
                         const SizedBox(width: 6),
                         Text(
-                          'Označit zaplaceno',
+                          L.of(context).apayMarkPaid,
                           style: AppType.ui(
                             size: 12.5,
                             weight: FontWeight.w500,

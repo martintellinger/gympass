@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/format.dart';
 import '../../core/routing/nav.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../shared/widgets/app_card.dart';
@@ -105,7 +106,7 @@ class _QrPaymentScreenState extends ConsumerState<QrPaymentScreen> {
                   Expanded(
                     child: Center(
                       child: Text(
-                        'Platba',
+                        L.of(context).qrTitle,
                         style: AppType.ui(
                           size: 14,
                           weight: FontWeight.w600,
@@ -128,7 +129,7 @@ class _QrPaymentScreenState extends ConsumerState<QrPaymentScreen> {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
                     child: Text(
-                      'TARIF',
+                      L.of(context).qrTariffLabel,
                       style: AppType.ui(
                         size: 13,
                         weight: FontWeight.w600,
@@ -170,7 +171,7 @@ class _QrPaymentScreenState extends ConsumerState<QrPaymentScreen> {
 
                   // Headline.
                   Text(
-                    'Naskenuj QR nebo si ho ulož',
+                    L.of(context).qrHeadline,
                     style: AppType.ui(
                       size: 22,
                       weight: FontWeight.w700,
@@ -215,22 +216,22 @@ class _QrPaymentScreenState extends ConsumerState<QrPaymentScreen> {
                       child: Column(
                         children: [
                           _DetailRow(
-                            label: 'Částka',
+                            label: L.of(context).qrDetailAmount,
                             value: kc(t.price),
                             big: true,
                           ),
                           _DetailRow(
-                            label: 'Účet',
+                            label: L.of(context).qrDetailAccount,
                             value: '1234567890 / 0100',
                             mono: true,
                           ),
                           _DetailRow(
-                            label: 'VS',
+                            label: L.of(context).qrDetailVs,
                             value: t.vs,
                             mono: true,
                           ),
                           _DetailRow(
-                            label: 'Zpráva',
+                            label: L.of(context).qrDetailMessage,
                             value: 'Členství Pavel Novák · ${t.title}',
                             mono: true,
                             last: true,
@@ -248,7 +249,7 @@ class _QrPaymentScreenState extends ConsumerState<QrPaymentScreen> {
                         Expanded(
                           child: _GhostBtn(
                             icon: AppIcon('download', size: 16, color: T.text),
-                            label: 'Uložit QR',
+                            label: L.of(context).qrSaveQr,
                             onTap: () {},
                           ),
                         ),
@@ -256,7 +257,7 @@ class _QrPaymentScreenState extends ConsumerState<QrPaymentScreen> {
                         Expanded(
                           child: _GhostBtn(
                             icon: AppIcon('copy', size: 16, color: T.text),
-                            label: 'Zkopírovat',
+                            label: L.of(context).qrCopy,
                             onTap: () {},
                           ),
                         ),
@@ -278,7 +279,7 @@ class _QrPaymentScreenState extends ConsumerState<QrPaymentScreen> {
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
-                            'QR se uloží do Fotek. Otevři ho v bance přes „Naskenovat ze souboru".',
+                            L.of(context).qrSaveHint,
                             style: AppType.ui(
                               size: 12,
                               color: T.text3,
@@ -300,13 +301,13 @@ class _QrPaymentScreenState extends ConsumerState<QrPaymentScreen> {
                         borderRadius: BorderRadius.circular(14),
                         child: InkWell(
                           onTap: () => nav('dashboard',
-                              toast: 'Označeno jako zaplaceno'),
+                              toast: L.of(context).qrToastMarkedPaid),
                           borderRadius: BorderRadius.circular(14),
                           child: Container(
                             height: 52,
                             alignment: Alignment.center,
                             child: Text(
-                              'Zaplatil jsem',
+                              L.of(context).qrPaidButton,
                               style: AppType.ui(
                                 size: 16,
                                 weight: FontWeight.w600,

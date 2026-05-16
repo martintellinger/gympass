@@ -7,9 +7,9 @@ import '../../core/store/models.dart';
 import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
-import '../../shared/widgets/bottom_nav.dart';
 import '../../shared/widgets/screen_frame.dart';
 
 /// Admin Messages 15 — 1:1 thread inbox (owner Olda <-> members).
@@ -48,16 +48,10 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
     final totalUnread = store.totalUnread();
     final unreadThreads = threads.where((t) => t.unread > 0).length;
 
-    final countLabel = filtered.length == 1
-        ? 'vlákno'
-        : (filtered.length > 1 && filtered.length < 5 ? 'vlákna' : 'vláken');
-
     return ScreenFrame(
-      child: Stack(
+      child: ListView(
+        padding: const EdgeInsets.only(bottom: 110),
         children: [
-          ListView(
-            padding: const EdgeInsets.only(bottom: 110),
-            children: [
               // ── Header block ──
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
@@ -72,7 +66,7 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Zprávy',
+                                L.of(context).amsgTitle,
                                 style: AppType.ui(
                                   size: 28,
                                   weight: FontWeight.w700,
@@ -125,7 +119,7 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
                               decoration: InputDecoration(
                                 isCollapsed: true,
                                 border: InputBorder.none,
-                                hintText: 'Hledat ve zprávách…',
+                                hintText: L.of(context).amsgSearchHint,
                                 hintStyle:
                                     AppType.ui(size: 14, color: T.text2),
                               ),
@@ -152,7 +146,7 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
                           Expanded(
                             child: _QuickPill(
                               icon: 'megaphone',
-                              label: 'Hromadně všem',
+                              label: L.of(context).amsgBulkAll,
                               onTap: () => _openBroadcast(store, nav),
                             ),
                           ),
@@ -160,14 +154,14 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
                           Expanded(
                             child: _QuickPill(
                               icon: 'alert',
-                              label: 'Připomenout dlužníky',
+                              label: L.of(context).amsgRemindDebtors,
                               onTap: () {
                                 for (final id in ['david', 'petr']) {
                                   store.sendMessage(id,
-                                      'Připomínka platby — pošlu QR. Dík.');
+                                      L.of(context).amsgPaymentReminderMsg);
                                 }
                                 nav('messages',
-                                    toast: 'Připomínky odeslány');
+                                    toast: L.of(context).amsgRemindersSent);
                               },
                             ),
                           ),
@@ -187,7 +181,10 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(4, 8, 4, 8),
                       child: Text(
-                        '${filtered.length} $countLabel'.toUpperCase(),
+                        L
+                            .of(context)
+                            .amsgThreadCount(filtered.length)
+                            .toUpperCase(),
                         style: AppType.ui(
                           size: 11.5,
                           weight: FontWeight.w600,
@@ -202,8 +199,8 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
                         child: Center(
                           child: Text(
                             _q.isNotEmpty
-                                ? 'Nikdo s "$_q"'
-                                : 'Zatím žádné zprávy.',
+                                ? L.of(context).amsgEmptySearch(_q)
+                                : L.of(context).amsgEmpty,
                             style: AppType.ui(size: 13, color: T.text3),
                           ),
                         ),
@@ -221,40 +218,26 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
               ),
             ],
           ),
-
-          // ── Floating bottom nav ──
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: AdminBottomNav(
-              active: 3,
-              unread: totalUnread,
-              onNav: (route) => nav(route),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
   Widget _subtitle(int totalUnread, int unreadThreads) {
     if (totalUnread <= 0) {
       return Text(
-        'Vše vyřízeno',
+        L.of(context).amsgAllDone,
         style: AppType.ui(size: 13, color: T.text2),
       );
     }
-    final threadWord = unreadThreads == 1 ? 'vlákno' : 'vlákna';
     return Text.rich(
       TextSpan(
         style: AppType.ui(size: 13, color: T.text2),
         children: [
           TextSpan(
-            text: '$totalUnread nepřečteno',
+            text: L.of(context).amsgUnreadCount(totalUnread),
             style: AppType.ui(size: 13, color: T.text),
           ),
-          TextSpan(text: ' · $unreadThreads $threadWord'),
+          TextSpan(
+              text: ' · ${L.of(context).amsgUnreadThreads(unreadThreads)}'),
         ],
       ),
     );
@@ -287,7 +270,7 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
         store: store,
         onSent: (count) {
           Navigator.of(context).pop();
-          nav('messages', toast: 'Odesláno · $count členům');
+          nav('messages', toast: L.of(context).amsgSentToMembers(count));
         },
       ),
     );
@@ -447,7 +430,7 @@ class _ThreadRow extends StatelessWidget {
                     children: [
                       if (isFromOlda) ...[
                         Text(
-                          'já →',
+                          L.of(context).amsgFromMePrefix,
                           style: AppType.mono(
                             size: 10.5,
                             weight: FontWeight.w600,
@@ -540,7 +523,7 @@ class _ComposeSheetState extends State<_ComposeSheet> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Nová zpráva',
+                        L.of(context).amsgComposeTitle,
                         style: AppType.ui(
                           size: 17,
                           weight: FontWeight.w700,
@@ -577,7 +560,7 @@ class _ComposeSheetState extends State<_ComposeSheet> {
                             decoration: InputDecoration(
                               isCollapsed: true,
                               border: InputBorder.none,
-                              hintText: 'Komu napsat…',
+                              hintText: L.of(context).amsgComposeSearchHint,
                               hintStyle:
                                   AppType.ui(size: 14, color: T.text2),
                             ),
@@ -707,10 +690,6 @@ class _BroadcastSheetState extends State<_BroadcastSheet> {
     final recipients = _recipients;
     final canSend = hasText && recipients.isNotEmpty;
 
-    final recipientWord = recipients.length == 1
-        ? 'člen'
-        : (recipients.length < 5 ? 'členové' : 'členů');
-
     return Padding(
       padding: EdgeInsets.only(
         bottom: MediaQuery.of(context).viewInsets.bottom,
@@ -745,7 +724,7 @@ class _BroadcastSheetState extends State<_BroadcastSheet> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Hromadná zpráva',
+                          L.of(context).amsgBroadcastTitle,
                           style: AppType.ui(
                             size: 17,
                             weight: FontWeight.w700,
@@ -755,7 +734,7 @@ class _BroadcastSheetState extends State<_BroadcastSheet> {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Přistáne všem jako normální zpráva od Oldy',
+                          L.of(context).amsgBroadcastSubtitle,
                           style: AppType.ui(size: 12, color: T.text2),
                         ),
                       ],
@@ -771,7 +750,7 @@ class _BroadcastSheetState extends State<_BroadcastSheet> {
               const SizedBox(height: 14),
               // Komu
               Text(
-                'KOMU',
+                L.of(context).amsgBroadcastTo,
                 style: AppType.ui(
                   size: 11,
                   weight: FontWeight.w600,
@@ -857,7 +836,7 @@ class _BroadcastSheetState extends State<_BroadcastSheet> {
                   decoration: InputDecoration(
                     isCollapsed: true,
                     border: InputBorder.none,
-                    hintText: 'Co chtěš říct…',
+                    hintText: L.of(context).amsgBroadcastTextHint,
                     hintStyle: AppType.ui(size: 14.5, color: T.text2),
                   ),
                 ),
@@ -920,7 +899,7 @@ class _BroadcastSheetState extends State<_BroadcastSheet> {
                           color: canSend ? Colors.white : T.text3),
                       const SizedBox(width: 8),
                       Text(
-                        'Odeslat · ${recipients.length} $recipientWord',
+                        L.of(context).amsgSendButton(recipients.length),
                         style: AppType.ui(
                           size: 15,
                           weight: FontWeight.w600,

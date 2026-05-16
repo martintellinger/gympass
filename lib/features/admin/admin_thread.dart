@@ -11,6 +11,7 @@ import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
 import '../../shared/widgets/status_pill.dart';
 import '../../shared/widgets/screen_frame.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Admin Thread 16 — jedna konverzace majitel ↔ člen.
 /// Bubliny zpráv, kompozér, rychlé šablony, hlavička s kontextem.
@@ -86,15 +87,14 @@ class _AdminThreadScreenState extends ConsumerState<AdminThreadScreen> {
     // Šablony podle stavu člena.
     final templates = <String>[];
     if (member.state == 'error') {
-      templates.add(
-          'Připomínka platby ${member.tariff == 'Student' ? '1 500' : '2 250'} Kč. Pošlu QR.');
+      templates.add(L.of(context).athrTemplatePaymentReminder(
+          member.tariff == 'Student' ? '1 500' : '2 250'));
     }
     if (member.state == 'warn') {
-      templates.add(
-          'Ahoj $firstName, končí ti za pár dní. Chceš prodloužit?');
+      templates.add(L.of(context).athrTemplateExpiringSoon(firstName));
     }
-    templates.add('Stavím se zítra v Klubu.');
-    templates.add('Díky, mám.');
+    templates.add(L.of(context).athrTemplateDropBy);
+    templates.add(L.of(context).athrTemplateThanksGot);
 
     // Bubliny seskupené po dnech.
     final groups = <_DayGroup>[];
@@ -234,7 +234,7 @@ class _AdminThreadScreenState extends ConsumerState<AdminThreadScreen> {
                   Expanded(
                     child: Text(
                       member.state == 'error'
-                          ? 'Platba po lhůtě · prodlení'
+                          ? L.of(context).athrContextOverdue
                           : 'Členství končí za ${member.daysNum} ${member.daysNum == 1 ? 'den' : member.daysNum < 5 ? 'dny' : 'dní'}',
                       style: AppType.ui(
                         size: 12.5,
@@ -254,7 +254,7 @@ class _AdminThreadScreenState extends ConsumerState<AdminThreadScreen> {
                     alignment: Alignment.topCenter,
                     padding: const EdgeInsets.all(30),
                     child: Text(
-                      'Začni první zprávou.',
+                      L.of(context).athrEmptyState,
                       style: AppType.ui(size: 13, color: T.text3),
                     ),
                   )
@@ -361,7 +361,7 @@ class _AdminThreadScreenState extends ConsumerState<AdminThreadScreen> {
                         contentPadding:
                             const EdgeInsets.symmetric(vertical: 6),
                         border: InputBorder.none,
-                        hintText: 'Napiš $firstName…',
+                        hintText: L.of(context).athrComposerHint(firstName),
                         hintStyle: AppType.ui(
                             size: 14.5, color: T.text3, height: 1.4),
                       ),

@@ -2,21 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/routing/nav.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/store/models.dart';
 import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
-import '../../shared/widgets/bottom_nav.dart';
 import '../../shared/widgets/screen_frame.dart';
 import '../../shared/widgets/status_pill.dart';
 
-const Map<String, String> _kSortLabels = {
-  'expiration': 'expirace',
-  'name': 'jméno',
-  'tariff': 'tarif',
-};
+String _sortLabel(BuildContext context, String key) {
+  switch (key) {
+    case 'expiration':
+      return L.of(context).mlistSortLabelExpiration;
+    case 'name':
+      return L.of(context).mlistSortLabelName;
+    case 'tariff':
+      return L.of(context).mlistSortLabelTariff;
+    default:
+      return '';
+  }
+}
 
 /// Member List 11 — filterable/searchable/sortable member list for admin.
 class MemberListScreen extends ConsumerStatefulWidget {
@@ -60,7 +67,7 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
     showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
-      barrierColor: const Color(0x80000000),
+      barrierColor: T.scrimSheet,
       isScrollControlled: true,
       builder: (_) => _FilterSortSheet(
         sortBy: _sortBy,
@@ -127,11 +134,9 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
         : (sorted.length > 1 && sorted.length < 5 ? 'členové' : 'členů');
 
     return ScreenFrame(
-      child: Stack(
+      child: ListView(
+        padding: EdgeInsets.zero,
         children: [
-          ListView(
-            padding: EdgeInsets.zero,
-            children: [
               // ── Header block ──
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
@@ -147,7 +152,7 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Členové',
+                                L.of(context).mlistTitle,
                                 style: AppType.ui(
                                   size: 28,
                                   weight: FontWeight.w700,
@@ -156,7 +161,11 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '${counts['all']} celkem · ${counts['ok']} aktivní · ${counts['warn']! + counts['error']!} potřebuje pozornost',
+                                L.of(context).mlistSubtitle(
+                                  counts['all']!,
+                                  counts['ok']!,
+                                  counts['warn']! + counts['error']!,
+                                ),
                                 style: AppType.ui(
                                   size: 12.5,
                                   color: T.text2,
@@ -235,7 +244,7 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
                               decoration: InputDecoration(
                                 isCollapsed: true,
                                 border: InputBorder.none,
-                                hintText: 'Hledat člena, telefon, e-mail…',
+                                hintText: L.of(context).mlistSearchHint,
                                 hintStyle:
                                     AppType.ui(size: 14, color: T.text3),
                               ),
@@ -269,21 +278,21 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
                             _Chip(
                               active: _filter == 'all',
                               onTap: () => setState(() => _filter = 'all'),
-                              label: 'Vše · ${counts['all']}',
+                              label: L.of(context).mlistChipAll(counts['all']!),
                             ),
                             const SizedBox(width: 6),
                             _Chip(
                               active: _filter == 'ok',
                               onTap: () => setState(() => _filter = 'ok'),
                               dot: StatusState.ok,
-                              label: 'Aktivní ${counts['ok']}',
+                              label: L.of(context).mlistChipActive(counts['ok']!),
                             ),
                             const SizedBox(width: 6),
                             _Chip(
                               active: _filter == 'warn',
                               onTap: () => setState(() => _filter = 'warn'),
                               dot: StatusState.warn,
-                              label: 'Končí ${counts['warn']}',
+                              label: L.of(context).mlistChipEnding(counts['warn']!),
                             ),
                             const SizedBox(width: 6),
                             _Chip(
@@ -291,7 +300,7 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
                               onTap: () =>
                                   setState(() => _filter = 'error'),
                               dot: StatusState.error,
-                              label: 'Po lhůtě ${counts['error']}',
+                              label: L.of(context).mlistChipOverdue(counts['error']!),
                             ),
                           ],
                         ),
@@ -338,7 +347,7 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
                                         AppType.ui(color: T.text3, size: 11.5, weight: FontWeight.w600, letterSpacing: 0.4),
                                   ),
                                   TextSpan(
-                                    text: (_kSortLabels[_sortBy] ?? '')
+                                    text: _sortLabel(context, _sortBy)
                                         .toUpperCase(),
                                     style: AppType.ui(
                                       color: T.accent,
@@ -369,8 +378,8 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
                             vertical: 40, horizontal: 12),
                         child: Text(
                           _q.isNotEmpty
-                              ? 'Nikdo neodpovídá "$_q"'
-                              : 'Žádní členové pro vybraný filtr.',
+                              ? L.of(context).mlistEmptySearch(_q)
+                              : L.of(context).mlistEmptyFilter,
                           textAlign: TextAlign.center,
                           style: AppType.ui(size: 13, color: T.text3),
                         ),
@@ -387,20 +396,6 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
                   ],
                 ),
               ),
-            ],
-          ),
-
-          // Floating bottom nav
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: AdminBottomNav(
-              active: 1,
-              onNav: (r) => nav(r),
-              unread: store.totalUnread(),
-            ),
-          ),
         ],
       ),
     );
@@ -507,12 +502,12 @@ class _MemberRow extends StatelessWidget {
                 : T.text2;
 
     final String subLabel = m.state == 'ok'
-        ? 'do expirace'
+        ? L.of(context).mlistRowUntilExpiry
         : m.state == 'warn'
-            ? 'končí'
+            ? L.of(context).mlistRowEnding
             : m.state == 'error'
-                ? 'po lhůtě'
-                : '30+ dní';
+                ? L.of(context).mlistRowOverdue
+                : L.of(context).mlistRow30Plus;
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
@@ -586,7 +581,7 @@ class _MemberRow extends StatelessWidget {
                                 color: m.overdue ? T.error : T.text2),
                             const SizedBox(width: 3),
                             Text(
-                              'klíč',
+                              L.of(context).mlistRowKey,
                               style: AppType.ui(
                                 size: 12.5,
                                 color: m.overdue ? T.error : T.text2,
@@ -596,7 +591,7 @@ class _MemberRow extends StatelessWidget {
                         )
                       else
                         Text(
-                          'bez klíče',
+                          L.of(context).mlistRowNoKey,
                           style: AppType.ui(size: 12.5, color: T.text3),
                         ),
                     ],
@@ -685,7 +680,7 @@ class _FilterSortSheet extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Filtr a řazení',
+                        L.of(context).mlistSheetTitle,
                         style: AppType.ui(
                           size: 17,
                           weight: FontWeight.w700,
@@ -701,7 +696,7 @@ class _FilterSortSheet extends StatelessWidget {
                               setSheetState(() {});
                             },
                             child: Text(
-                              'resetovat',
+                              L.of(context).mlistSheetReset,
                               style:
                                   AppType.ui(size: 12.5, color: T.text2),
                             ),
@@ -718,11 +713,23 @@ class _FilterSortSheet extends StatelessWidget {
                     ],
                   ),
 
-                  const _SheetLabel('Řadit podle'),
+                  _SheetLabel(L.of(context).mlistSheetSortBy),
                   ...[
-                    ('expiration', 'Expirace', 'kdo končí nejdřív'),
-                    ('name', 'Jméno', 'abecedně'),
-                    ('tariff', 'Tarif', 'Standard / Student'),
+                    (
+                      'expiration',
+                      L.of(context).mlistSortOptExpirationTitle,
+                      L.of(context).mlistSortOptExpirationDesc
+                    ),
+                    (
+                      'name',
+                      L.of(context).mlistSortOptNameTitle,
+                      L.of(context).mlistSortOptNameDesc
+                    ),
+                    (
+                      'tariff',
+                      L.of(context).mlistSortOptTariffTitle,
+                      L.of(context).mlistSortOptTariffDesc
+                    ),
                   ].map((o) {
                     final active = o.$1 == sortBy;
                     return GestureDetector(
@@ -807,8 +814,8 @@ class _FilterSortSheet extends StatelessWidget {
                               children: [
                                 Text(
                                   sortDir == 'asc'
-                                      ? 'Vzestupně'
-                                      : 'Sestupně',
+                                      ? L.of(context).mlistSheetAscending
+                                      : L.of(context).mlistSheetDescending,
                                   style: AppType.ui(
                                     size: 14,
                                     weight: FontWeight.w600,
@@ -816,7 +823,7 @@ class _FilterSortSheet extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 1),
                                 Text(
-                                  'Klepni pro otočení',
+                                  L.of(context).mlistSheetTapToToggle,
                                   style: AppType.ui(
                                     size: 11.5,
                                     color: T.text2,
@@ -830,31 +837,31 @@ class _FilterSortSheet extends StatelessWidget {
                     ),
                   ),
 
-                  const _SheetLabel('Tarif'),
+                  _SheetLabel(L.of(context).mlistSheetTariff),
                   _Seg(
                     value: tariffFilter,
                     onChange: (v) {
                       onPickTariff(v);
                       setSheetState(() {});
                     },
-                    options: const [
-                      ('any', 'Oba'),
+                    options: [
+                      ('any', L.of(context).mlistTariffOptBoth),
                       ('Standard', 'Standard'),
                       ('Student', 'Student'),
                     ],
                   ),
 
-                  const _SheetLabel('Klíč'),
+                  _SheetLabel(L.of(context).mlistSheetKey),
                   _Seg(
                     value: keyFilter,
                     onChange: (v) {
                       onPickKey(v);
                       setSheetState(() {});
                     },
-                    options: const [
-                      ('any', 'Všichni'),
-                      ('with', 'S klíčem'),
-                      ('without', 'Bez klíče'),
+                    options: [
+                      ('any', L.of(context).mlistKeyOptAll),
+                      ('with', L.of(context).mlistKeyOptWith),
+                      ('without', L.of(context).mlistKeyOptWithout),
                     ],
                   ),
 
@@ -870,7 +877,7 @@ class _FilterSortSheet extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
-                        'Použít',
+                        L.of(context).mlistSheetApply,
                         style: AppType.ui(
                           size: 15,
                           weight: FontWeight.w600,

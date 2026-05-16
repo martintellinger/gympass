@@ -3,10 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/tokens.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/routing/nav.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/screen_frame.dart';
-import '../../shared/widgets/bottom_nav.dart';
 
 class _HistoryItem {
   final String type;
@@ -95,8 +94,6 @@ class _HistoryScreenViewState extends ConsumerState<HistoryScreenView> {
 
   @override
   Widget build(BuildContext context) {
-    final nav = navCb(context);
-
     final items = _kHistoryItems
         .where((i) => _filter == 'all' || i.type == _filter)
         .toList();
@@ -115,10 +112,8 @@ class _HistoryScreenViewState extends ConsumerState<HistoryScreenView> {
     });
 
     return ScreenFrame(
-      child: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.only(bottom: 110),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.only(bottom: 110),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -130,7 +125,7 @@ class _HistoryScreenViewState extends ConsumerState<HistoryScreenView> {
                     children: [
                       const SizedBox(height: 4),
                       Text(
-                        'Historie',
+                        L.of(context).histTitle,
                         style: AppType.ui(
                           size: 28,
                           weight: FontWeight.w700,
@@ -140,7 +135,7 @@ class _HistoryScreenViewState extends ConsumerState<HistoryScreenView> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Všechno, co se v Klubu stalo s tvým účtem.',
+                        L.of(context).histSubtitle,
                         style: AppType.ui(
                           size: 13.5,
                           weight: FontWeight.w400,
@@ -153,16 +148,16 @@ class _HistoryScreenViewState extends ConsumerState<HistoryScreenView> {
                         children: [
                           Expanded(
                             child: _MiniStat(
-                              label: 'Zaplaceno',
+                              label: L.of(context).histStatPaid,
                               value: '${_groupThousands(totalPaid)} Kč',
                             ),
                           ),
                           const SizedBox(width: 8),
-                          const Expanded(
+                          Expanded(
                             child: _MiniStat(
-                              label: 'Člen od',
+                              label: L.of(context).histStatMemberSince,
                               value: '9 · 2025',
-                              sub: '8 měsíců',
+                              sub: L.of(context).histStatMonthsCount(8),
                             ),
                           ),
                         ],
@@ -174,25 +169,26 @@ class _HistoryScreenViewState extends ConsumerState<HistoryScreenView> {
                         child: Row(
                           children: [
                             _FChip(
-                              label: 'Vše · ${_kHistoryItems.length}',
+                              label: L.of(context).histFilterAll(
+                                  _kHistoryItems.length),
                               active: _filter == 'all',
                               onTap: () => setState(() => _filter = 'all'),
                             ),
                             const SizedBox(width: 6),
                             _FChip(
-                              label: 'Platby · 3',
+                              label: L.of(context).histFilterPayments(3),
                               active: _filter == 'pay',
                               onTap: () => setState(() => _filter = 'pay'),
                             ),
                             const SizedBox(width: 6),
                             _FChip(
-                              label: 'Klíč · 1',
+                              label: L.of(context).histFilterKey(1),
                               active: _filter == 'key',
                               onTap: () => setState(() => _filter = 'key'),
                             ),
                             const SizedBox(width: 6),
                             _FChip(
-                              label: 'Účet · 1',
+                              label: L.of(context).histFilterAccount(1),
                               active: _filter == 'signup',
                               onTap: () => setState(() => _filter = 'signup'),
                             ),
@@ -249,7 +245,7 @@ class _HistoryScreenViewState extends ConsumerState<HistoryScreenView> {
                       SizedBox(
                         width: double.infinity,
                         child: Text(
-                          'To je všechno. Účet máš od září 2025.',
+                          L.of(context).histEndNote,
                           textAlign: TextAlign.center,
                           style: AppType.ui(
                             size: 12,
@@ -265,14 +261,6 @@ class _HistoryScreenViewState extends ConsumerState<HistoryScreenView> {
               ],
             ),
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: MemberBottomNav(active: 2, onNav: nav),
-          ),
-        ],
-      ),
     );
   }
 }

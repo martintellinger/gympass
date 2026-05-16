@@ -7,8 +7,8 @@ import '../../core/store/store.dart';
 import '../../core/routing/nav.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
-import '../../shared/widgets/bottom_nav.dart';
 import '../../shared/widgets/screen_frame.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Admin More 17 — "Více": nastavení Klubu, nástěnka, schvalování, FAQ.
 class AdminMoreScreen extends ConsumerWidget {
@@ -18,18 +18,17 @@ class AdminMoreScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final store = ref.watch(storeProvider);
     final nav = navCb(context);
+    final l = L.of(context);
 
     return ScreenFrame(
-      child: Stack(
-        children: [
-          SingleChildScrollView(
+      child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(20, 4, 20, 110),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Text(
-                  'Více',
-                  style: TextStyle(
+                Text(
+                  l.amoreTitle,
+                  style: const TextStyle(
                     fontFamily: 'Inter',
                     fontSize: 28,
                     fontWeight: FontWeight.w700,
@@ -66,7 +65,7 @@ class AdminMoreScreen extends ConsumerWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'majitel · BýtFit Klub',
+                              l.amoreOwnerSubtitle,
                               style: AppType.ui(
                                 size: 12.5,
                                 color: T.text2,
@@ -82,87 +81,87 @@ class AdminMoreScreen extends ConsumerWidget {
                 ),
 
                 // Aktivita
-                const _SectionLabel('Aktivita'),
+                _SectionLabel(l.amoreSectionActivity),
                 _MoreCard(children: [
                   _MoreRow(
                     icon: 'user_check',
-                    label: 'Schvalování registrací',
-                    sub: '2 čekající žádosti',
+                    label: l.amoreApprovalsLabel,
+                    sub: l.amoreApprovalsSub,
                     badge: 2,
                     onTap: () => nav('approval'),
                   ),
                   const _MoreDivider(),
                   _MoreRow(
                     icon: 'board',
-                    label: 'Nástěnka',
-                    sub: 'Připnout, mimo provoz, akce',
+                    label: l.amoreBoardLabel,
+                    sub: l.amoreBoardSub,
                     onTap: () => nav('board'),
                   ),
                   const _MoreDivider(),
                   _MoreRow(
                     icon: 'megaphone',
-                    label: 'Hromadná zpráva všem',
-                    sub: '${store.members.length} členů',
+                    label: l.amoreBroadcastLabel,
+                    sub: l.amoreBroadcastSub(store.members.length),
                     onTap: () => nav('broadcast'),
                   ),
                 ]),
 
                 // Klub
-                const _SectionLabel('Klub'),
+                _SectionLabel(l.amoreSectionClub),
                 _MoreCard(children: [
-                  const _MoreRow(
+                  _MoreRow(
                     icon: 'tag',
-                    label: 'Tarify a ceny',
-                    sub: 'Standard 2 250 · Student 1 500 · 6m / 12m',
+                    label: l.amoreTariffsLabel,
+                    sub: l.amoreTariffsSub,
                   ),
                   const _MoreDivider(),
-                  const _MoreRow(
+                  _MoreRow(
                     icon: 'calendar',
-                    label: 'Otevírací doba',
-                    sub: 'Po–Pá 6:00–22:00 · So–Ne 8:00–20:00',
+                    label: l.amoreHoursLabel,
+                    sub: l.amoreHoursSub,
                   ),
                   const _MoreDivider(),
-                  const _MoreRow(
+                  _MoreRow(
                     icon: 'key',
-                    label: 'Klíče a kauce',
-                    sub: '34 vydaných · 2 propadlé kauce',
+                    label: l.amoreKeysLabel,
+                    sub: l.amoreKeysSub,
                   ),
                   const _MoreDivider(),
-                  const _MoreRow(
+                  _MoreRow(
                     icon: 'shield',
-                    label: 'Pravidla Klubu',
-                    sub: 'Naposledy aktualizováno 3. 4. 2026',
+                    label: l.amoreRulesLabel,
+                    sub: l.amoreRulesSub,
                   ),
                 ]),
 
                 // Data
-                const _SectionLabel('Data'),
+                _SectionLabel(l.amoreSectionData),
                 _MoreCard(children: [
-                  const _MoreRow(
+                  _MoreRow(
                     icon: 'download',
-                    label: 'Export plateb (CSV)',
-                    sub: 'Pro účetnictví · poslední 12 měsíců',
+                    label: l.amoreExportLabel,
+                    sub: l.amoreExportSub,
                   ),
                   const _MoreDivider(),
-                  const _MoreRow(
+                  _MoreRow(
                     icon: 'refresh',
-                    label: 'Záloha databáze',
-                    sub: 'Poslední záloha · dnes 03:00',
+                    label: l.amoreBackupLabel,
+                    sub: l.amoreBackupSub,
                   ),
                 ]),
 
                 // Účet
-                const _SectionLabel('Účet'),
+                _SectionLabel(l.amoreSectionAccount),
                 _MoreCard(children: [
-                  const _MoreRow(
+                  _MoreRow(
                     icon: 'help',
-                    label: 'Nápověda & FAQ',
-                    sub: 'Pravidla aplikace, dotazy',
+                    label: l.amoreHelpLabel,
+                    sub: l.amoreHelpSub,
                   ),
                   const _MoreDivider(),
-                  const _MoreRow(
+                  _MoreRow(
                     icon: 'logout',
-                    label: 'Odhlásit Oldu',
+                    label: l.amoreLogoutLabel,
                     danger: true,
                   ),
                 ]),
@@ -170,7 +169,7 @@ class AdminMoreScreen extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 20),
                   child: Text(
-                    'BÝTFIT KLUB · v1.0.0',
+                    l.amoreVersion,
                     textAlign: TextAlign.center,
                     style: AppType.mono(
                       size: 11,
@@ -182,18 +181,6 @@ class AdminMoreScreen extends ConsumerWidget {
               ],
             ),
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: AdminBottomNav(
-              active: 4,
-              onNav: (route) => nav(route),
-              unread: store.totalUnread(),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }

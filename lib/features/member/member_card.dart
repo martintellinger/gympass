@@ -6,9 +6,9 @@ import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../shared/widgets/app_icon.dart';
-import '../../shared/widgets/bottom_nav.dart';
 import '../../shared/widgets/screen_frame.dart';
 import '../../shared/widgets/status_pill.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Member Card 09 — fullscreen membership card (Apple Wallet style).
 /// Port of docs/design/gympass/project/screens/MemberCard.jsx.
@@ -29,14 +29,11 @@ class MemberCardScreen extends ConsumerWidget {
     final state = statusFromKey(member?.state ?? 'ok');
 
     // JSX: "člen od 9 · 2025" — joined string is "M · YYYY".
-    final joinedLabel = 'člen od $joined';
+    final joinedLabel = L.of(context).cardJoinedSince(joined);
 
     return ScreenFrame(
-      child: Stack(
-        children: [
-          // Scrollable body. JSX page background is pure black (#000).
-          Positioned.fill(
-            child: Container(
+      // Scrollable body. JSX page background is pure black (#000).
+      child: Container(
               color: Colors.black,
               child: SingleChildScrollView(
                 padding: const EdgeInsets.only(bottom: 110),
@@ -92,16 +89,6 @@ class MemberCardScreen extends ConsumerWidget {
                 ),
               ),
             ),
-          ),
-          // Floating bottom nav — active: 1 (Karta).
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: MemberBottomNav(active: 1, onNav: nav),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -132,7 +119,7 @@ class _MembershipCard extends StatelessWidget {
           gradient: const LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Color(0xFF161618), Color(0xFF0E0E10)],
+            colors: T.cardSheen,
           ),
           border: Border.all(color: T.border),
           borderRadius: BorderRadius.circular(22),
@@ -149,7 +136,7 @@ class _MembershipCard extends StatelessWidget {
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
-                    colors: [Color(0x38FF4D2E), Color(0x00FF4D2E)],
+                    colors: T.accentGlowStrong,
                     stops: [0.0, 0.7],
                   ),
                 ),
@@ -180,7 +167,7 @@ class _MembershipCard extends StatelessWidget {
                             ),
                             const SizedBox(height: 2),
                             Text(
-                              'Členská karta',
+                              L.of(context).cardSubtitle,
                               style: AppType.ui(
                                 size: 11,
                                 weight: FontWeight.w400,
@@ -306,7 +293,9 @@ class _StatusGrid extends StatelessWidget {
         const AppIcon('key', size: 14, color: T.text2),
         const SizedBox(width: 6),
         Text(
-          hasKey ? 'u tebe' : 'na recepci',
+          hasKey
+              ? L.of(context).cardKeyWithYou
+              : L.of(context).cardKeyAtReception,
           style: AppType.ui(
             size: 15,
             weight: FontWeight.w600,
@@ -335,17 +324,19 @@ class _StatusGrid extends StatelessWidget {
           children: [
             Expanded(
               child: cell(
-                _label('Stav'),
+                _label(L.of(context).cardLabelStatus),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: StatusPill(state: statusState, label: 'Aktivní'),
+                  child: StatusPill(
+                      state: statusState,
+                      label: L.of(context).cardStatusActive),
                 ),
               ),
             ),
             const SizedBox(width: 16),
             Expanded(
               child: cell(
-                _label('Platí do'),
+                _label(L.of(context).cardLabelValidUntil),
                 Text(expiresAt, style: monoValueStyle),
               ),
             ),
@@ -357,13 +348,14 @@ class _StatusGrid extends StatelessWidget {
           children: [
             Expanded(
               child: cell(
-                _label('Tarif'),
-                Text('$tariff · 3 měs.', style: valueStyle),
+                _label(L.of(context).cardLabelTariff),
+                Text(L.of(context).cardTariffValue(tariff),
+                    style: valueStyle),
               ),
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: cell(_label('Klíč'), keyValue),
+              child: cell(_label(L.of(context).cardLabelKey), keyValue),
             ),
           ],
         ),
@@ -411,7 +403,7 @@ class _BrightnessTip extends StatelessWidget {
           const SizedBox(width: 10),
           Expanded(
             child: Text(
-              'Když ukazuješ kartu Oldovi, zvyš jas obrazovky — čte se to líp.',
+              L.of(context).cardBrightnessTip,
               style: AppType.ui(
                 size: 12.5,
                 weight: FontWeight.w400,
@@ -449,7 +441,7 @@ class _WalletButton extends StatelessWidget {
             const AppIcon('wallet', size: 18, color: T.text),
             const SizedBox(width: 10),
             Text(
-              'Přidat do Walletu',
+              L.of(context).cardAddToWallet,
               style: AppType.ui(
                 size: 15,
                 weight: FontWeight.w600,

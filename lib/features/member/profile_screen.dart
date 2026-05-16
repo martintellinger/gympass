@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/routing/nav.dart';
 import '../../core/theme/app_theme.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/theme/tokens.dart';
 import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
-import '../../shared/widgets/bottom_nav.dart';
 import '../../shared/widgets/screen_frame.dart';
 import '../../shared/widgets/status_pill.dart';
 
@@ -23,18 +23,25 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
   bool _push = true;
   bool _outage = true;
   bool _promo = false;
-  String _lang = 'cs';
-  String _theme = 'dark';
+
+  static const _themeKeys = {
+    ThemeMode.dark: 'dark',
+    ThemeMode.system: 'system',
+    ThemeMode.light: 'light',
+  };
+  static const _themeModes = {
+    'dark': ThemeMode.dark,
+    'system': ThemeMode.system,
+    'light': ThemeMode.light,
+  };
 
   @override
   Widget build(BuildContext context) {
     final nav = navCb(context);
 
     return ScreenFrame(
-      child: Stack(
-        children: [
-          SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(24, 4, 24, 110),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(24, 4, 24, 110),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -60,7 +67,7 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'člen od 9 · 2025',
+                              L.of(context).profMemberSince,
                               style: AppType.ui(
                                 size: 13,
                                 weight: FontWeight.w400,
@@ -68,11 +75,11 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                               ),
                             ),
                             const SizedBox(height: 8),
-                            const Align(
+                            Align(
                               alignment: Alignment.centerLeft,
                               child: StatusPill(
                                 state: StatusState.ok,
-                                label: 'Aktivní · 23 dní',
+                                label: L.of(context).profActiveDays,
                               ),
                             ),
                           ],
@@ -99,101 +106,105 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                 ),
 
                 // Kontakt
-                _section('Kontakt', [
-                  _row(icon: 'message', label: 'E-mail', value: 'pavel.novak@email.cz'),
+                _section(L.of(context).profSectionContact, [
+                  _row(icon: 'message', label: L.of(context).profEmail, value: 'pavel.novak@email.cz'),
                   _divider(),
                   _row(
                     icon: 'bell',
-                    label: 'Telefon',
+                    label: L.of(context).profPhone,
                     value: '+420 728 451 209',
                     mono: true,
                   ),
                 ]),
 
                 // Členství
-                _section('Členství', [
-                  _row(icon: 'dumbbell', label: 'Tarif', value: 'Standard · 3 měs.'),
+                _section(L.of(context).profSectionMembership, [
+                  _row(icon: 'dumbbell', label: L.of(context).profTariff, value: L.of(context).profTariffValue),
                   _divider(),
                   _row(
                     icon: 'calendar',
-                    label: 'Platí do',
+                    label: L.of(context).profValidUntil,
                     value: '23. 6. 2026',
                     mono: true,
                   ),
                   _divider(),
                   _row(
                     icon: 'key',
-                    label: 'Klíč',
-                    value: 'u tebe',
+                    label: L.of(context).profKey,
+                    value: L.of(context).profKeyValue,
                     pill: const StatusPill(state: StatusState.ok, label: '100 Kč'),
                   ),
                 ]),
 
                 // Notifikace
-                _section('Notifikace', [
+                _section(L.of(context).profSectionNotifications, [
                   _toggle(
                     icon: 'bell',
-                    label: 'Push notifikace',
-                    sub: 'Konec členství, schválení žádostí',
+                    label: L.of(context).profPushLabel,
+                    sub: L.of(context).profPushSub,
                     value: _push,
                     onChange: (v) => setState(() => _push = v),
                   ),
                   _divider(),
                   _toggle(
                     icon: 'tool',
-                    label: 'Výpadky a zavírací doba',
-                    sub: 'Když je v Klubu něco mimo provoz',
+                    label: L.of(context).profOutageLabel,
+                    sub: L.of(context).profOutageSub,
                     value: _outage,
                     onChange: (v) => setState(() => _outage = v),
                   ),
                   _divider(),
                   _toggle(
                     icon: 'tag',
-                    label: 'Akce a slevy',
-                    sub: 'Občas, ne víc než 1× měsíčně',
+                    label: L.of(context).profPromoLabel,
+                    sub: L.of(context).profPromoSub,
                     value: _promo,
                     onChange: (v) => setState(() => _promo = v),
                   ),
                 ]),
 
                 // Vzhled & jazyk
-                _section('Vzhled & jazyk', [
+                _section(L.of(context).appearanceAndLanguage, [
                   _segment(
                     icon: 'moon',
-                    label: 'Téma',
-                    value: _theme,
-                    options: const [
-                      ['dark', 'Tmavé'],
-                      ['system', 'Systém'],
-                      ['light', 'Světlé'],
+                    label: L.of(context).themeLabel,
+                    value: _themeKeys[ref.watch(themeModeProvider)]!,
+                    options: [
+                      ['dark', L.of(context).themeDark],
+                      ['system', L.of(context).themeSystem],
+                      ['light', L.of(context).themeLight],
                     ],
-                    onChange: (k) => setState(() => _theme = k),
+                    onChange: (k) => ref
+                        .read(themeModeProvider.notifier)
+                        .set(_themeModes[k]!),
                   ),
                   _divider(),
                   _segment(
                     icon: 'globe',
-                    label: 'Jazyk',
-                    value: _lang,
+                    label: L.of(context).languageLabel,
+                    value: ref.watch(localeProvider).languageCode,
                     options: const [
                       ['cs', 'CZ'],
                       ['en', 'EN'],
                     ],
-                    onChange: (k) => setState(() => _lang = k),
+                    onChange: (k) => ref
+                        .read(localeProvider.notifier)
+                        .set(Locale(k)),
                   ),
                 ]),
 
                 // Pomoc
-                _section('Pomoc', [
+                _section(L.of(context).profSectionHelp, [
                   _navRow(
                     icon: 'help',
-                    label: 'FAQ',
-                    sub: 'Časté otázky a pravidla Klubu',
+                    label: L.of(context).profFaqLabel,
+                    sub: L.of(context).profFaqSub,
                   ),
                   _divider(),
                   _navRow(
                     icon: 'message',
-                    label: 'Napsat Oldovi',
-                    sub: 'Odpovídá obvykle do hodiny',
+                    label: L.of(context).profWriteToOlda,
+                    sub: L.of(context).profWriteToOldaSub,
                     onTap: () => nav('thread', arg: 'pavel'),
                   ),
                 ]),
@@ -213,7 +224,7 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                         const AppIcon('logout', size: 16, color: T.error),
                         const SizedBox(width: 12),
                         Text(
-                          'Odhlásit',
+                          L.of(context).profSignOut,
                           style: AppType.ui(
                             size: 14.5,
                             weight: FontWeight.w500,
@@ -228,7 +239,7 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                 Padding(
                   padding: const EdgeInsets.only(top: 18),
                   child: Text(
-                    'BýtFit Klub · v1.0.0 · sestaveno 5/2026',
+                    L.of(context).profBuildInfo,
                     textAlign: TextAlign.center,
                     style: AppType.ui(
                       size: 11,
@@ -240,14 +251,6 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                 ),
               ],
             ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: MemberBottomNav(active: 4, onNav: nav),
-          ),
-        ],
       ),
     );
   }

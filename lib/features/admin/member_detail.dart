@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/format.dart';
+import '../../l10n/app_localizations.dart';
 import '../../core/routing/nav.dart';
 import '../../core/store/models.dart';
 import '../../core/store/store.dart';
@@ -28,13 +29,14 @@ class MemberDetailScreen extends ConsumerWidget {
         store.memberById('pavel') ??
         store.members.first;
 
+    final l = L.of(context);
     final stateLabel = m.state == 'ok'
-        ? 'Aktivní · ${m.daysNum} dní'
+        ? l.mdetStateActive(m.daysNum)
         : m.state == 'warn'
-            ? 'Končí za ${m.daysNum} dní'
+            ? l.mdetStateEnding(m.daysNum)
             : m.state == 'error'
-                ? 'Po lhůtě · ${m.daysNum.abs()} dní'
-                : 'Pozastaveno';
+                ? l.mdetStateOverdue(m.daysNum.abs())
+                : l.mdetStateSuspended;
 
     final memberPayments = store.payments
         .where((p) => p.memberId == m.id)
@@ -59,7 +61,7 @@ class MemberDetailScreen extends ConsumerWidget {
                   onTap: () => nav('back'),
                 ),
                 Text(
-                  'Detail člena',
+                  l.mdetTitle,
                   style: AppType.ui(
                     size: 14,
                     weight: FontWeight.w600,
@@ -102,7 +104,7 @@ class MemberDetailScreen extends ConsumerWidget {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              '${m.tariff}${m.isic ? ' · ISIC' : ''} · člen od ${m.joined}',
+                              '${m.tariff}${m.isic ? ' · ISIC' : ''} · ${l.mdetMemberSince(m.joined)}',
                               style: AppType.ui(
                                 size: 13,
                                 color: T.text2,
@@ -129,7 +131,7 @@ class MemberDetailScreen extends ConsumerWidget {
                       Expanded(
                         child: _DetailQuick(
                           icon: 'message',
-                          label: 'Zpráva',
+                          label: l.mdetQuickMessage,
                           onTap: () => nav('thread', arg: m.id),
                         ),
                       ),
@@ -137,7 +139,7 @@ class MemberDetailScreen extends ConsumerWidget {
                       Expanded(
                         child: _DetailQuick(
                           icon: 'cash',
-                          label: 'Platba',
+                          label: l.mdetQuickPayment,
                           onTap: () => nav('payments'),
                         ),
                       ),
@@ -145,7 +147,7 @@ class MemberDetailScreen extends ConsumerWidget {
                       Expanded(
                         child: _DetailQuick(
                           icon: 'refresh',
-                          label: 'Prodloužit',
+                          label: l.mdetQuickExtend,
                           onTap: () => nav('qr'),
                         ),
                       ),
@@ -158,12 +160,12 @@ class MemberDetailScreen extends ConsumerWidget {
                     padding: EdgeInsets.zero,
                     child: Column(
                       children: [
-                        _KV(label: 'E-mail', value: m.email),
+                        _KV(label: l.mdetKvEmail, value: m.email),
                         const _KVDivider(),
-                        _KV(label: 'Telefon', value: m.phone, mono: true),
+                        _KV(label: l.mdetKvPhone, value: m.phone, mono: true),
                         const _KVDivider(),
                         _KV(
-                          label: 'Tarif',
+                          label: l.mdetKvTariff,
                           value: '${m.tariff}${m.isic ? ' · ISIC' : ''}',
                         ),
                         const _KVDivider(),
@@ -173,7 +175,7 @@ class MemberDetailScreen extends ConsumerWidget {
                         ),
                         const _KVDivider(),
                         _KV(
-                          label: 'Platí do',
+                          label: l.mdetKvPaidUntil,
                           value: m.expiresAt,
                           mono: true,
                           last: true,
@@ -205,8 +207,8 @@ class MemberDetailScreen extends ConsumerWidget {
                           Expanded(
                             child: Text(
                               m.state == 'error'
-                                  ? 'Platba ${m.daysNum.abs()} dní po lhůtě'
-                                  : 'Končí za ${m.daysNum} dní',
+                                  ? l.mdetAlertOverdue(m.daysNum.abs())
+                                  : l.mdetStateEnding(m.daysNum),
                               style: AppType.ui(
                                 size: 13,
                                 weight: FontWeight.w500,
@@ -227,7 +229,7 @@ class MemberDetailScreen extends ConsumerWidget {
                                 borderRadius: BorderRadius.circular(100),
                               ),
                               child: Text(
-                                'Napsat',
+                                l.mdetWrite,
                                 style: AppType.ui(
                                   size: 12,
                                   weight: FontWeight.w600,
@@ -244,7 +246,7 @@ class MemberDetailScreen extends ConsumerWidget {
                   ],
 
                   // Klíč & kauce
-                  const _SectionLabel('Klíč & kauce'),
+                  _SectionLabel(l.mdetSectionKeyDeposit),
                   const SizedBox(height: 12),
                   AppCard(
                     padding: const EdgeInsets.all(16),
@@ -271,7 +273,7 @@ class MemberDetailScreen extends ConsumerWidget {
                                     CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Klíč',
+                                    l.mdetKey,
                                     style: AppType.ui(
                                       size: 15,
                                       weight: FontWeight.w600,
@@ -280,7 +282,7 @@ class MemberDetailScreen extends ConsumerWidget {
                                   ),
                                   const SizedBox(height: 2),
                                   Text(
-                                    'vydán 14. 9. 2025',
+                                    l.mdetKeyIssued('14. 9. 2025'),
                                     style: AppType.mono(
                                       size: 12.5,
                                       color: T.text2,
@@ -289,9 +291,9 @@ class MemberDetailScreen extends ConsumerWidget {
                                 ],
                               ),
                             ),
-                            const StatusPill(
+                            StatusPill(
                               state: StatusState.ok,
-                              label: 'U člena',
+                              label: l.mdetKeyWithMember,
                             ),
                           ],
                         ),
@@ -309,7 +311,7 @@ class MemberDetailScreen extends ConsumerWidget {
                                   CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Kauce',
+                                  l.mdetDeposit,
                                   style: AppType.ui(
                                     size: 13,
                                     color: T.text2,
@@ -326,15 +328,15 @@ class MemberDetailScreen extends ConsumerWidget {
                                 ),
                               ],
                             ),
-                            const StatusPill(
+                            StatusPill(
                               state: StatusState.ok,
-                              label: 'Přijata',
+                              label: l.mdetDepositReceived,
                             ),
                           ],
                         ),
                         const SizedBox(height: 14),
                         AppButton(
-                          label: 'Označit jako vrácený',
+                          label: l.mdetMarkReturned,
                           variant: BtnVariant.secondary,
                           full: true,
                           height: 44,
@@ -346,9 +348,9 @@ class MemberDetailScreen extends ConsumerWidget {
 
                   // Platby
                   _SectionLabel(
-                    'Platby',
+                    l.mdetSectionPayments,
                     right: Text(
-                      'od ${m.joined}',
+                      l.mdetPaymentsSince(m.joined),
                       style: AppType.ui(size: 12.5, color: T.text2),
                     ),
                   ),
@@ -356,10 +358,13 @@ class MemberDetailScreen extends ConsumerWidget {
                   AppCard(
                     padding: EdgeInsets.zero,
                     child: memberPayments.isEmpty
-                        ? const Padding(
-                            padding: EdgeInsets.all(20),
+                        ? Padding(
+                            padding: const EdgeInsets.all(20),
                             child: Center(
-                              child: _EmptyPayments(),
+                              child: Text(
+                                l.mdetNoPayments,
+                                style: AppType.ui(size: 13, color: T.text3),
+                              ),
                             ),
                           )
                         : Column(
@@ -377,7 +382,7 @@ class MemberDetailScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
                   AppButton(
-                    label: 'Manuální platba (cash)',
+                    label: l.mdetManualPayment,
                     variant: BtnVariant.ghost,
                     full: true,
                     icon: const AppIcon('plus', size: 16),
@@ -385,13 +390,12 @@ class MemberDetailScreen extends ConsumerWidget {
                   ),
 
                   // Danger zone
-                  const _SectionLabel('Akce'),
+                  _SectionLabel(l.mdetSectionActions),
                   const SizedBox(height: 12),
                   _ActionRow(
                     icon: 'pause',
-                    label: 'Pozastavit členství',
-                    sub:
-                        'Členství zůstane v systému, neeviduje se platba',
+                    label: l.mdetSuspendLabel,
+                    sub: l.mdetSuspendSub,
                     onTap: () {
                       store.updateMember(
                         m.id,
@@ -405,8 +409,8 @@ class MemberDetailScreen extends ConsumerWidget {
                   const SizedBox(height: 8),
                   _ActionRow(
                     icon: 'trash',
-                    label: 'Smazat člena',
-                    sub: 'Nevratná akce, vyžaduje potvrzení',
+                    label: l.mdetDeleteLabel,
+                    sub: l.mdetDeleteSub,
                     danger: true,
                     onTap: () => _confirmDelete(context, store, m, nav),
                   ),
@@ -425,6 +429,7 @@ class MemberDetailScreen extends ConsumerWidget {
     Member m,
     NavCb nav,
   ) {
+    final l = L.of(context);
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -434,7 +439,7 @@ class MemberDetailScreen extends ConsumerWidget {
           side: const BorderSide(color: T.border),
         ),
         title: Text(
-          'Smazat člena?',
+          l.mdetDeleteDialogTitle,
           style: AppType.ui(
             size: 17,
             weight: FontWeight.w700,
@@ -442,14 +447,14 @@ class MemberDetailScreen extends ConsumerWidget {
           ),
         ),
         content: Text(
-          'Opravdu chceš smazat ${m.name}? Nevratná akce.',
+          l.mdetDeleteDialogBody(m.name),
           style: AppType.ui(size: 14, color: T.text2),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text(
-              'Zrušit',
+              l.mdetDeleteDialogCancel,
               style: AppType.ui(
                 size: 14,
                 weight: FontWeight.w600,
@@ -464,7 +469,7 @@ class MemberDetailScreen extends ConsumerWidget {
               nav('back');
             },
             child: Text(
-              'Smazat',
+              l.mdetDeleteDialogConfirm,
               style: AppType.ui(
                 size: 14,
                 weight: FontWeight.w600,
@@ -566,7 +571,7 @@ class _KVPrice extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Cena/měs.',
+              L.of(context).mdetKvPricePerMonth,
               style: AppType.ui(size: 13, color: T.text2),
             ),
             const SizedBox(width: 12),
@@ -582,7 +587,7 @@ class _KVPrice extends StatelessWidget {
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: Text(
-                      'VLASTNÍ',
+                      L.of(context).mdetCustomBadge,
                       style: AppType.ui(
                         size: 9.5,
                         weight: FontWeight.w700,
@@ -714,15 +719,6 @@ class _PayRow extends StatelessWidget {
       ),
     );
   }
-}
-
-class _EmptyPayments extends StatelessWidget {
-  const _EmptyPayments();
-  @override
-  Widget build(BuildContext context) => Text(
-        'Zatím žádné platby.',
-        style: AppType.ui(size: 13, color: T.text3),
-      );
 }
 
 class _ActionRow extends StatelessWidget {

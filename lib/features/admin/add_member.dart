@@ -7,6 +7,7 @@ import '../../core/store/models.dart';
 import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
+import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
 import '../../shared/widgets/screen_frame.dart';
@@ -109,7 +110,8 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
       joined: '5 · 2026',
       expiresAt: '~ ${_length * 30} dní',
     ));
-    nav('list', toast: '${created.name} přidán/a · $_length měs.');
+    nav('list',
+        toast: L.of(context).addmMemberAddedToast(created.name, _length));
   }
 
   void _cancel() => navCb(context)('list');
@@ -156,7 +158,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                   ),
                 ),
                 Text(
-                  'Nový člen',
+                  L.of(context).addmTitle,
                   style: AppType.ui(
                     size: 14,
                     weight: FontWeight.w600,
@@ -180,7 +182,9 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                     child: Row(
                       children: [
                         Avatar(
-                            name: nameTrim.isEmpty ? 'Nový člen' : nameTrim,
+                            name: nameTrim.isEmpty
+                                ? L.of(context).addmTitle
+                                : nameTrim,
                             size: 56),
                         const SizedBox(width: 14),
                         Expanded(
@@ -188,7 +192,9 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                nameTrim.isEmpty ? 'Bez jména' : nameTrim,
+                                nameTrim.isEmpty
+                                    ? L.of(context).addmNoName
+                                    : nameTrim,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: AppType.ui(
@@ -211,23 +217,25 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
 
                   // Základní
                   _FormSection(
-                    label: 'Základní',
+                    label: L.of(context).addmSectionBasic,
                     children: [
                       _Field(
-                        label: 'Jméno a příjmení',
+                        label: L.of(context).addmFieldName,
                         controller: _nameCtrl,
-                        placeholder: 'např. Pavel Novák',
+                        placeholder: L.of(context).addmFieldNamePlaceholder,
                         invalid: nameInvalid,
-                        hint: nameInvalid ? 'Vyplň jméno' : null,
+                        hint: nameInvalid
+                            ? L.of(context).addmFieldNameError
+                            : null,
                       ),
                       _Field(
-                        label: 'E-mail',
+                        label: L.of(context).addmFieldEmail,
                         controller: _emailCtrl,
                         placeholder: 'pavel.novak@email.cz',
                         keyboardType: TextInputType.emailAddress,
                       ),
                       _Field(
-                        label: 'Telefon',
+                        label: L.of(context).addmFieldPhone,
                         controller: _phoneCtrl,
                         placeholder: '+420 728 451 209',
                         mono: true,
@@ -241,7 +249,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
                           child: Text(
-                            'Potřebuju aspoň e-mail nebo telefon.',
+                            L.of(context).addmContactRequired,
                             style: AppType.ui(size: 12, color: T.error),
                           ),
                         ),
@@ -250,7 +258,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
 
                   // Tarif
                   _FormSection(
-                    label: 'Tarif',
+                    label: L.of(context).addmSectionTariff,
                     children: [
                       _RowSegment<String>(
                         value: _tariff,
@@ -258,27 +266,28 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                           _tariff = v;
                           _syncTariffPrice();
                         }),
-                        options: const [
-                          _SegOpt('Standard', 'Standard', '750 Kč/měs'),
-                          _SegOpt(
-                              'Student', 'Student', '500 Kč/měs · ISIC'),
+                        options: [
+                          _SegOpt('Standard', L.of(context).addmTariffStandard,
+                              L.of(context).addmTariffStandardSub),
+                          _SegOpt('Student', L.of(context).addmTariffStudent,
+                              L.of(context).addmTariffStudentSub),
                         ],
                       ),
                       if (_tariff == 'Student')
                         _Toggle(
-                          label: 'Má ISIC',
+                          label: L.of(context).addmHasIsic,
                           value: _isic,
                           onChange: (v) => setState(() => _isic = v),
-                          sub: 'Potřebuju vidět platnou kartu',
+                          sub: L.of(context).addmHasIsicSub,
                         ),
                       _RowSegment<int>(
-                        label: 'Délka',
+                        label: L.of(context).addmLength,
                         value: _length,
                         onChange: (v) => setState(() => _length = v),
-                        options: const [
-                          _SegOpt(3, '3 měs.', null),
-                          _SegOpt(6, '6 měs.', null),
-                          _SegOpt(12, '12 měs.', null),
+                        options: [
+                          _SegOpt(3, L.of(context).addmMonths(3), null),
+                          _SegOpt(6, L.of(context).addmMonths(6), null),
+                          _SegOpt(12, L.of(context).addmMonths(12), null),
                         ],
                       ),
                     ],
@@ -286,18 +295,20 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
 
                   // Cena za měsíc
                   _FormSection(
-                    label: 'Cena za měsíc',
+                    label: L.of(context).addmSectionPrice,
                     children: [
                       _Toggle(
-                        label: 'Individuální cena',
+                        label: L.of(context).addmCustomPrice,
                         value: _customOn,
                         onChange: (v) => setState(() {
                           _customOn = v;
                           _syncTariffPrice();
                         }),
                         sub: _customOn
-                            ? 'Přepisuje standardní $_tariffDefault Kč/měs'
-                            : 'Použít standardní $_tariffDefault Kč/měs',
+                            ? L.of(context).addmCustomPriceOnSub(_tariffDefault)
+                            : L
+                                .of(context)
+                                .addmCustomPriceOffSub(_tariffDefault),
                       ),
                       if (_customOn) _priceField(),
                       _kCalcRow(),
@@ -306,13 +317,13 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
 
                   // Klíč & kauce
                   _FormSection(
-                    label: 'Klíč & kauce',
+                    label: L.of(context).addmSectionKey,
                     children: [
                       _Toggle(
-                        label: 'Vydat klíč',
+                        label: L.of(context).addmIssueKey,
                         value: _hasKey,
                         onChange: (v) => setState(() => _hasKey = v),
-                        sub: 'Kauce 100 Kč v hotovosti',
+                        sub: L.of(context).addmIssueKeySub,
                       ),
                     ],
                   ),
@@ -335,7 +346,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                               color: _ok ? Colors.white : T.text3),
                           const SizedBox(width: 8),
                           Text(
-                            'Přidat člena',
+                            L.of(context).addmSubmit,
                             style: AppType.ui(
                               size: 16,
                               weight: FontWeight.w600,
@@ -358,7 +369,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                       ),
                       alignment: Alignment.center,
                       child: Text(
-                        'Zrušit',
+                        L.of(context).addmCancel,
                         style: AppType.ui(
                           size: 14,
                           weight: FontWeight.w500,
@@ -380,12 +391,14 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
     final spans = <InlineSpan>[
       TextSpan(
         text: _tariff +
-            (_tariff == 'Student' && _isic ? ' · ISIC' : ''),
+            (_tariff == 'Student' && _isic
+                ? L.of(context).addmSubtitleIsic
+                : ''),
       ),
     ];
     if (_isCustomActive) {
       spans.add(TextSpan(
-        text: ' · vlastní cena',
+        text: L.of(context).addmSubtitleCustomPrice,
         style: AppType.ui(size: 13, color: T.accent),
       ));
     }
@@ -408,7 +421,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Vlastní cena',
+            L.of(context).addmCustomPriceLabel,
             style: AppType.ui(
                 size: 11, weight: FontWeight.w500, color: T.text2,
                 letterSpacing: 0.2),
@@ -448,7 +461,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                       ),
                     ),
                     const SizedBox(width: 4),
-                    Text('Kč/měs',
+                    Text(L.of(context).addmPerMonth,
                         style: AppType.ui(size: 13, color: T.text2)),
                   ],
                 ),
@@ -462,7 +475,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
           if (invalid)
             Padding(
               padding: const EdgeInsets.only(top: 4),
-              child: Text('Zadej částku větší než 0',
+              child: Text(L.of(context).addmPriceError,
                   style: AppType.ui(size: 11.5, color: T.error)),
             ),
           const SizedBox(height: 10),
@@ -482,7 +495,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                     border: Border.all(
                         color: sel ? Colors.transparent : T.border),
                   ),
-                  child: Text('$p Kč',
+                  child: Text(L.of(context).addmCzk(p),
                       style: AppType.mono(
                         size: 12,
                         weight: FontWeight.w500,
@@ -529,7 +542,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
               text: TextSpan(
                 style: AppType.ui(size: 13, color: T.text2),
                 children: [
-                  const TextSpan(text: 'K zaplacení '),
+                  TextSpan(text: L.of(context).addmToPay),
                   TextSpan(
                     text: '· $_monthly × $_length',
                     style: AppType.mono(size: 13, color: T.text3),
@@ -550,7 +563,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
               children: [
                 TextSpan(text: _csNum(_total)),
                 TextSpan(
-                    text: ' Kč',
+                    text: ' ${L.of(context).addmCzkUnit}',
                     style: AppType.ui(size: 12, color: T.text2)),
               ],
             ),
