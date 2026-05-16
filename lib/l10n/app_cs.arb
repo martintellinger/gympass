@@ -1,0 +1,497 @@
+{
+  "@@locale": "cs",
+  "appName": "BýtFit Klub",
+  "@appName": {},
+  "navHome": "Domů",
+  "navCard": "Karta",
+  "navHistory": "Historie",
+  "navBoard": "Nástěnka",
+  "navProfile": "Profil",
+  "navOverview": "Přehled",
+  "navMembers": "Členové",
+  "navPayments": "Platby",
+  "navMessages": "Zprávy",
+  "navMore": "Více",
+  "personaTitle": "BýtFit Klub",
+  "personaSubtitle": "Vyber, jak appku otevřít.",
+  "personaOpenAsMember": "Otevřít jako člen",
+  "personaOpenAsOwner": "Otevřít jako Olda (majitel)",
+  "appearanceAndLanguage": "Vzhled & jazyk",
+  "themeLabel": "Téma",
+  "themeDark": "Tmavé",
+  "themeSystem": "Systém",
+  "themeLight": "Světlé",
+  "languageLabel": "Jazyk",
+  "languageCs": "Čeština",
+  "languageEn": "Angličtina",
+  "actionSave": "Uložit",
+  "actionCancel": "Zrušit",
+  "actionBack": "Zpět",
+  "actionConfirm": "Potvrdit",
+  "actionClose": "Zavřít",
+  "boardTitle": "Nástěnka",
+  "boardSubtitle": "Co se děje v Klubu",
+  "boardStatusOpen": "otevřeno",
+  "boardEmptyFilter": "Pro tento filtr nic není.",
+  "boardFilterAll": "Vše",
+  "boardFilterOutage": "Výpadky",
+  "boardFilterWarning": "Pozor",
+  "boardFilterPromo": "Akce",
+  "boardFilterEvent": "Události",
+  "boardTypePinned": "Připnuto",
+  "boardTypeOutage": "Mimo provoz",
+  "boardTypeWarning": "Pozor",
+  "boardTypePromo": "Akce",
+  "boardTypeEvent": "Událost",
+  "boardTypeFixed": "Opraveno",
+  "boardTypeInfo": "Info",
+  "cardJoinedSince": "člen od {joined}",
+  "@cardJoinedSince": {
+    "placeholders": {
+      "joined": {}
+    }
+  },
+  "cardSubtitle": "Členská karta",
+  "cardKeyWithYou": "u tebe",
+  "cardKeyAtReception": "na recepci",
+  "cardLabelStatus": "Stav",
+  "cardStatusActive": "Aktivní",
+  "cardLabelValidUntil": "Platí do",
+  "cardLabelTariff": "Tarif",
+  "cardTariffValue": "{tariff} · 3 měs.",
+  "@cardTariffValue": {
+    "placeholders": {
+      "tariff": {}
+    }
+  },
+  "cardLabelKey": "Klíč",
+  "cardBrightnessTip": "Když ukazuješ kartu Oldovi, zvyš jas obrazovky — čte se to líp.",
+  "cardAddToWallet": "Přidat do Walletu",
+  "dashGreeting": "Ahoj, {name}.",
+  "@dashGreeting": {
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "dashStatusHeadline": "Do posilovny můžeš ještě",
+  "dashDaysUnit": "dní",
+  "dashExpiryDate": "do 23. 6. 2026",
+  "dashExtendMembership": "Prodloužit členství",
+  "dashReportFault": "Nahlásit závadu",
+  "dashYourCard": "Tvoje karta",
+  "dashRecentActivity": "Poslední aktivity",
+  "dashAll": "Vše",
+  "dashBoard": "Nástěnka",
+  "dashBoardAll": "vše →",
+  "dashStatusActive": "Aktivní",
+  "dashKeyWithYou": "klíč u tebe",
+  "dashPinned": "PŘIPNUTO",
+  "dashBoardTimeAgo": "před 2 h",
+  "dashBoardPostTitle": "Zítra zavřeno do 14:00",
+  "dashBoardPostBody": "Revize elektroinstalace. Otevíráme po obědě. — Olda",
+  "faultTitle": "Nahlásit závadu",
+  "faultSubtitle": "Co se pokazilo, co nejde? Pošli to Oldovi, on vyřídí.",
+  "faultHint": "Třeba: bench č. 2 má rozsekané lano nebo ve sprše č. 3 protéká kohoutek.",
+  "faultPhotosLabel": "FOTKY",
+  "faultAddPhoto": "fotka",
+  "faultSubmit": "Odeslat",
+  "faultSentToast": "Závada odeslána",
+  "faultMessageBody": "Závada: {body}",
+  "histTitle": "Historie",
+  "histSubtitle": "Všechno, co se v Klubu stalo s tvým účtem.",
+  "histStatPaid": "Zaplaceno",
+  "histStatMemberSince": "Člen od",
+  "histStatMonthsCount": "{count} měsíců",
+  "@histStatMonthsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "histFilterAll": "Vše · {count}",
+  "@histFilterAll": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "histFilterPayments": "Platby · {count}",
+  "@histFilterPayments": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "histFilterKey": "Klíč · {count}",
+  "@histFilterKey": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "histFilterAccount": "Účet · {count}",
+  "@histFilterAccount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "histEndNote": "To je všechno. Účet máš od září 2025.",
+  "profMemberSince": "člen od 9 · 2025",
+  "profActiveDays": "Aktivní · 23 dní",
+  "profSectionContact": "Kontakt",
+  "profEmail": "E-mail",
+  "profPhone": "Telefon",
+  "profSectionMembership": "Členství",
+  "profTariff": "Tarif",
+  "profTariffValue": "Standard · 3 měs.",
+  "profValidUntil": "Platí do",
+  "profKey": "Klíč",
+  "profKeyValue": "u tebe",
+  "profSectionNotifications": "Notifikace",
+  "profPushLabel": "Push notifikace",
+  "profPushSub": "Konec členství, schválení žádostí",
+  "profOutageLabel": "Výpadky a zavírací doba",
+  "profOutageSub": "Když je v Klubu něco mimo provoz",
+  "profPromoLabel": "Akce a slevy",
+  "profPromoSub": "Občas, ne víc než 1× měsíčně",
+  "profSectionHelp": "Pomoc",
+  "profFaqLabel": "FAQ",
+  "profFaqSub": "Časté otázky a pravidla Klubu",
+  "profWriteToOlda": "Napsat Oldovi",
+  "profWriteToOldaSub": "Odpovídá obvykle do hodiny",
+  "profSignOut": "Odhlásit",
+  "profBuildInfo": "BýtFit Klub · v1.0.0 · sestaveno 5/2026",
+  "qrTitle": "Platba",
+  "qrTariffLabel": "TARIF",
+  "qrHeadline": "Naskenuj QR nebo si ho ulož",
+  "qrDetailAmount": "Částka",
+  "qrDetailAccount": "Účet",
+  "qrDetailVs": "VS",
+  "qrDetailMessage": "Zpráva",
+  "qrSaveQr": "Uložit QR",
+  "qrCopy": "Zkopírovat",
+  "qrSaveHint": "QR se uloží do Fotek. Otevři ho v bance přes „Naskenovat ze souboru\".",
+  "qrToastMarkedPaid": "Označeno jako zaplaceno",
+  "qrPaidButton": "Zaplatil jsem",
+  "adashKicker": "BÝTFIT ADMIN",
+  "adashGreeting": "Dobré ráno, Oldo.",
+  "adashStatActive": "AKTIVNÍCH",
+  "adashStatActiveSub": "z {total}",
+  "@adashStatActiveSub": {
+    "placeholders": {
+      "total": {}
+    }
+  },
+  "adashStatEndingSoon": "KONČÍ ≤ 7 DNÍ",
+  "adashStatEndingSoonSub": "vyhraj výročí",
+  "adashStatOverdue": "PO LHŮTĚ",
+  "adashStatOverdueSub": "urgent",
+  "adashStatRevenue": "PŘÍJEM {period}",
+  "@adashStatRevenue": {
+    "placeholders": {
+      "period": {}
+    }
+  },
+  "adashCurrencyCzk": "Kč",
+  "adashNeedsAttention": "Vyžaduje pozornost",
+  "adashAttnPending": "{count} čekající registrace",
+  "@adashAttnPending": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "adashAttnOverdue": "{count} po lhůtě",
+  "@adashAttnOverdue": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "adashAttnOverdueSub": "{names} · zaplať co nejdřív",
+  "@adashAttnOverdueSub": {
+    "placeholders": {
+      "names": {}
+    }
+  },
+  "adashAttnEndingSoon": "{count} končí brzy",
+  "@adashAttnEndingSoon": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "adashAttnEndingSoonSub": "Tento týden",
+  "adashQuickActions": "Rychlé akce",
+  "adashActionSendMessage": "Poslat zprávu",
+  "adashActionPayments": "Platby",
+  "adashActionAddMember": "Přidat člena",
+  "adashRevenue": "Příjem",
+  "adashRevenueRange": "6 měsíců",
+  "adashRevenueMonth": "Kč · {month}",
+  "@adashRevenueMonth": {
+    "placeholders": {
+      "month": {}
+    }
+  },
+  "addmTitle": "Nový člen",
+  "addmNoName": "Bez jména",
+  "addmMemberAddedToast": "{name} přidán/a · {months} měs.",
+  "addmSectionBasic": "Základní",
+  "addmFieldName": "Jméno a příjmení",
+  "addmFieldNamePlaceholder": "např. Pavel Novák",
+  "addmFieldNameError": "Vyplň jméno",
+  "addmFieldEmail": "E-mail",
+  "addmFieldPhone": "Telefon",
+  "addmContactRequired": "Potřebuju aspoň e-mail nebo telefon.",
+  "addmSectionTariff": "Tarif",
+  "addmTariffStandard": "Standard",
+  "addmTariffStandardSub": "750 Kč/měs",
+  "addmTariffStudent": "Student",
+  "addmTariffStudentSub": "500 Kč/měs · ISIC",
+  "addmHasIsic": "Má ISIC",
+  "addmHasIsicSub": "Potřebuju vidět platnou kartu",
+  "addmLength": "Délka",
+  "addmMonths": "{months} měs.",
+  "addmSectionPrice": "Cena za měsíc",
+  "addmCustomPrice": "Individuální cena",
+  "addmCustomPriceOnSub": "Přepisuje standardní {price} Kč/měs",
+  "addmCustomPriceOffSub": "Použít standardní {price} Kč/měs",
+  "addmSectionKey": "Klíč & kauce",
+  "addmIssueKey": "Vydat klíč",
+  "addmIssueKeySub": "Kauce 100 Kč v hotovosti",
+  "addmSubmit": "Přidat člena",
+  "addmCancel": "Zrušit",
+  "addmSubtitleIsic": " · ISIC",
+  "addmSubtitleCustomPrice": " · vlastní cena",
+  "addmCustomPriceLabel": "Vlastní cena",
+  "addmPerMonth": "Kč/měs",
+  "addmPriceError": "Zadej částku větší než 0",
+  "addmCzk": "{amount} Kč",
+  "addmToPay": "K zaplacení ",
+  "addmCzkUnit": "Kč",
+  "amoreTitle": "Více",
+  "amoreOwnerSubtitle": "majitel · BýtFit Klub",
+  "amoreSectionActivity": "Aktivita",
+  "amoreApprovalsLabel": "Schvalování registrací",
+  "amoreApprovalsSub": "2 čekající žádosti",
+  "amoreBoardLabel": "Nástěnka",
+  "amoreBoardSub": "Připnout, mimo provoz, akce",
+  "amoreBroadcastLabel": "Hromadná zpráva všem",
+  "amoreBroadcastSub": "{count} členů",
+  "amoreSectionClub": "Klub",
+  "amoreTariffsLabel": "Tarify a ceny",
+  "amoreTariffsSub": "Standard 2 250 · Student 1 500 · 6m / 12m",
+  "amoreHoursLabel": "Otevírací doba",
+  "amoreHoursSub": "Po–Pá 6:00–22:00 · So–Ne 8:00–20:00",
+  "amoreKeysLabel": "Klíče a kauce",
+  "amoreKeysSub": "34 vydaných · 2 propadlé kauce",
+  "amoreRulesLabel": "Pravidla Klubu",
+  "amoreRulesSub": "Naposledy aktualizováno 3. 4. 2026",
+  "amoreSectionData": "Data",
+  "amoreExportLabel": "Export plateb (CSV)",
+  "amoreExportSub": "Pro účetnictví · poslední 12 měsíců",
+  "amoreBackupLabel": "Záloha databáze",
+  "amoreBackupSub": "Poslední záloha · dnes 03:00",
+  "amoreSectionAccount": "Účet",
+  "amoreHelpLabel": "Nápověda & FAQ",
+  "amoreHelpSub": "Pravidla aplikace, dotazy",
+  "amoreLogoutLabel": "Odhlásit Oldu",
+  "amoreVersion": "BÝTFIT KLUB · v1.0.0",
+  "amsgTitle": "Zprávy",
+  "amsgSearchHint": "Hledat ve zprávách…",
+  "amsgBulkAll": "Hromadně všem",
+  "amsgRemindDebtors": "Připomenout dlužníky",
+  "amsgPaymentReminderMsg": "Připomínka platby — pošlu QR. Dík.",
+  "amsgRemindersSent": "Připomínky odeslány",
+  "amsgThreadCount": "{count, plural, one{{count} vlákno} few{{count} vlákna} other{{count} vláken}}",
+  "@amsgThreadCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "amsgEmptySearch": "Nikdo s \"{query}\"",
+  "@amsgEmptySearch": {
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "amsgEmpty": "Zatím žádné zprávy.",
+  "amsgAllDone": "Vše vyřízeno",
+  "amsgUnreadCount": "{count} nepřečteno",
+  "@amsgUnreadCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "amsgUnreadThreads": "{count, plural, one{{count} vlákno} few{{count} vlákna} other{{count} vláken}}",
+  "@amsgUnreadThreads": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "amsgSentToMembers": "Odesláno · {count} členům",
+  "@amsgSentToMembers": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "amsgFromMePrefix": "já →",
+  "amsgComposeTitle": "Nová zpráva",
+  "amsgComposeSearchHint": "Komu napsat…",
+  "amsgBroadcastTitle": "Hromadná zpráva",
+  "amsgBroadcastSubtitle": "Přistáne všem jako normální zpráva od Oldy",
+  "amsgBroadcastTo": "KOMU",
+  "amsgBroadcastTextHint": "Co chtěš říct…",
+  "amsgSendButton": "Odeslat · {count, plural, one{{count} člen} few{{count} členové} other{{count} členů}}",
+  "@amsgSendButton": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "apayTitle": "Platby",
+  "apayToastExportReady": "Export připraven",
+  "apayToastAddPayment": "Přidat platbu",
+  "apayMonthLabel": "KVĚTEN 2026",
+  "apayYtd": "YTD {amount}",
+  "apayStatReceived": "{count} přijato",
+  "apayStatPending": "{count} čeká",
+  "apayStatDebt": "{amount} Kč dluh",
+  "apaySearchHint": "Hledat člena…",
+  "apayFilterAll": "Vše · {count}",
+  "apayFilterReceived": "Přijato · {count}",
+  "apayFilterPending": "Čeká · {count}",
+  "apayFilterOverdue": "Po lhůtě · {count}",
+  "apayFilterActive": "filtr: „{query}\"",
+  "apayEmpty": "Žádné platby pro vybraný filtr.",
+  "apayReminderMessage": "Připomínka platby {amount} Kč — pošlu QR. Dík.",
+  "apayToastReminderSent": "Připomínka odeslána",
+  "apayRemind": "Připomenout",
+  "apayMarkPaid": "Označit zaplaceno",
+  "apprTitle": "Schvalování",
+  "apprNewApplicant": "NOVÝ ŽADATEL",
+  "apprEmail": "E-mail",
+  "apprPhone": "Telefon",
+  "apprTariff": "Tarif",
+  "apprGdprConsent": "GDPR souhlas",
+  "apprIsicCard": "ISIC PRŮKAZ",
+  "apprTapToEnlarge": "tap pro zvětšení",
+  "apprCheckPrefix": "Zkontroluj: ",
+  "apprApplicantNote": "POZNÁMKA OD ŽADATELE",
+  "apprReject": "Zamítnout",
+  "apprApprove": "Schválit",
+  "apprRejectedToast": "Zamítnuto · {name}",
+  "apprApprovedToast": "{name} přidána mezi členy",
+  "athrTemplatePaymentReminder": "Připomínka platby {amount} Kč. Pošlu QR.",
+  "athrTemplateExpiringSoon": "Ahoj {name}, končí ti za pár dní. Chceš prodloužit?",
+  "athrTemplateDropBy": "Stavím se zítra v Klubu.",
+  "athrTemplateThanksGot": "Díky, mám.",
+  "athrContextOverdue": "Platba po lhůtě · prodlení",
+  "athrEmptyState": "Začni první zprávou.",
+  "athrComposerHint": "Napiš {name}…",
+  "bcastHeader": "Hromadná zpráva",
+  "bcastTargetActive": "Všem aktivním",
+  "bcastTargetOverdue": "Dlužníkům",
+  "bcastTargetEnding": "Končícím",
+  "bcastTargetAll": "Všem členům",
+  "bcastSectionRecipients": "PŘÍJEMCI",
+  "bcastSectionMessage": "ZPRÁVA",
+  "bcastSectionTemplates": "ŠABLONY",
+  "bcastSectionPreview": "NÁHLED",
+  "bcastTitleHint": "Titulek (volitelné)",
+  "bcastBodyHint": "Napiš zprávu členům…",
+  "bcastPreviewBadge": "INFO · NÁSTĚNKA",
+  "bcastPreviewNoTitle": "Bez titulku",
+  "bcastPreviewBodyPlaceholder": "Tady se zobrazí text zprávy.",
+  "bcastSendLabel": "Odeslat · {count, plural, one{{count} člen} few{{count} členům} other{{count} členům}}",
+  "bcastSentToast": "Odesláno · {count, plural, one{{count} členovi} few{{count} členům} other{{count} členům}}",
+  "mdetTitle": "Detail člena",
+  "mdetStateActive": "Aktivní · {days} dní",
+  "mdetStateEnding": "Končí za {days} dní",
+  "mdetStateOverdue": "Po lhůtě · {days} dní",
+  "mdetStateSuspended": "Pozastaveno",
+  "mdetMemberSince": "člen od {date}",
+  "mdetQuickMessage": "Zpráva",
+  "mdetQuickPayment": "Platba",
+  "mdetQuickExtend": "Prodloužit",
+  "mdetKvEmail": "E-mail",
+  "mdetKvPhone": "Telefon",
+  "mdetKvTariff": "Tarif",
+  "mdetKvPricePerMonth": "Cena/měs.",
+  "mdetKvPaidUntil": "Platí do",
+  "mdetCustomBadge": "VLASTNÍ",
+  "mdetAlertOverdue": "Platba {days} dní po lhůtě",
+  "mdetWrite": "Napsat",
+  "mdetSectionKeyDeposit": "Klíč & kauce",
+  "mdetKey": "Klíč",
+  "mdetKeyIssued": "vydán {date}",
+  "mdetKeyWithMember": "U člena",
+  "mdetDeposit": "Kauce",
+  "mdetDepositReceived": "Přijata",
+  "mdetMarkReturned": "Označit jako vrácený",
+  "mdetSectionPayments": "Platby",
+  "mdetPaymentsSince": "od {date}",
+  "mdetNoPayments": "Zatím žádné platby.",
+  "mdetManualPayment": "Manuální platba (cash)",
+  "mdetSectionActions": "Akce",
+  "mdetSuspendLabel": "Pozastavit členství",
+  "mdetSuspendSub": "Členství zůstane v systému, neeviduje se platba",
+  "mdetDeleteLabel": "Smazat člena",
+  "mdetDeleteSub": "Nevratná akce, vyžaduje potvrzení",
+  "mdetDeleteDialogTitle": "Smazat člena?",
+  "mdetDeleteDialogBody": "Opravdu chceš smazat {name}? Nevratná akce.",
+  "mdetDeleteDialogCancel": "Zrušit",
+  "mdetDeleteDialogConfirm": "Smazat",
+  "mlistTitle": "Členové",
+  "mlistSubtitle": "{total} celkem · {active} aktivní · {attention} potřebuje pozornost",
+  "mlistSearchHint": "Hledat člena, telefon, e-mail…",
+  "mlistChipAll": "Vše · {count}",
+  "mlistChipActive": "Aktivní {count}",
+  "mlistChipEnding": "Končí {count}",
+  "mlistChipOverdue": "Po lhůtě {count}",
+  "mlistSortLabelExpiration": "expirace",
+  "mlistSortLabelName": "jméno",
+  "mlistSortLabelTariff": "tarif",
+  "mlistEmptySearch": "Nikdo neodpovídá \"{query}\"",
+  "mlistEmptyFilter": "Žádní členové pro vybraný filtr.",
+  "mlistRowUntilExpiry": "do expirace",
+  "mlistRowEnding": "končí",
+  "mlistRowOverdue": "po lhůtě",
+  "mlistRow30Plus": "30+ dní",
+  "mlistRowKey": "klíč",
+  "mlistRowNoKey": "bez klíče",
+  "mlistSheetTitle": "Filtr a řazení",
+  "mlistSheetReset": "resetovat",
+  "mlistSheetSortBy": "Řadit podle",
+  "mlistSortOptExpirationTitle": "Expirace",
+  "mlistSortOptExpirationDesc": "kdo končí nejdřív",
+  "mlistSortOptNameTitle": "Jméno",
+  "mlistSortOptNameDesc": "abecedně",
+  "mlistSortOptTariffTitle": "Tarif",
+  "mlistSortOptTariffDesc": "Standard / Student",
+  "mlistSheetAscending": "Vzestupně",
+  "mlistSheetDescending": "Sestupně",
+  "mlistSheetTapToToggle": "Klepni pro otočení",
+  "mlistSheetTariff": "Tarif",
+  "mlistTariffOptBoth": "Oba",
+  "mlistSheetKey": "Klíč",
+  "mlistKeyOptAll": "Všichni",
+  "mlistKeyOptWith": "S klíčem",
+  "mlistKeyOptWithout": "Bez klíče",
+  "mlistSheetApply": "Použít"
+}
