@@ -149,7 +149,7 @@ class LEn extends L {
   String get cardSubtitle => 'Membership card';
 
   @override
-  String get cardKeyWithYou => 'with you';
+  String get cardKeyWithYou => 'Deposit 100 CZK paid';
 
   @override
   String get cardKeyAtReception => 'at reception';
@@ -261,6 +261,20 @@ class LEn extends L {
   @override
   String faultMessageBody(Object body) {
     return 'Problem: $body';
+  }
+
+  @override
+  String get faultPhotoOptional => 'optional';
+
+  @override
+  String faultPhotoCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count photos',
+      one: '$count photo',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -877,6 +891,17 @@ class LEn extends L {
   String get apayMarkPaid => 'Mark as paid';
 
   @override
+  String apayRecordsHeader(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count records · date ↓',
+      one: '$count record · date ↓',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get apprTitle => 'Approvals';
 
   @override
@@ -947,6 +972,17 @@ class LEn extends L {
   @override
   String athrComposerHint(Object name) {
     return 'Message $name…';
+  }
+
+  @override
+  String athrExpiresIn(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Membership ends in $count days',
+      one: 'Membership ends in $count day',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1189,6 +1225,42 @@ class LEn extends L {
 
   @override
   String get mlistEmptyFilter => 'No members for the selected filter.';
+
+  @override
+  String mlistMemberCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count members',
+      one: '$count member',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mlistDaysSuspended => 'suspended';
+
+  @override
+  String mlistDaysAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days ago',
+      one: '$count day ago',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mlistDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '$count day',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get mlistRowUntilExpiry => 'until expiry';

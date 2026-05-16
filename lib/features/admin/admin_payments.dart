@@ -69,12 +69,6 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
         sumFor((p) => p.state == 'ok' && p.date.year == 2026);
     final overdueTotal = sumFor((p) => p.state == 'overdue');
 
-    String recordWord(int n) {
-      if (n == 1) return 'záznam';
-      if (n > 0 && n < 5) return 'záznamy';
-      return 'záznamů';
-    }
-
     return ScreenFrame(
       child: ListView(
         padding: const EdgeInsets.only(bottom: 110),
@@ -309,7 +303,7 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                         children: [
                           Expanded(
                             child: Text(
-                              '${filtered.length} ${recordWord(filtered.length)} · datum ↓',
+                              L.of(context).apayRecordsHeader(filtered.length),
                               style: AppType.ui(
                                 size: 11.5,
                                 weight: FontWeight.w600,

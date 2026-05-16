@@ -43,16 +43,16 @@ class _FaultReportScreenState extends ConsumerState<FaultReportScreen> {
 
   bool get _canSubmit => _ctrl.text.trim().isNotEmpty;
 
-  String _photoLabel(int n) {
-    if (n == 0) return 'volitelné';
-    final word = n == 1 ? 'foto' : n < 5 ? 'fotky' : 'fotek';
-    return '$n $word';
+  String _photoLabel(BuildContext context, int n) {
+    final l = L.of(context);
+    return n == 0 ? l.faultPhotoOptional : l.faultPhotoCount(n);
   }
 
   void _submit() {
     if (!_canSubmit) return;
     final text = _ctrl.text.trim();
-    final photoSuffix = _photoCount > 0 ? '  (${_photoLabel(_photoCount)})' : '';
+    final photoSuffix =
+        _photoCount > 0 ? '  (${_photoLabel(context, _photoCount)})' : '';
     ref
         .read(storeProvider)
         .sendMessage(
@@ -221,7 +221,7 @@ class _FaultReportScreenState extends ConsumerState<FaultReportScreen> {
                                 ),
                               ),
                               Text(
-                                _photoLabel(_photoCount),
+                                _photoLabel(context, _photoCount),
                                 style: AppType.ui(
                                   size: 11.5,
                                   color: T.text3,

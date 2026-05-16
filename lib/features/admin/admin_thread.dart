@@ -235,7 +235,7 @@ class _AdminThreadScreenState extends ConsumerState<AdminThreadScreen> {
                     child: Text(
                       member.state == 'error'
                           ? L.of(context).athrContextOverdue
-                          : 'Členství končí za ${member.daysNum} ${member.daysNum == 1 ? 'den' : member.daysNum < 5 ? 'dny' : 'dní'}',
+                          : L.of(context).athrExpiresIn(member.daysNum),
                       style: AppType.ui(
                         size: 12.5,
                         weight: FontWeight.w500,

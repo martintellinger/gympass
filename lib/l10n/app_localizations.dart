@@ -376,7 +376,7 @@ abstract class L {
   /// No description provided for @cardKeyWithYou.
   ///
   /// In cs, this message translates to:
-  /// **'u tebe'**
+  /// **'Záloha 100 Kč uhrazena'**
   String get cardKeyWithYou;
 
   /// No description provided for @cardKeyAtReception.
@@ -582,6 +582,18 @@ abstract class L {
   /// In cs, this message translates to:
   /// **'Závada: {body}'**
   String faultMessageBody(Object body);
+
+  /// No description provided for @faultPhotoOptional.
+  ///
+  /// In cs, this message translates to:
+  /// **'volitelné'**
+  String get faultPhotoOptional;
+
+  /// No description provided for @faultPhotoCount.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count, plural, one{{count} foto} few{{count} fotky} other{{count} fotek}}'**
+  String faultPhotoCount(int count);
 
   /// No description provided for @histTitle.
   ///
@@ -1627,6 +1639,12 @@ abstract class L {
   /// **'Označit zaplaceno'**
   String get apayMarkPaid;
 
+  /// No description provided for @apayRecordsHeader.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count, plural, one{{count} záznam · datum ↓} few{{count} záznamy · datum ↓} other{{count} záznamů · datum ↓}}'**
+  String apayRecordsHeader(int count);
+
   /// No description provided for @apprTitle.
   ///
   /// In cs, this message translates to:
@@ -1752,6 +1770,12 @@ abstract class L {
   /// In cs, this message translates to:
   /// **'Napiš {name}…'**
   String athrComposerHint(Object name);
+
+  /// No description provided for @athrExpiresIn.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count, plural, one{Členství končí za {count} den} few{Členství končí za {count} dny} other{Členství končí za {count} dní}}'**
+  String athrExpiresIn(int count);
 
   /// No description provided for @bcastHeader.
   ///
@@ -2142,6 +2166,30 @@ abstract class L {
   /// In cs, this message translates to:
   /// **'Žádní členové pro vybraný filtr.'**
   String get mlistEmptyFilter;
+
+  /// No description provided for @mlistMemberCount.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count, plural, one{{count} člen} few{{count} členové} other{{count} členů}}'**
+  String mlistMemberCount(int count);
+
+  /// No description provided for @mlistDaysSuspended.
+  ///
+  /// In cs, this message translates to:
+  /// **'pozastaveno'**
+  String get mlistDaysSuspended;
+
+  /// No description provided for @mlistDaysAgo.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count, plural, one{před {count} dnem} few{před {count} dny} other{před {count} dny}}'**
+  String mlistDaysAgo(int count);
+
+  /// No description provided for @mlistDaysLeft.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count, plural, one{{count} den} few{{count} dny} other{{count} dní}}'**
+  String mlistDaysLeft(int count);
 
   /// No description provided for @mlistRowUntilExpiry.
   ///

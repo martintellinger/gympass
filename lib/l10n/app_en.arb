@@ -46,7 +46,7 @@
   "boardTypeInfo": "Info",
   "cardJoinedSince": "member since {joined}",
   "cardSubtitle": "Membership card",
-  "cardKeyWithYou": "with you",
+  "cardKeyWithYou": "Deposit 100 CZK paid",
   "cardKeyAtReception": "at reception",
   "cardLabelStatus": "Status",
   "cardStatusActive": "Active",
@@ -81,6 +81,15 @@
   "faultSubmit": "Send",
   "faultSentToast": "Problem reported",
   "faultMessageBody": "Problem: {body}",
+  "faultPhotoOptional": "optional",
+  "faultPhotoCount": "{count, plural, one{{count} photo} other{{count} photos}}",
+  "@faultPhotoCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "histTitle": "History",
   "histSubtitle": "Everything that happened with your account at the Club.",
   "histStatPaid": "Paid",
@@ -255,6 +264,14 @@
   "apayToastReminderSent": "Reminder sent",
   "apayRemind": "Remind",
   "apayMarkPaid": "Mark as paid",
+  "apayRecordsHeader": "{count, plural, one{{count} record · date ↓} other{{count} records · date ↓}}",
+  "@apayRecordsHeader": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "apprTitle": "Approvals",
   "apprNewApplicant": "NEW APPLICANT",
   "apprEmail": "Email",
@@ -276,6 +293,14 @@
   "athrContextOverdue": "Payment past due · overdue",
   "athrEmptyState": "Start with the first message.",
   "athrComposerHint": "Message {name}…",
+  "athrExpiresIn": "{count, plural, one{Membership ends in {count} day} other{Membership ends in {count} days}}",
+  "@athrExpiresIn": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "bcastHeader": "Broadcast message",
   "bcastTargetActive": "All active",
   "bcastTargetOverdue": "Overdue members",
@@ -341,6 +366,31 @@
   "mlistSortLabelTariff": "tariff",
   "mlistEmptySearch": "Nobody matches \"{query}\"",
   "mlistEmptyFilter": "No members for the selected filter.",
+  "mlistMemberCount": "{count, plural, one{{count} member} other{{count} members}}",
+  "@mlistMemberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mlistDaysSuspended": "suspended",
+  "mlistDaysAgo": "{count, plural, one{{count} day ago} other{{count} days ago}}",
+  "@mlistDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mlistDaysLeft": "{count, plural, one{{count} day} other{{count} days}}",
+  "@mlistDaysLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "mlistRowUntilExpiry": "until expiry",
   "mlistRowEnding": "ending",
   "mlistRowOverdue": "overdue",

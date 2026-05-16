@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/routing/nav.dart';
 import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
@@ -17,7 +16,6 @@ class MemberCardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final nav = navCb(context);
     final store = ref.watch(storeProvider);
     final member = store.memberById('pavel');
 
@@ -37,55 +35,27 @@ class MemberCardScreen extends ConsumerWidget {
               color: Colors.black,
               child: SingleChildScrollView(
                 padding: const EdgeInsets.only(bottom: 110),
-                child: Stack(
-                  children: [
-                    Padding(
-                      // JSX: padding 8px 20px 40px.
-                      padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // The card. marginTop 12.
-                          const SizedBox(height: 12),
-                          _MembershipCard(
-                            name: name,
-                            joinedLabel: joinedLabel,
-                            expiresAt: expiresAt,
-                            tariff: tariff,
-                            hasKey: hasKey,
-                            statusState: state,
-                          ),
-                          // Brightness tip. marginTop 20.
-                          const SizedBox(height: 20),
-                          _BrightnessTip(),
-                          // Apple/Google Wallet button (UI only, fáze 2).
-                          const SizedBox(height: 20),
-                          const _WalletButton(),
-                        ],
+                child: Padding(
+                  // JSX: padding 8px 20px 40px.
+                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // The card. marginTop 12.
+                      const SizedBox(height: 12),
+                      _MembershipCard(
+                        name: name,
+                        joinedLabel: joinedLabel,
+                        expiresAt: expiresAt,
+                        tariff: tariff,
+                        hasKey: hasKey,
+                        statusState: state,
                       ),
-                    ),
-                    // Close button — absolute top 60, right 20.
-                    // Status bar (~44px) is rendered above this Stack by
-                    // ScreenFrame, so subtract that from the JSX top:60.
-                    Positioned(
-                      top: 60 - 44,
-                      right: 20,
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => nav('dashboard'),
-                        child: Container(
-                          width: 32,
-                          height: 32,
-                          decoration: const BoxDecoration(
-                            color: Color(0x1FFFFFFF), // rgba(255,255,255,0.12)
-                            shape: BoxShape.circle,
-                          ),
-                          alignment: Alignment.center,
-                          child: const AppIcon('x', size: 16, color: T.text),
-                        ),
-                      ),
-                    ),
-                  ],
+                      // Brightness tip. marginTop 20.
+                      const SizedBox(height: 20),
+                      _BrightnessTip(),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -218,23 +188,8 @@ class _MembershipCard extends StatelessWidget {
                     hasKey: hasKey,
                     statusState: statusState,
                   ),
-                  // Barcode strip. marginTop 28.
+                  // Membership ID. marginTop 28.
                   const SizedBox(height: 28),
-                  Container(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    decoration: BoxDecoration(
-                      color: const Color(0x0AFFFFFF), // rgba(255,255,255,0.04)
-                      border: Border.all(color: T.border),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    alignment: Alignment.center,
-                    child: SizedBox(
-                      width: 220,
-                      height: 40,
-                      child: CustomPaint(painter: _BarcodePainter()),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
                   Center(
                     child: Text(
                       'BF-PN-260623',
@@ -289,17 +244,23 @@ class _StatusGrid extends StatelessWidget {
 
     final keyValue = Row(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const AppIcon('key', size: 14, color: T.text2),
+        const Padding(
+          padding: EdgeInsets.only(top: 2),
+          child: AppIcon('key', size: 14, color: T.text2),
+        ),
         const SizedBox(width: 6),
-        Text(
-          hasKey
-              ? L.of(context).cardKeyWithYou
-              : L.of(context).cardKeyAtReception,
-          style: AppType.ui(
-            size: 15,
-            weight: FontWeight.w600,
-            color: T.text,
+        Flexible(
+          child: Text(
+            hasKey
+                ? L.of(context).cardKeyWithYou
+                : L.of(context).cardKeyAtReception,
+            style: AppType.ui(
+              size: 15,
+              weight: FontWeight.w600,
+              color: T.text,
+            ),
           ),
         ),
       ],
@@ -364,25 +325,6 @@ class _StatusGrid extends StatelessWidget {
   }
 }
 
-class _BarcodePainter extends CustomPainter {
-  // JSX: 60 bars, x = i*3.6, widths cycle [1,1.4,2,1,2.4,1.2], full height,
-  // fill #F5F5F7.
-  static const _widths = [1.0, 1.4, 2.0, 1.0, 2.4, 1.2];
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..color = const Color(0xFFF5F5F7);
-    for (var i = 0; i < 60; i++) {
-      final x = i * 3.6;
-      final w = _widths[i % 6];
-      canvas.drawRect(Rect.fromLTWH(x, 0, w, size.height), paint);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
 class _BrightnessTip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -418,39 +360,3 @@ class _BrightnessTip extends StatelessWidget {
   }
 }
 
-/// Apple/Google Wallet button — UI only, inactive (fáze 2). Not present in
-/// the JSX; added per the screen brief as a disabled affordance.
-class _WalletButton extends StatelessWidget {
-  const _WalletButton();
-
-  @override
-  Widget build(BuildContext context) {
-    return Opacity(
-      opacity: 0.5,
-      child: Container(
-        height: 52,
-        decoration: BoxDecoration(
-          color: Colors.black,
-          border: Border.all(color: T.border),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        alignment: Alignment.center,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const AppIcon('wallet', size: 18, color: T.text),
-            const SizedBox(width: 10),
-            Text(
-              L.of(context).cardAddToWallet,
-              style: AppType.ui(
-                size: 15,
-                weight: FontWeight.w600,
-                color: T.text,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}

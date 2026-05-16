@@ -143,24 +143,27 @@ class _HistoryScreenViewState extends ConsumerState<HistoryScreenView> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      // Stats
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _MiniStat(
-                              label: L.of(context).histStatPaid,
-                              value: '${_groupThousands(totalPaid)} Kč',
+                      // Stats — both boxes share the tallest box's height.
+                      IntrinsicHeight(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Expanded(
+                              child: _MiniStat(
+                                label: L.of(context).histStatPaid,
+                                value: '${_groupThousands(totalPaid)} Kč',
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: _MiniStat(
-                              label: L.of(context).histStatMemberSince,
-                              value: '9 · 2025',
-                              sub: L.of(context).histStatMonthsCount(8),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: _MiniStat(
+                                label: L.of(context).histStatMemberSince,
+                                value: '9 · 2025',
+                                sub: L.of(context).histStatMonthsCount(8),
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                       const SizedBox(height: 16),
                       // Filter chips

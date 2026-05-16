@@ -52,15 +52,11 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
   int _cmpCs(String a, String b) =>
       a.toLowerCase().compareTo(b.toLowerCase());
 
-  String _fmtDays(Member m) {
-    if (m.suspended) return 'pozastaveno';
-    if (m.daysNum < 0) {
-      final n = m.daysNum.abs();
-      return 'před $n ${n == 1 ? 'dnem' : 'dny'}';
-    }
-    if (m.daysNum == 1) return '1 den';
-    if (m.daysNum < 5) return '${m.daysNum} dny';
-    return '${m.daysNum} dní';
+  String _fmtDays(BuildContext context, Member m) {
+    final l = L.of(context);
+    if (m.suspended) return l.mlistDaysSuspended;
+    if (m.daysNum < 0) return l.mlistDaysAgo(m.daysNum.abs());
+    return l.mlistDaysLeft(m.daysNum);
   }
 
   void _openSortSheet() {
@@ -129,9 +125,8 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
         return _sortDir == 'asc' ? d : -d;
       });
 
-    final memberWord = sorted.length == 1
-        ? 'člen'
-        : (sorted.length > 1 && sorted.length < 5 ? 'členové' : 'členů');
+    final memberCount =
+        L.of(context).mlistMemberCount(sorted.length).toUpperCase();
 
     return ScreenFrame(
       child: ListView(
@@ -338,9 +333,7 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
                                   color: T.text2,
                                 ),
                                 children: [
-                                  TextSpan(
-                                      text:
-                                          '${sorted.length} ${memberWord.toUpperCase()}'),
+                                  TextSpan(text: memberCount),
                                   TextSpan(
                                     text: ' · ',
                                     style:
@@ -388,7 +381,7 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
                       ...sorted.map(
                         (m) => _MemberRow(
                           member: m,
-                          daysLabel: _fmtDays(m),
+                          daysLabel: _fmtDays(context, m),
                           onTap: () =>
                               nav('detail', arg: m.id),
                         ),

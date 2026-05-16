@@ -51,7 +51,7 @@ class BottomNav extends StatelessWidget {
           filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
           child: Container(
             padding:
-                const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(999),
               // Translucent "glass" — lets blurred content show through.
@@ -73,11 +73,11 @@ class BottomNav extends StatelessWidget {
               builder: (context, c) {
                 final n = items.length;
                 final slotW = c.maxWidth / n;
-                const capsuleH = 40.0;
-                final capsuleW = slotW.clamp(48.0, 72.0);
+                const capsuleH = 44.0;
+                final capsuleW = slotW.clamp(46.0, 68.0);
 
                 return SizedBox(
-                  height: 48,
+                  height: 46,
                   child: Stack(
                     alignment: Alignment.center,
                     children: [
@@ -86,7 +86,7 @@ class BottomNav extends StatelessWidget {
                         duration: const Duration(milliseconds: 340),
                         curve: Curves.easeOutCubic,
                         left: active * slotW + (slotW - capsuleW) / 2,
-                        top: (48 - capsuleH) / 2,
+                        top: (46 - capsuleH) / 2,
                         child: Container(
                           width: capsuleW,
                           height: capsuleH,

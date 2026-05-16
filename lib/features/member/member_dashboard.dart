@@ -81,36 +81,33 @@ class MemberDashboardScreen extends ConsumerWidget {
                                 height: 1.15,
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.only(left: 10),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.baseline,
-                                textBaseline: TextBaseline.alphabetic,
-                                children: [
-                                  Text(
-                                    '23',
-                                    style: AppType.ui(
-                                      size: 64,
-                                      weight: FontWeight.w700,
-                                      color: T.accent,
-                                      letterSpacing: -2.4,
-                                      height: 1,
-                                    ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Text(
+                                  '23',
+                                  style: AppType.ui(
+                                    size: 64,
+                                    weight: FontWeight.w700,
+                                    color: T.accent,
+                                    letterSpacing: -2.4,
+                                    height: 1,
                                   ),
-                                  const SizedBox(width: 12),
-                                  Text(
-                                    L.of(context).dashDaysUnit,
-                                    style: AppType.ui(
-                                      size: 28,
-                                      weight: FontWeight.w500,
-                                      color: T.text2,
-                                      letterSpacing: -0.6,
-                                      height: 1,
-                                    ),
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  L.of(context).dashDaysUnit,
+                                  style: AppType.ui(
+                                    size: 28,
+                                    weight: FontWeight.w500,
+                                    color: T.text2,
+                                    letterSpacing: -0.6,
+                                    height: 1,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -134,6 +131,15 @@ class MemberDashboardScreen extends ConsumerWidget {
                             ),
                           ],
                         ),
+                      ),
+
+                      // Membership timeline — visual progress until expiry
+                      const SizedBox(height: 18),
+                      const _MembershipTimeline(
+                        startLabel: '23. 3.',
+                        endLabel: '23. 6.',
+                        // 90-day period, 23 days remaining → 67 elapsed
+                        progress: 67 / 90,
                       ),
 
                       // Primary CTA
@@ -258,6 +264,106 @@ class _SectionLabel extends StatelessWidget {
           ),
         ),
         ?right,
+      ],
+    );
+  }
+}
+
+/// Membership timeline — a thin progress track showing how far through the
+/// current paid period the member is, with the period bounds as endpoints.
+class _MembershipTimeline extends StatelessWidget {
+  final String startLabel;
+  final String endLabel;
+
+  /// 0.0–1.0 — fraction of the period elapsed.
+  final double progress;
+
+  const _MembershipTimeline({
+    required this.startLabel,
+    required this.endLabel,
+    required this.progress,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final p = progress.clamp(0.0, 1.0);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        LayoutBuilder(
+          builder: (context, c) {
+            const trackH = 6.0;
+            const thumb = 12.0;
+            final fillW = (c.maxWidth * p).clamp(0.0, c.maxWidth);
+            return SizedBox(
+              height: thumb,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  // Track
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      height: trackH,
+                      decoration: BoxDecoration(
+                        color: T.surface2,
+                        borderRadius: BorderRadius.circular(trackH / 2),
+                      ),
+                    ),
+                  ),
+                  // Filled portion
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Container(
+                      height: trackH,
+                      width: fillW,
+                      decoration: BoxDecoration(
+                        color: T.accent,
+                        borderRadius: BorderRadius.circular(trackH / 2),
+                      ),
+                    ),
+                  ),
+                  // Current-position thumb
+                  Positioned(
+                    left: (fillW - thumb / 2).clamp(0.0, c.maxWidth - thumb),
+                    top: 0,
+                    child: Container(
+                      width: thumb,
+                      height: thumb,
+                      decoration: BoxDecoration(
+                        color: T.accent,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: T.bg, width: 2),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              startLabel,
+              style: AppType.mono(
+                size: 11.5,
+                weight: FontWeight.w500,
+                color: T.text3,
+              ),
+            ),
+            Text(
+              endLabel,
+              style: AppType.mono(
+                size: 11.5,
+                weight: FontWeight.w500,
+                color: T.text2,
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }

@@ -52,7 +52,7 @@
     }
   },
   "cardSubtitle": "Členská karta",
-  "cardKeyWithYou": "u tebe",
+  "cardKeyWithYou": "Záloha 100 Kč uhrazena",
   "cardKeyAtReception": "na recepci",
   "cardLabelStatus": "Stav",
   "cardStatusActive": "Aktivní",
@@ -97,6 +97,15 @@
   "faultSubmit": "Odeslat",
   "faultSentToast": "Závada odeslána",
   "faultMessageBody": "Závada: {body}",
+  "faultPhotoOptional": "volitelné",
+  "faultPhotoCount": "{count, plural, one{{count} foto} few{{count} fotky} other{{count} fotek}}",
+  "@faultPhotoCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "histTitle": "Historie",
   "histSubtitle": "Všechno, co se v Klubu stalo s tvým účtem.",
   "histStatPaid": "Zaplaceno",
@@ -383,6 +392,14 @@
   "apayToastReminderSent": "Připomínka odeslána",
   "apayRemind": "Připomenout",
   "apayMarkPaid": "Označit zaplaceno",
+  "apayRecordsHeader": "{count, plural, one{{count} záznam · datum ↓} few{{count} záznamy · datum ↓} other{{count} záznamů · datum ↓}}",
+  "@apayRecordsHeader": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "apprTitle": "Schvalování",
   "apprNewApplicant": "NOVÝ ŽADATEL",
   "apprEmail": "E-mail",
@@ -404,6 +421,14 @@
   "athrContextOverdue": "Platba po lhůtě · prodlení",
   "athrEmptyState": "Začni první zprávou.",
   "athrComposerHint": "Napiš {name}…",
+  "athrExpiresIn": "{count, plural, one{Členství končí za {count} den} few{Členství končí za {count} dny} other{Členství končí za {count} dní}}",
+  "@athrExpiresIn": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "bcastHeader": "Hromadná zpráva",
   "bcastTargetActive": "Všem aktivním",
   "bcastTargetOverdue": "Dlužníkům",
@@ -469,6 +494,31 @@
   "mlistSortLabelTariff": "tarif",
   "mlistEmptySearch": "Nikdo neodpovídá \"{query}\"",
   "mlistEmptyFilter": "Žádní členové pro vybraný filtr.",
+  "mlistMemberCount": "{count, plural, one{{count} člen} few{{count} členové} other{{count} členů}}",
+  "@mlistMemberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mlistDaysSuspended": "pozastaveno",
+  "mlistDaysAgo": "{count, plural, one{před {count} dnem} few{před {count} dny} other{před {count} dny}}",
+  "@mlistDaysAgo": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mlistDaysLeft": "{count, plural, one{{count} den} few{{count} dny} other{{count} dní}}",
+  "@mlistDaysLeft": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "mlistRowUntilExpiry": "do expirace",
   "mlistRowEnding": "končí",
   "mlistRowOverdue": "po lhůtě",

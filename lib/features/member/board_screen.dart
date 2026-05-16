@@ -5,7 +5,6 @@ import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_icon.dart';
-import '../../shared/widgets/avatar.dart';
 import '../../shared/widgets/screen_frame.dart';
 
 const Color _eventColor = T.event;
@@ -439,39 +438,24 @@ class _BoardPost extends StatelessWidget {
                       height: 1.5,
                     ),
                   ),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Avatar(name: post.author, size: 20),
-                          const SizedBox(width: 6),
-                          Text(
-                            post.author,
-                            style: AppType.ui(size: 12, color: T.text3),
+                  if (post.cta != null) ...[
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                          post.cta!,
+                          style: AppType.ui(
+                            size: 12.5,
+                            weight: FontWeight.w600,
+                            color: c,
                           ),
-                        ],
-                      ),
-                      if (post.cta != null)
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              post.cta!,
-                              style: AppType.ui(
-                                size: 12.5,
-                                weight: FontWeight.w600,
-                                color: c,
-                              ),
-                            ),
-                            const SizedBox(width: 4),
-                            AppIcon('chevron', size: 13, color: c),
-                          ],
                         ),
-                    ],
-                  ),
+                        const SizedBox(width: 4),
+                        AppIcon('chevron', size: 13, color: c),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),

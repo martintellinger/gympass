@@ -149,7 +149,7 @@ class LCs extends L {
   String get cardSubtitle => 'Členská karta';
 
   @override
-  String get cardKeyWithYou => 'u tebe';
+  String get cardKeyWithYou => 'Záloha 100 Kč uhrazena';
 
   @override
   String get cardKeyAtReception => 'na recepci';
@@ -261,6 +261,21 @@ class LCs extends L {
   @override
   String faultMessageBody(Object body) {
     return 'Závada: $body';
+  }
+
+  @override
+  String get faultPhotoOptional => 'volitelné';
+
+  @override
+  String faultPhotoCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fotek',
+      few: '$count fotky',
+      one: '$count foto',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -877,6 +892,18 @@ class LCs extends L {
   String get apayMarkPaid => 'Označit zaplaceno';
 
   @override
+  String apayRecordsHeader(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count záznamů · datum ↓',
+      few: '$count záznamy · datum ↓',
+      one: '$count záznam · datum ↓',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get apprTitle => 'Schvalování';
 
   @override
@@ -947,6 +974,18 @@ class LCs extends L {
   @override
   String athrComposerHint(Object name) {
     return 'Napiš $name…';
+  }
+
+  @override
+  String athrExpiresIn(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Členství končí za $count dní',
+      few: 'Členství končí za $count dny',
+      one: 'Členství končí za $count den',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -1190,6 +1229,45 @@ class LCs extends L {
 
   @override
   String get mlistEmptyFilter => 'Žádní členové pro vybraný filtr.';
+
+  @override
+  String mlistMemberCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count členů',
+      few: '$count členové',
+      one: '$count člen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mlistDaysSuspended => 'pozastaveno';
+
+  @override
+  String mlistDaysAgo(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'před $count dny',
+      few: 'před $count dny',
+      one: 'před $count dnem',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String mlistDaysLeft(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count dní',
+      few: '$count dny',
+      one: '$count den',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get mlistRowUntilExpiry => 'do expirace';
