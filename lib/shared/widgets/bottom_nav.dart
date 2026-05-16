@@ -38,61 +38,68 @@ class BottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // iOS 26: bar floats above the home indicator with a real safe-area gap.
-    final bottomPad = (bottomInset > 0 ? bottomInset : 16).toDouble();
+    // iOS 26: a detached, fully-rounded glass pill floating above the home
+    // indicator — not an edge-to-edge bar. Side + bottom margins, stadium
+    // corners, blur clipped to the pill shape.
+    final gap = (bottomInset > 0 ? bottomInset : 12).toDouble();
 
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 28, sigmaY: 28),
-        child: Container(
-          padding: EdgeInsets.only(top: 10, bottom: bottomPad, left: 10, right: 10),
-          decoration: BoxDecoration(
-            // Translucent "glass" — lets blurred content show through.
-            gradient: const LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [Color(0xCC141416), Color(0xF20F0F10)],
-            ),
-            border: const Border(top: BorderSide(color: T.border)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.35),
-                blurRadius: 24,
-                offset: const Offset(0, -6),
+    return Padding(
+      padding: EdgeInsets.only(left: 16, right: 16, bottom: gap, top: 6),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(999),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
+          child: Container(
+            padding:
+                const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(999),
+              // Translucent "glass" — lets blurred content show through.
+              gradient: const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0xC2141416), Color(0xE60F0F10)],
               ),
-            ],
-          ),
-          child: LayoutBuilder(
-            builder: (context, c) {
-              final n = items.length;
-              final slotW = c.maxWidth / n;
-              const capsuleH = 40.0;
-              final capsuleW = slotW.clamp(48.0, 76.0);
+              border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.45),
+                  blurRadius: 28,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
+            child: LayoutBuilder(
+              builder: (context, c) {
+                final n = items.length;
+                final slotW = c.maxWidth / n;
+                const capsuleH = 40.0;
+                final capsuleW = slotW.clamp(48.0, 72.0);
 
-              return SizedBox(
-                height: 50,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    // ── Sliding "liquid glass" capsule behind the active tab ──
-                    AnimatedPositioned(
-                      duration: const Duration(milliseconds: 340),
-                      curve: Curves.easeOutCubic,
-                      left: active * slotW + (slotW - capsuleW) / 2,
-                      top: 0,
-                      child: Container(
-                        width: capsuleW,
-                        height: capsuleH,
-                        decoration: BoxDecoration(
-                          color: T.accentSoft,
-                          borderRadius: BorderRadius.circular(capsuleH / 2),
-                          border: Border.all(
-                            color: T.accent.withValues(alpha: 0.22),
+                return SizedBox(
+                  height: 48,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      // ── Sliding "liquid glass" capsule behind active tab ──
+                      AnimatedPositioned(
+                        duration: const Duration(milliseconds: 340),
+                        curve: Curves.easeOutCubic,
+                        left: active * slotW + (slotW - capsuleW) / 2,
+                        top: (48 - capsuleH) / 2,
+                        child: Container(
+                          width: capsuleW,
+                          height: capsuleH,
+                          decoration: BoxDecoration(
+                            color: T.accentSoft,
+                            borderRadius: BorderRadius.circular(capsuleH / 2),
+                            border: Border.all(
+                              color: T.accent.withValues(alpha: 0.22),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Row(
+                      Row(
                       children: List.generate(n, (i) {
                         final it = items[i];
                         final isActive = i == active;
@@ -175,6 +182,7 @@ class BottomNav extends StatelessWidget {
           ),
         ),
       ),
+    ),
     );
   }
 }
