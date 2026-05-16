@@ -189,10 +189,10 @@ class MemberDetailScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 12),
+                          horizontal: Space.s14, vertical: 12),
                       decoration: BoxDecoration(
                         color: m.state == 'error' ? T.errorSoft : T.warnSoft,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(Radii.md),
                       ),
                       child: Row(
                         children: [
@@ -223,10 +223,10 @@ class MemberDetailScreen extends ConsumerWidget {
                             onTap: () => nav('thread', arg: m.id),
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 4),
+                                  horizontal: Space.s10, vertical: 4),
                               decoration: BoxDecoration(
                                 color: Colors.white.withAlpha(0x14),
-                                borderRadius: BorderRadius.circular(100),
+                                borderRadius: BorderRadius.circular(Radii.pill),
                               ),
                               child: Text(
                                 l.mdetWrite,
@@ -249,7 +249,7 @@ class MemberDetailScreen extends ConsumerWidget {
                   _SectionLabel(l.mdetSectionKeyDeposit),
                   const SizedBox(height: 12),
                   AppCard(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(Space.lg),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -261,7 +261,7 @@ class MemberDetailScreen extends ConsumerWidget {
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 color: T.accentSoft,
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(Radii.md),
                               ),
                               child: AppIcon('key',
                                   size: 22, color: T.accent),
@@ -359,7 +359,7 @@ class MemberDetailScreen extends ConsumerWidget {
                     padding: EdgeInsets.zero,
                     child: memberPayments.isEmpty
                         ? Padding(
-                            padding: const EdgeInsets.all(20),
+                            padding: const EdgeInsets.all(Space.xl),
                             child: Center(
                               child: Text(
                                 l.mdetNoPayments,
@@ -435,7 +435,7 @@ class MemberDetailScreen extends ConsumerWidget {
       builder: (ctx) => AlertDialog(
         backgroundColor: T.surface,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(Radii.xl),
           side: const BorderSide(color: T.border),
         ),
         title: Text(
@@ -519,7 +519,7 @@ class _KV extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: Space.lg, vertical: 12),
       child: Row(
         children: [
           Text(
@@ -566,7 +566,7 @@ class _KVPrice extends StatelessWidget {
       onTap: onEdit,
       behavior: HitTestBehavior.opaque,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: Space.lg, vertical: 12),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -581,10 +581,10 @@ class _KVPrice extends StatelessWidget {
                 if (isCustom) ...[
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 6, vertical: 2),
+                        horizontal: Space.s6, vertical: 2),
                     decoration: BoxDecoration(
                       color: T.accentSoft,
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(Radii.xs),
                     ),
                     child: Text(
                       L.of(context).mdetCustomBadge,
@@ -663,7 +663,7 @@ class _PayRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final date = '${p.date.day}. ${p.date.month}. ${p.date.year}';
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: Space.lg, vertical: 12),
       decoration: BoxDecoration(
         border: last
             ? null
@@ -741,11 +741,11 @@ class _ActionRow extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: const EdgeInsets.all(14),
+        padding: const EdgeInsets.all(Space.s14),
         decoration: BoxDecoration(
           color: T.surface,
           border: Border.all(color: T.border),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(Radii.md),
         ),
         child: Row(
           children: [
@@ -800,11 +800,11 @@ class _DetailQuick extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: Space.sm, vertical: 12),
         decoration: BoxDecoration(
           color: T.surface,
           border: Border.all(color: T.border),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(Radii.md),
         ),
         child: Column(
           children: [

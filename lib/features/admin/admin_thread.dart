@@ -219,10 +219,10 @@ class _AdminThreadScreenState extends ConsumerState<AdminThreadScreen> {
           if (showContext)
             Container(
               margin: const EdgeInsets.fromLTRB(16, 10, 16, 0),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              padding: const EdgeInsets.symmetric(horizontal: Space.md, vertical: 10),
               decoration: BoxDecoration(
                 color: member.state == 'error' ? T.errorSoft : T.warnSoft,
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(Radii.s10),
               ),
               child: Row(
                 children: [
@@ -310,10 +310,10 @@ class _AdminThreadScreenState extends ConsumerState<AdminThreadScreen> {
                       child: Container(
                         constraints: const BoxConstraints(maxWidth: 240),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 7),
+                            horizontal: Space.md, vertical: 7),
                         decoration: BoxDecoration(
                           color: T.surface,
-                          borderRadius: BorderRadius.circular(100),
+                          borderRadius: BorderRadius.circular(Radii.pill),
                           border: Border.all(color: T.border, width: 1),
                         ),
                         child: Text(
@@ -344,7 +344,7 @@ class _AdminThreadScreenState extends ConsumerState<AdminThreadScreen> {
                       border: Border.all(color: T.border, width: 1),
                     ),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 6),
+                        horizontal: Space.md, vertical: 6),
                     alignment: Alignment.center,
                     child: TextField(
                       controller: _ctrl,

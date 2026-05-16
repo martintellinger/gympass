@@ -65,27 +65,41 @@ class T {
   static const List<Color> accentGlow = [Color(0x2EFF4D2E), Color(0x00FF4D2E)];
 }
 
-/// Spacing scale (4-pt grid). Use instead of ad-hoc magic numbers.
+/// Spacing scale — the 2-pt rhythm the prototype actually uses (ported from
+/// shared.jsx). Named anchors map to the recurring values so adoption is a
+/// pure refactor, not a redesign. Prefer these over raw numbers in new code.
 class Space {
   Space._();
+  static const double xxs = 2;
   static const double xs = 4;
+  static const double s6 = 6;
   static const double sm = 8;
+  static const double s10 = 10;
   static const double md = 12;
+  static const double s14 = 14;
   static const double lg = 16;
+  static const double s18 = 18;
   static const double xl = 20;
   static const double xxl = 24;
+  static const double s28 = 28;
+  static const double s32 = 32;
 
-  /// Bottom content inset that clears the persistent tab bar.
+  /// Bottom content inset that clears the persistent floating tab bar.
   static const double navClearance = 110;
 }
 
-/// Corner-radius scale.
+/// Corner-radius scale — the real radii from the prototype. `pill` is the
+/// stadium shape (chips, badges, the nav); 100 and 999 collapse to it since
+/// both already render as a full stadium.
 class Radii {
   Radii._();
+  static const double xs = 4;
   static const double sm = 8;
+  static const double s10 = 10;
   static const double md = 12;
-  static const double lg = 16;
-  static const double xl = 20;
+  static const double lg = 14;
+  static const double xl = 16;
+  static const double s18 = 18;
   static const double pill = 999;
 }
 

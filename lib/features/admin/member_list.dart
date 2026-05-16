@@ -190,7 +190,7 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                     color: T.accent,
-                                    borderRadius: BorderRadius.circular(8),
+                                    borderRadius: BorderRadius.circular(Radii.sm),
                                     border:
                                         Border.all(color: T.bg, width: 2),
                                   ),
@@ -223,7 +223,7 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
                       decoration: BoxDecoration(
                         color: T.surface,
                         border: Border.all(color: T.border),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(Radii.md),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Row(
@@ -319,7 +319,7 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
                       child: Container(
                         color: T.bg,
                         padding: const EdgeInsets.symmetric(
-                            vertical: 8, horizontal: 4),
+                            vertical: Space.sm, horizontal: 4),
                         child: Row(
                           mainAxisAlignment:
                               MainAxisAlignment.spaceBetween,
@@ -448,7 +448,7 @@ class _Chip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
           color: active ? T.text : T.surface,
-          borderRadius: BorderRadius.circular(100),
+          borderRadius: BorderRadius.circular(Radii.pill),
           border: Border.all(color: active ? T.text : T.border),
         ),
         child: Row(
@@ -506,7 +506,7 @@ class _MemberRow extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
+        padding: const EdgeInsets.symmetric(vertical: Space.s14, horizontal: 4),
         decoration: const BoxDecoration(
           border: Border(bottom: BorderSide(color: T.divider)),
         ),
@@ -535,10 +535,10 @@ class _MemberRow extends StatelessWidget {
                         const SizedBox(width: 6),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 4, vertical: 1),
+                              horizontal: Space.xs, vertical: 1),
                           decoration: BoxDecoration(
                             border: Border.all(color: T.border),
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(Radii.xs),
                           ),
                           child: Text(
                             'ISIC',
@@ -663,7 +663,7 @@ class _FilterSortSheet extends StatelessWidget {
               ),
               border: Border.fromBorderSide(BorderSide(color: T.border)),
             ),
-            padding: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(Space.s14),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -732,11 +732,11 @@ class _FilterSortSheet extends StatelessWidget {
                         setSheetState(() {});
                       },
                       child: Container(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(Space.s10),
                         decoration: BoxDecoration(
                           color:
                               active ? T.surface2 : Colors.transparent,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(Radii.s10),
                         ),
                         child: Row(
                           children: [
@@ -781,10 +781,10 @@ class _FilterSortSheet extends StatelessWidget {
                       setSheetState(() {});
                     },
                     child: Container(
-                      padding: const EdgeInsets.all(10),
+                      padding: const EdgeInsets.all(Space.s10),
                       decoration: BoxDecoration(
                         color: T.surface2,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(Radii.s10),
                       ),
                       child: Row(
                         children: [
@@ -867,7 +867,7 @@ class _FilterSortSheet extends StatelessWidget {
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
                         color: T.accent,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(Radii.md),
                       ),
                       child: Text(
                         L.of(context).mlistSheetApply,
@@ -923,10 +923,10 @@ class _Seg extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(4),
+      padding: const EdgeInsets.all(Space.xs),
       decoration: BoxDecoration(
         color: T.surface2,
-        borderRadius: BorderRadius.circular(10),
+        borderRadius: BorderRadius.circular(Radii.s10),
       ),
       child: Row(
         children: [
@@ -938,13 +938,13 @@ class _Seg extends StatelessWidget {
                 onTap: () => onChange(options[i].$1),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                      vertical: 8, horizontal: 6),
+                      vertical: Space.sm, horizontal: 6),
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: options[i].$1 == value
                         ? T.bg
                         : Colors.transparent,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(Radii.sm),
                     border: Border.all(
                       color: options[i].$1 == value
                           ? T.border

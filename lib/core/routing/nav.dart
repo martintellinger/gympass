@@ -108,7 +108,7 @@ NavCb navCb(BuildContext context) {
               duration: const Duration(milliseconds: 2600),
               margin: const EdgeInsets.fromLTRB(16, 0, 16, 96),
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(Radii.lg),
                 side: BorderSide(color: T.border),
               ),
             ),

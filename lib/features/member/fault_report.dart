@@ -173,9 +173,9 @@ class _FaultReportScreenState extends ConsumerState<FaultReportScreen> {
                             border: Border.all(
                               color: _focused ? T.accent : T.border,
                             ),
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(Radii.md),
                           ),
-                          padding: const EdgeInsets.all(14),
+                          padding: const EdgeInsets.all(Space.s14),
                           child: TextField(
                             controller: _ctrl,
                             focusNode: _focus,
@@ -248,7 +248,7 @@ class _FaultReportScreenState extends ConsumerState<FaultReportScreen> {
                                 height: 64,
                                 decoration: BoxDecoration(
                                   color: T.bg,
-                                  borderRadius: BorderRadius.circular(10),
+                                  borderRadius: BorderRadius.circular(Radii.s10),
                                   border: Border.all(color: T.border),
                                 ),
                                 child: Column(
@@ -312,7 +312,7 @@ class _PhotoTile extends StatelessWidget {
             height: 64,
             decoration: BoxDecoration(
               color: T.bg,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(Radii.s10),
               border: Border.all(color: T.border),
             ),
             alignment: Alignment.center,

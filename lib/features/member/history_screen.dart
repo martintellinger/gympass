@@ -238,7 +238,7 @@ class _HistoryScreenViewState extends ConsumerState<HistoryScreenView> {
                           decoration: BoxDecoration(
                             color: T.surface,
                             border: Border.all(color: T.border),
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: BorderRadius.circular(Radii.xl),
                           ),
                           child: Column(
                             children: [
@@ -305,9 +305,9 @@ class _MiniStat extends StatelessWidget {
       decoration: BoxDecoration(
         color: T.surface,
         border: Border.all(color: T.border),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(Radii.md),
       ),
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(Space.md),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -366,7 +366,7 @@ class _FChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: active ? T.text : T.surface,
           border: Border.all(color: active ? T.text : T.border),
-          borderRadius: BorderRadius.circular(100),
+          borderRadius: BorderRadius.circular(Radii.pill),
         ),
         child: Text(
           label,
@@ -390,7 +390,7 @@ class _HistoryRow extends StatelessWidget {
     final meta = _kTypeMeta[item.type]!;
     final c = meta.color;
     return Padding(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(Space.s14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -399,7 +399,7 @@ class _HistoryRow extends StatelessWidget {
             height: 36,
             decoration: BoxDecoration(
               color: c.withValues(alpha: 0x22 / 255),
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(Radii.s10),
             ),
             alignment: Alignment.center,
             child: AppIcon(meta.icon, size: 16, color: c),

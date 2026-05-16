@@ -47,14 +47,14 @@ class BottomNav extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(left: 16, right: 16, bottom: gap, top: 6),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: BorderRadius.circular(Radii.pill),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
           child: Container(
             padding:
-                const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                const EdgeInsets.symmetric(vertical: Space.sm, horizontal: 8),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(999),
+              borderRadius: BorderRadius.circular(Radii.pill),
               // iOS 26 "liquid glass": translucent enough that the 40px
               // backdrop blur reads as frost, a bright sheen across the
               // top edge, and a deep ambient drop shadow so it floats.
@@ -181,7 +181,7 @@ class BottomNav extends StatelessWidget {
                                             decoration: BoxDecoration(
                                               color: T.error,
                                               borderRadius:
-                                                  BorderRadius.circular(8),
+                                                  BorderRadius.circular(Radii.sm),
                                               border: Border.all(
                                                   color: T.bg, width: 2),
                                             ),

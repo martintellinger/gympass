@@ -213,11 +213,11 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                 Padding(
                   padding: const EdgeInsets.only(top: 16),
                   child: Container(
-                    padding: const EdgeInsets.all(14),
+                    padding: const EdgeInsets.all(Space.s14),
                     decoration: BoxDecoration(
                       color: T.surface,
                       border: Border.all(color: T.border),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(Radii.md),
                     ),
                     child: Row(
                       children: [
@@ -297,7 +297,7 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: T.surface2,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(Radii.sm),
         ),
         child: AppIcon(icon, size: 15, color: T.text2),
       );
@@ -310,7 +310,7 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
     Widget? pill,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: Space.s14, vertical: 12),
       child: Row(
         children: [
           _leadIcon(icon),
@@ -371,7 +371,7 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
     required ValueChanged<bool> onChange,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: Space.s14, vertical: 12),
       child: Row(
         children: [
           _leadIcon(icon),
@@ -417,7 +417,7 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
     required ValueChanged<String> onChange,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: Space.s14, vertical: 12),
       child: Row(
         children: [
           _leadIcon(icon),
@@ -434,10 +434,10 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
           ),
           const SizedBox(width: 12),
           Container(
-            padding: const EdgeInsets.all(2),
+            padding: const EdgeInsets.all(Space.xxs),
             decoration: BoxDecoration(
               color: T.surface2,
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: BorderRadius.circular(Radii.sm),
               border: Border.all(color: T.border),
             ),
             child: Row(
@@ -451,7 +451,7 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                   onTap: () => onChange(k),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
+                      horizontal: Space.s10,
                       vertical: 5,
                     ),
                     decoration: BoxDecoration(
@@ -486,7 +486,7 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: Space.s14, vertical: 12),
         child: Row(
           children: [
             _leadIcon(icon),
@@ -542,7 +542,7 @@ class _Switch extends StatelessWidget {
         height: 24,
         decoration: BoxDecoration(
           color: value ? T.accent : T.surface2,
-          borderRadius: BorderRadius.circular(100),
+          borderRadius: BorderRadius.circular(Radii.pill),
           border: Border.all(color: value ? T.accent : T.border),
         ),
         child: Stack(

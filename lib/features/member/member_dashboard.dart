@@ -425,7 +425,7 @@ class _MemberCardPreview extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(Radii.s18),
         child: Container(
           decoration: BoxDecoration(
             gradient: const LinearGradient(
@@ -434,7 +434,7 @@ class _MemberCardPreview extends StatelessWidget {
               colors: T.cardSheenSoft,
             ),
             border: Border.all(color: T.border),
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(Radii.s18),
           ),
           child: Stack(
             children: [
@@ -455,7 +455,7 @@ class _MemberCardPreview extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(18),
+                padding: const EdgeInsets.all(Space.s18),
                 child: Row(
                   children: [
                     Container(
@@ -463,7 +463,7 @@ class _MemberCardPreview extends StatelessWidget {
                       height: 48,
                       decoration: BoxDecoration(
                         color: T.bg,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(Radii.md),
                         border: Border.all(color: T.border),
                       ),
                       alignment: Alignment.center,
@@ -539,7 +539,7 @@ class _ActivityRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(Space.s14),
       child: Row(
         children: [
           Container(
@@ -657,10 +657,10 @@ class _BoardPreview extends StatelessWidget {
                       children: [
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
+                              horizontal: Space.s6, vertical: 2),
                           decoration: BoxDecoration(
                             border: Border.all(color: T.accent),
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(Radii.xs),
                           ),
                           child: Text(
                             L.of(context).dashPinned,

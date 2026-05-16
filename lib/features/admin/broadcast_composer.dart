@@ -95,12 +95,12 @@ class _BroadcastComposerScreenState
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 160),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 10),
+                            horizontal: Space.s14, vertical: 10),
                         decoration: BoxDecoration(
                           color: sel ? T.accentSoft : T.surface,
                           border: Border.all(
                               color: sel ? T.accent : T.border),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(Radii.md),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -126,7 +126,7 @@ class _BroadcastComposerScreenState
                 _label(l.bcastSectionMessage),
                 const SizedBox(height: 10),
                 AppCard(
-                  padding: const EdgeInsets.all(4),
+                  padding: const EdgeInsets.all(Space.xs),
                   child: Column(
                     children: [
                       TextField(
@@ -161,11 +161,11 @@ class _BroadcastComposerScreenState
                       }),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 8),
+                            horizontal: Space.md, vertical: 8),
                         decoration: BoxDecoration(
                           color: T.surface,
                           border: Border.all(color: T.border),
-                          borderRadius: BorderRadius.circular(100),
+                          borderRadius: BorderRadius.circular(Radii.pill),
                         ),
                         child: Text(t.$1,
                             style: AppType.ui(
@@ -274,7 +274,7 @@ class _BroadcastComposerScreenState
         hintStyle: AppType.ui(size: 14, color: T.text3),
         border: InputBorder.none,
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            const EdgeInsets.symmetric(horizontal: Space.md, vertical: 12),
       );
 }
 

@@ -117,9 +117,9 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                       decoration: BoxDecoration(
                         color: T.surface,
                         border: Border.all(color: T.border),
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(Radii.lg),
                       ),
-                      padding: const EdgeInsets.all(14),
+                      padding: const EdgeInsets.all(Space.s14),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -205,7 +205,7 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                       decoration: BoxDecoration(
                         color: T.surface,
                         border: Border.all(color: T.border),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(Radii.md),
                       ),
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Row(
@@ -415,7 +415,7 @@ class _PChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: active ? T.text : T.surface,
           border: Border.all(color: active ? T.text : T.border),
-          borderRadius: BorderRadius.circular(100),
+          borderRadius: BorderRadius.circular(Radii.pill),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -519,7 +519,7 @@ class _PaymentRow extends StatelessWidget {
             behavior: HitTestBehavior.opaque,
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                  horizontal: 4, vertical: 12),
+                  horizontal: Space.xs, vertical: 12),
               child: Row(
                 children: [
                   Container(
@@ -527,7 +527,7 @@ class _PaymentRow extends StatelessWidget {
                     height: 36,
                     decoration: BoxDecoration(
                       color: cSoft,
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(Radii.s10),
                     ),
                     child: Center(
                       child: AppIcon(iconName, size: 16, color: c),
@@ -618,7 +618,7 @@ class _PaymentRow extends StatelessWidget {
                           const EdgeInsets.symmetric(horizontal: 12),
                       decoration: BoxDecoration(
                         color: T.accentSoft,
-                        borderRadius: BorderRadius.circular(100),
+                        borderRadius: BorderRadius.circular(Radii.pill),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -646,7 +646,7 @@ class _PaymentRow extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: T.surface2,
                       border: Border.all(color: T.border),
-                      borderRadius: BorderRadius.circular(100),
+                      borderRadius: BorderRadius.circular(Radii.pill),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,

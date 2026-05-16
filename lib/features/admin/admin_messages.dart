@@ -104,7 +104,7 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
                       decoration: BoxDecoration(
                         color: T.surface,
                         border: Border.all(color: T.border),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(Radii.md),
                       ),
                       child: Row(
                         children: [
@@ -296,11 +296,11 @@ class _QuickPill extends StatelessWidget {
       onTap: onTap,
       child: Container(
         constraints: const BoxConstraints(minHeight: 44),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        padding: const EdgeInsets.symmetric(horizontal: Space.md, vertical: 6),
         decoration: BoxDecoration(
           color: T.surface,
           border: Border.all(color: T.border),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(Radii.md),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -348,7 +348,7 @@ class _ThreadRow extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: Space.xs, vertical: 14),
         decoration: const BoxDecoration(
           border: Border(bottom: BorderSide(color: T.divider)),
         ),
@@ -513,7 +513,7 @@ class _ComposeSheetState extends State<_ComposeSheet> {
           children: [
             // Header
             Container(
-              padding: const EdgeInsets.all(14),
+              padding: const EdgeInsets.all(Space.s14),
               decoration: const BoxDecoration(
                 border: Border(bottom: BorderSide(color: T.divider)),
               ),
@@ -545,7 +545,7 @@ class _ComposeSheetState extends State<_ComposeSheet> {
                     decoration: BoxDecoration(
                       color: T.surface2,
                       border: Border.all(color: T.border),
-                      borderRadius: BorderRadius.circular(10),
+                      borderRadius: BorderRadius.circular(Radii.s10),
                     ),
                     child: Row(
                       children: [
@@ -575,14 +575,14 @@ class _ComposeSheetState extends State<_ComposeSheet> {
             // List
             Flexible(
               child: ListView(
-                padding: const EdgeInsets.all(6),
+                padding: const EdgeInsets.all(Space.s6),
                 shrinkWrap: true,
                 children: filtered
                     .map((m) => GestureDetector(
                           behavior: HitTestBehavior.opaque,
                           onTap: () => widget.onPick(m.id),
                           child: Padding(
-                            padding: const EdgeInsets.all(10),
+                            padding: const EdgeInsets.all(Space.s10),
                             child: Row(
                               children: [
                                 Avatar(name: m.name, size: 36),
@@ -698,7 +698,7 @@ class _BroadcastSheetState extends State<_BroadcastSheet> {
         alignment: Alignment.bottomCenter,
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(Space.lg),
           decoration: const BoxDecoration(
             color: T.surface,
             border: Border(
@@ -760,10 +760,10 @@ class _BroadcastSheetState extends State<_BroadcastSheet> {
               ),
               const SizedBox(height: 6),
               Container(
-                padding: const EdgeInsets.all(4),
+                padding: const EdgeInsets.all(Space.xs),
                 decoration: BoxDecoration(
                   color: T.surface2,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(Radii.s10),
                 ),
                 child: Row(
                   children: _targets.entries.map((e) {
@@ -778,10 +778,10 @@ class _BroadcastSheetState extends State<_BroadcastSheet> {
                         child: Container(
                           margin: const EdgeInsets.symmetric(horizontal: 2),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 4, vertical: 8),
+                              horizontal: Space.xs, vertical: 8),
                           decoration: BoxDecoration(
                             color: active ? T.bg : Colors.transparent,
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(Radii.sm),
                             border: Border.all(
                               color:
                                   active ? T.border : Colors.transparent,
@@ -823,9 +823,9 @@ class _BroadcastSheetState extends State<_BroadcastSheet> {
                 decoration: BoxDecoration(
                   color: T.surface2,
                   border: Border.all(color: T.border),
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(Radii.s10),
                 ),
-                padding: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(Space.md),
                 child: TextField(
                   controller: _textCtrl,
                   onChanged: (_) => setState(() {}),
@@ -864,7 +864,7 @@ class _BroadcastSheetState extends State<_BroadcastSheet> {
                         decoration: BoxDecoration(
                           color: T.surface2,
                           border: Border.all(color: T.border),
-                          borderRadius: BorderRadius.circular(100),
+                          borderRadius: BorderRadius.circular(Radii.pill),
                         ),
                         child: Text(
                           tpl,
@@ -888,7 +888,7 @@ class _BroadcastSheetState extends State<_BroadcastSheet> {
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
                     color: canSend ? T.accent : T.surface2,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(Radii.md),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

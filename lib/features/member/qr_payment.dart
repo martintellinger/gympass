@@ -184,10 +184,10 @@ class _QrPaymentScreenState extends ConsumerState<QrPaymentScreen> {
                   // QR card (white).
                   Container(
                     margin: const EdgeInsets.only(top: 16),
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(Space.xl),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(18),
+                      borderRadius: BorderRadius.circular(Radii.s18),
                     ),
                     child: Column(
                       children: [
@@ -298,11 +298,11 @@ class _QrPaymentScreenState extends ConsumerState<QrPaymentScreen> {
                       width: double.infinity,
                       child: Material(
                         color: T.accent,
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(Radii.lg),
                         child: InkWell(
                           onTap: () => nav('dashboard',
                               toast: L.of(context).qrToastMarkedPaid),
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(Radii.lg),
                           child: Container(
                             height: 52,
                             alignment: Alignment.center,
@@ -346,10 +346,10 @@ class _TariffPick extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 160),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(Space.md),
         decoration: BoxDecoration(
           color: active ? T.accentSoft : T.surface,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(Radii.lg),
           border: Border.all(color: active ? T.accent : T.border),
         ),
         child: Stack(
@@ -448,7 +448,7 @@ class _DetailRow extends StatelessWidget {
           );
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: Space.lg, vertical: 12),
       decoration: BoxDecoration(
         border: last
             ? null
@@ -490,15 +490,15 @@ class _GhostBtn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Colors.transparent,
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(Radii.lg),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(Radii.lg),
         child: Container(
           height: 52,
           decoration: BoxDecoration(
             border: Border.all(color: T.border),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(Radii.lg),
           ),
           alignment: Alignment.center,
           child: Row(

@@ -178,7 +178,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                   // Identity row
                   Padding(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 2, vertical: 6),
+                        horizontal: Space.xxs, vertical: 6),
                     child: Row(
                       children: [
                         Avatar(
@@ -336,7 +336,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                       height: 52,
                       decoration: BoxDecoration(
                         color: _ok ? T.accent : T.surface2,
-                        borderRadius: BorderRadius.circular(14),
+                        borderRadius: BorderRadius.circular(Radii.lg),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -364,7 +364,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                       height: 44,
                       decoration: BoxDecoration(
                         color: Colors.transparent,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(Radii.md),
                         border: Border.all(color: T.border),
                       ),
                       alignment: Alignment.center,
@@ -488,10 +488,10 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                 onTap: () => _setPrice(p),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 4),
+                      horizontal: Space.s10, vertical: 4),
                   decoration: BoxDecoration(
                     color: sel ? T.accent : T.surface2,
-                    borderRadius: BorderRadius.circular(100),
+                    borderRadius: BorderRadius.circular(Radii.pill),
                     border: Border.all(
                         color: sel ? Colors.transparent : T.border),
                   ),
@@ -518,7 +518,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
         height: 32,
         decoration: BoxDecoration(
           color: T.surface2,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(Radii.sm),
           border: Border.all(color: T.border),
         ),
         alignment: Alignment.center,
@@ -531,7 +531,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
 
   Widget _kCalcRow() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: Space.s14, vertical: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.baseline,
         textBaseline: TextBaseline.alphabetic,
@@ -598,11 +598,11 @@ class _FormSection extends StatelessWidget {
           ),
         ),
         ClipRRect(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(Radii.lg),
           child: Container(
             decoration: BoxDecoration(
               color: T.surface,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(Radii.lg),
               border: Border.all(color: T.border),
             ),
             child: Column(
@@ -653,7 +653,7 @@ class _Field extends StatelessWidget {
             color: invalid ? T.error : T.text,
           ));
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+      padding: const EdgeInsets.symmetric(horizontal: Space.s14, vertical: 11),
       decoration: BoxDecoration(
         border: last
             ? null
@@ -727,7 +727,7 @@ class _RowSegment<TVal> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: Space.s14, vertical: 12),
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: T.divider)),
       ),
@@ -747,10 +747,10 @@ class _RowSegment<TVal> extends StatelessWidget {
             const SizedBox(height: 8),
           ],
           Container(
-            padding: const EdgeInsets.all(4),
+            padding: const EdgeInsets.all(Space.xs),
             decoration: BoxDecoration(
               color: T.surface2,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(Radii.s10),
             ),
             child: Row(
               children: [
@@ -776,10 +776,10 @@ class _RowSegment<TVal> extends StatelessWidget {
     return GestureDetector(
       onTap: () => onChange(o.value),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: Space.s6, vertical: 8),
         decoration: BoxDecoration(
           color: active ? T.bg : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
+          borderRadius: BorderRadius.circular(Radii.sm),
           border: Border.all(
               color: active ? T.border : Colors.transparent),
         ),
@@ -830,7 +830,7 @@ class _Toggle extends StatelessWidget {
       onTap: () => onChange(!value),
       behavior: HitTestBehavior.opaque,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+        padding: const EdgeInsets.symmetric(horizontal: Space.s14, vertical: 13),
         decoration: const BoxDecoration(
           border: Border(bottom: BorderSide(color: T.divider)),
         ),
@@ -861,10 +861,10 @@ class _Toggle extends StatelessWidget {
               duration: const Duration(milliseconds: 160),
               width: 46,
               height: 28,
-              padding: const EdgeInsets.all(2),
+              padding: const EdgeInsets.all(Space.xxs),
               decoration: BoxDecoration(
                 color: value ? T.accent : T.surface2,
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(Radii.pill),
                 border: Border.all(
                     color: value ? Colors.transparent : T.border),
               ),

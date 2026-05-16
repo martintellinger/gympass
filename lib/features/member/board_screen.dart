@@ -317,7 +317,7 @@ class _BChip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
           color: active ? T.text : T.surface,
-          borderRadius: BorderRadius.circular(100),
+          borderRadius: BorderRadius.circular(Radii.pill),
           border: Border.all(color: active ? T.text : T.border),
         ),
         child: Row(
@@ -359,11 +359,11 @@ class _BoardPost extends StatelessWidget {
     final c = meta.color;
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(Radii.lg),
       child: Container(
         decoration: BoxDecoration(
           color: T.surface,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(Radii.lg),
           border: Border.all(color: post.pinned ? c : T.border),
         ),
         child: Stack(
@@ -388,7 +388,7 @@ class _BoardPost extends StatelessWidget {
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 3),
+                            horizontal: Space.sm, vertical: 3),
                         decoration: BoxDecoration(
                           color: c.withAlpha(0x22),
                           borderRadius: BorderRadius.circular(6),

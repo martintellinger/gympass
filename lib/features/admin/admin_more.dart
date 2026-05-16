@@ -40,11 +40,11 @@ class AdminMoreScreen extends ConsumerWidget {
                 // Olda — vizitka
                 Container(
                   margin: const EdgeInsets.only(top: 14),
-                  padding: const EdgeInsets.all(14),
+                  padding: const EdgeInsets.all(Space.s14),
                   decoration: BoxDecoration(
                     color: T.surface,
                     border: Border.all(color: T.border),
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: BorderRadius.circular(Radii.lg),
                   ),
                   child: Row(
                     children: [
@@ -217,7 +217,7 @@ class _MoreCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: T.surface,
         border: Border.all(color: T.border),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(Radii.lg),
       ),
       child: Column(children: children),
     );
@@ -257,7 +257,7 @@ class _MoreRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final row = Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+      padding: const EdgeInsets.symmetric(horizontal: Space.s14, vertical: 13),
       child: Row(
         children: [
           Container(
@@ -304,7 +304,7 @@ class _MoreRow extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
               decoration: BoxDecoration(
                 color: T.accent,
-                borderRadius: BorderRadius.circular(100),
+                borderRadius: BorderRadius.circular(Radii.pill),
               ),
               child: Text(
                 '$badge',

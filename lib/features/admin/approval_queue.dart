@@ -119,7 +119,7 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
         backgroundColor: T.surface2,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(Radii.md),
           side: const BorderSide(color: T.border),
         ),
         duration: const Duration(seconds: 2),
@@ -272,7 +272,7 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
                     ),
                     const SizedBox(height: 12),
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
+                      borderRadius: BorderRadius.circular(Radii.lg),
                       child: Container(
                         height: 200,
                         decoration: BoxDecoration(
@@ -282,7 +282,7 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
                             colors: T.cardSheenRaised,
                           ),
                           border: Border.all(color: T.border),
-                          borderRadius: BorderRadius.circular(14),
+                          borderRadius: BorderRadius.circular(Radii.lg),
                         ),
                         child: Stack(
                           children: [
@@ -336,7 +336,7 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
                               right: 10,
                               child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
+                                    horizontal: Space.sm, vertical: 4),
                                 decoration: BoxDecoration(
                                   color: T.scrimMedium,
                                   borderRadius: BorderRadius.circular(6),
@@ -358,10 +358,10 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
                     const SizedBox(height: 10),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 10),
+                          horizontal: Space.md, vertical: 10),
                       decoration: BoxDecoration(
                         color: T.warnSoft,
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(Radii.s10),
                       ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -414,11 +414,11 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
                     ),
                     const SizedBox(height: 12),
                     Container(
-                      padding: const EdgeInsets.all(14),
+                      padding: const EdgeInsets.all(Space.s14),
                       decoration: BoxDecoration(
                         color: T.surface,
                         border: Border.all(color: T.border),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(Radii.md),
                       ),
                       child: Text(
                         a.note,
@@ -487,7 +487,7 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
     bool last = false,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: Space.lg, vertical: 14),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -499,7 +499,7 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
           ),
           if (pill != null) ...[
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: Space.s6, vertical: 2),
               decoration: BoxDecoration(
                 border: Border.all(color: T.border),
                 borderRadius: BorderRadius.circular(5),
@@ -562,10 +562,10 @@ class _ActionButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: ghost ? Colors.transparent : (bg ?? T.surface2),
-      borderRadius: BorderRadius.circular(14),
+      borderRadius: BorderRadius.circular(Radii.lg),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(Radii.lg),
         child: Container(
           height: 52,
           padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -573,7 +573,7 @@ class _ActionButton extends StatelessWidget {
             border: ghost
                 ? Border.all(color: borderColor ?? T.border)
                 : null,
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(Radii.lg),
           ),
           alignment: Alignment.center,
           child: Row(

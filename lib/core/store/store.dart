@@ -114,6 +114,23 @@ class GymStore extends ChangeNotifier {
     return created;
   }
 
+  /// Applies a confirmed Excel migration: inserts brand-new members and
+  /// patches existing ones in place. Identity-preserving (keeps `id`,
+  /// `joined`, threads), so a re-import never duplicates anyone.
+  void importMembers({
+    required List<Member> additions,
+    required Map<String, Member> updates,
+  }) {
+    for (final m in additions) {
+      members.insert(0, m);
+    }
+    for (final entry in updates.entries) {
+      final i = members.indexWhere((m) => m.id == entry.key);
+      if (i != -1) members[i] = entry.value;
+    }
+    notifyListeners();
+  }
+
   void removeMember(String id) {
     members.removeWhere((m) => m.id == id);
     threads.remove(id);

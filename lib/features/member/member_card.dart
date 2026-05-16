@@ -113,7 +113,7 @@ class _MembershipCard extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(Space.xxl),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -152,7 +152,7 @@ class _MembershipCard extends StatelessWidget {
                         height: 36,
                         decoration: BoxDecoration(
                           color: T.surface,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(Radii.s10),
                         ),
                         alignment: Alignment.center,
                         child: const AppIcon('dumbbell',
@@ -329,11 +329,11 @@ class _BrightnessTip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(Space.s14),
       decoration: BoxDecoration(
         color: T.surface,
         border: Border.all(color: T.border),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(Radii.md),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

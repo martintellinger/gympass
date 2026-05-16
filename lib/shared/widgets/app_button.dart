@@ -86,7 +86,7 @@ class _AppButtonState extends State<AppButton> {
       curve: Curves.easeOut,
       child: Material(
         color: bg,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(Radii.lg),
         child: InkWell(
           onTap: enabled
               ? () {
@@ -97,14 +97,14 @@ class _AppButtonState extends State<AppButton> {
           onTapDown: enabled ? (_) => _setPressed(true) : null,
           onTapUp: enabled ? (_) => _setPressed(false) : null,
           onTapCancel: enabled ? () => _setPressed(false) : null,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(Radii.lg),
           child: Container(
             height: widget.height,
             width: widget.full ? double.infinity : null,
             padding: const EdgeInsets.symmetric(horizontal: 20),
             decoration: BoxDecoration(
               border: bd,
-              borderRadius: BorderRadius.circular(14),
+              borderRadius: BorderRadius.circular(Radii.lg),
             ),
             alignment: Alignment.center,
             child: content,

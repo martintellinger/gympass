@@ -310,9 +310,9 @@ class _Stat extends StatelessWidget {
       decoration: BoxDecoration(
         color: T.surface,
         border: Border.all(color: T.border),
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(Radii.lg),
       ),
-      padding: const EdgeInsets.all(14),
+      padding: const EdgeInsets.all(Space.s14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -378,7 +378,7 @@ class _AttentionRow extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(Space.s14),
           child: Row(
             children: [
               Container(
@@ -386,7 +386,7 @@ class _AttentionRow extends StatelessWidget {
                 height: 36,
                 decoration: BoxDecoration(
                   color: bg,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(Radii.s10),
                 ),
                 alignment: Alignment.center,
                 child: AppIcon(icon, size: 18, color: c),
@@ -438,13 +438,13 @@ class _QuickAction extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(Radii.lg),
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+          padding: const EdgeInsets.symmetric(vertical: Space.lg, horizontal: 8),
           decoration: BoxDecoration(
             color: T.surface,
             border: Border.all(color: T.border),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(Radii.lg),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -454,7 +454,7 @@ class _QuickAction extends StatelessWidget {
                 height: 36,
                 decoration: BoxDecoration(
                   color: T.accentSoft,
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(Radii.s10),
                 ),
                 alignment: Alignment.center,
                 child: AppIcon(icon, size: 18, color: T.accent),
