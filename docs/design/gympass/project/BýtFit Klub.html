@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BýtFit Klub · Mobile App</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #f0eee9; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
+  * { box-sizing: border-box; }
+  /* Schovej výchozí placeholder image-slot u .bf-photo-slot avatarů */
+  image-slot.bf-photo-slot::part(empty) { display: none; }
+  image-slot.bf-photo-slot::part(ring) { opacity: 0.5; }
+  .bf-pulse { animation: bf-pulse 1.4s ease-out infinite; }
+  @keyframes bf-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(255,204,0,0.5); }
+    70%  { box-shadow: 0 0 0 10px rgba(255,204,0,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,204,0,0); }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="image-slot.js"></script>
+<script type="text/babel" src="design-canvas.jsx"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="screens/shared.jsx"></script>
+<script type="text/babel" src="screens/store.jsx"></script>
+<script type="text/babel" src="screens/MemberDashboard.jsx"></script>
+<script type="text/babel" src="screens/FaultReport.jsx"></script>
+<script type="text/babel" src="screens/QRPayment.jsx"></script>
+<script type="text/babel" src="screens/MemberCard.jsx"></script>
+<script type="text/babel" src="screens/AdminDashboard.jsx"></script>
+<script type="text/babel" src="screens/MemberList.jsx"></script>
+<script type="text/babel" src="screens/MemberDetail.jsx"></script>
+<script type="text/babel" src="screens/ApprovalQueue.jsx"></script>
+<script type="text/babel" src="screens/AdminPayments.jsx"></script>
+<script type="text/babel" src="screens/AdminMessages.jsx"></script>
+<script type="text/babel" src="screens/AdminThread.jsx"></script>
+<script type="text/babel" src="screens/AdminMore.jsx"></script>
+<script type="text/babel" src="screens/AddMember.jsx"></script>
+
+<script type="text/babel" data-presets="env,react">
+// ── Tweak defaults (parsed by host for persistence) ─────────────
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "#FF4D2E",
+  "density": "comfortable"
+}/*EDITMODE-END*/;
+
+const ACCENT_OPTIONS = [
+  '#FF4D2E', // brief default — orange-red
+  '#FFCC00', // warm yellow (Fakturoid-like)
+  '#BF5AF2', // purple
+  '#34C759', // green (less common for CTA, gives a calm utility feel)
+];
+
+// Phone bezel — minimal, our own (not iOS frame) since we control the chrome
+function Phone({ children }) {
+  return (
+    <div style={{
+      width: 360, alignSelf: 'flex-start',
+      borderRadius: 44, position: 'relative',
+      background: '#0F0F10', padding: 8,
+      boxShadow: '0 30px 60px rgba(0,0,0,0.25), inset 0 0 0 0 #18181a',
+      outline: '1px solid #2a2a2d',
+    }}>
+      <div style={{ borderRadius: 36, overflow: 'hidden', background: '#0F0F10', position: 'relative' }}>
+        {/* dynamic-island */}
+        <div style={{ position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)', width: 110, height: 30, borderRadius: 20, background: '#000', zIndex: 100 }}/>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// Intro / context panel — first card on the canvas
+function IntroCard() {
+  return (
+    <div style={{
+      width: 920, padding: 36, background: '#fff', borderRadius: 18,
+      border: '1px solid rgba(0,0,0,0.08)',
+      boxShadow: '0 10px 30px rgba(0,0,0,0.05)',
+      fontFamily: "'Inter', sans-serif", color: '#1c1c1e',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 24 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: '#666', textTransform: 'uppercase' }}>BýtFit Klub · v1 návrh</div>
+          <h1 style={{ fontSize: 38, fontWeight: 700, letterSpacing: -1.2, margin: '8px 0 0', lineHeight: 1.1 }}>
+            Utilita na členství.<br/>
+            <span style={{ color: '#8e8e93' }}>Ne fitness app.</span>
+          </h1>
+          <p style={{ fontSize: 15, lineHeight: 1.55, color: '#3a3a3c', maxWidth: 560, marginTop: 14 }}>
+            Prvních <b>7 obrazovek MVP</b> podle briefu — dashboard člena, prodloužení s QR, členská karta,
+            admin přehled, seznam členů, detail člena a schvalování. Vše v <b>dark</b> jako primární téma,
+            Inter pro UI, mono pro čísla. Český mluvený jazyk, tykání.
+          </p>
+          <div style={{ display: 'flex', gap: 8, marginTop: 18, flexWrap: 'wrap' }}>
+            <Tag>34 členů</Tag>
+            <Tag>iOS + Android (Flutter)</Tag>
+            <Tag>dark first</Tag>
+            <Tag>SPAYD QR</Tag>
+            <Tag>žádné svaly</Tag>
+          </div>
+        </div>
+        {/* Mini palette */}
+        <div style={{ width: 240, padding: 18, background: '#0F0F10', borderRadius: 14, color: '#F5F5F7' }}>
+          <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.5, color: '#8e8e93', textTransform: 'uppercase' }}>Vizuální systém</div>
+          <div style={{ marginTop: 12, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6 }}>
+            {['#0F0F10','#1A1A1C','#232326','#2A2A2D','#FF4D2E','#34C759','#FFCC00','#FF3B30'].map(c => (
+              <div key={c} style={{ height: 32, borderRadius: 6, background: c, border: '1px solid rgba(255,255,255,0.06)' }}/>
+            ))}
+          </div>
+          <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+            <div style={{ fontFamily: "'Inter', sans-serif", fontSize: 20, fontWeight: 700, letterSpacing: -0.5 }}>Inter</div>
+            <div style={{ fontFamily: "'JetBrains Mono', ui-monospace, monospace", fontSize: 13, color: '#8e8e93', marginTop: 4 }}>JetBrains Mono · 2 250 Kč</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+function Tag({ children }) {
+  return <span style={{ fontSize: 11.5, fontWeight: 500, padding: '5px 10px', background: '#0F0F10', color: '#F5F5F7', borderRadius: 100, letterSpacing: -0.1 }}>{children}</span>;
+}
+
+// ── Tweaks panel ────────────────────────────────────────────────
+function TweaksRoot() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+
+  // Apply accent CSS var globally
+  React.useEffect(() => {
+    document.documentElement.style.setProperty('--bf-accent', t.accent);
+    // Build soft variant (low alpha) from hex
+    const hex = t.accent.replace('#','');
+    const r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+    document.documentElement.style.setProperty('--bf-accent-soft', `rgba(${r},${g},${b},0.14)`);
+  }, [t.accent]);
+
+  return (
+    <TweaksPanel title="Tweaks">
+      <TweakSection label="Vzhled">
+        <TweakColor
+          label="Akcentní barva"
+          value={t.accent}
+          onChange={(v) => setTweak('accent', v)}
+          options={ACCENT_OPTIONS}
+        />
+      </TweakSection>
+    </TweaksPanel>
+  );
+}
+
+function App() {
+  return (
+    <>
+      <DesignCanvas>
+        <DCSection id="intro" title="BýtFit Klub" subtitle="Mobilní app pro správu členství · v1 návrh">
+          <DCArtboard id="intro" label="Brief · vizuální systém" width={920} height={300}>
+            <IntroCard/>
+          </DCArtboard>
+        </DCSection>
+
+        <DCSection id="member" title="Pro člena" subtitle="Hlavní flow: zjisti stav → prodluž → ukaž kartu">
+          <DCArtboard id="dashboard"  label="04 · Dashboard člena"      width={360} height={1280}><Phone><MemberDashboard/></Phone></DCArtboard>
+          <DCArtboard id="qr"         label="05 · Prodloužení (QR)"     width={360} height={1340}><Phone><QRPayment/></Phone></DCArtboard>
+          <DCArtboard id="card"       label="09 · Členská karta"        width={360} height={1080}><Phone><MemberCard/></Phone></DCArtboard>
+        </DCSection>
+
+        <DCSection id="admin" title="Pro majitele" subtitle="Kdo dluží, kdo končí, kdo čeká">
+          <DCArtboard id="admin"      label="10 · Admin přehled"        width={360} height={1380}><Phone><AdminDashboard/></Phone></DCArtboard>
+          <DCArtboard id="list"       label="11 · Seznam členů"         width={360} height={1480}><Phone><MemberList/></Phone></DCArtboard>
+          <DCArtboard id="detail"     label="12 · Detail člena"         width={360} height={1620}><Phone><MemberDetail memberId="pavel"/></Phone></DCArtboard>
+          <DCArtboard id="approval"   label="13 · Schvalování"          width={360} height={1380}><Phone><ApprovalQueue/></Phone></DCArtboard>
+          <DCArtboard id="payments"   label="14 · Platby"               width={360} height={1480}><Phone><AdminPayments/></Phone></DCArtboard>
+          <DCArtboard id="messages"   label="15 · Zprávy (inbox)"       width={360} height={1380}><Phone><AdminMessages/></Phone></DCArtboard>
+          <DCArtboard id="thread"     label="16 · Konverzace"           width={360} height={820}><Phone><AdminThread memberId="david"/></Phone></DCArtboard>
+          <DCArtboard id="adminMore"  label="17 · Více (majitel)"        width={360} height={1180}><Phone><AdminMore/></Phone></DCArtboard>
+          <DCArtboard id="addMember"  label="18 · Nový člen"            width={360} height={1280}><Phone><AddMember/></Phone></DCArtboard>
+        </DCSection>
+      </DesignCanvas>
+      <TweaksRoot/>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

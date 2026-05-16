@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>BýtFit Klub · Prototyp</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  html, body { margin: 0; padding: 0; background: #0a0a0b; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; color: #f5f5f7; min-height: 100vh; }
+  * { box-sizing: border-box; }
+
+  /* Dotted grid backdrop */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 22px 22px;
+    pointer-events: none; z-index: 0;
+  }
+
+  .stage {
+    position: relative; z-index: 1;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 40px;
+    padding: 48px 40px;
+  }
+
+  /* Screen-swap transition */
+  .screen-enter { animation: screenIn 360ms cubic-bezier(0.25, 0.8, 0.25, 1); }
+  @keyframes screenIn {
+    0%   { opacity: 0; transform: translateY(8px) scale(0.99); }
+    100% { opacity: 1; transform: translateY(0)   scale(1);    }
+  }
+
+  button, [role="button"] { font-family: inherit; }
+
+  /* Hotspot ripple — for primary actions */
+  .ripple { position: relative; overflow: hidden; }
+  .ripple::after {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(circle at var(--x,50%) var(--y,50%), rgba(255,255,255,0.25), transparent 60%);
+    opacity: 0; transition: opacity 0.5s;
+    pointer-events: none;
+  }
+  .ripple:active::after { opacity: 1; transition: opacity 0s; }
+
+  /* Skryj výchozí placeholder image-slot u avatarů (.bf-photo-slot)
+     — ukazujeme vlastní overlay s iniciály.
+     `::part(empty)` cílí na shadow DOM image-slot komponenty. */
+  image-slot.bf-photo-slot::part(empty) { display: none; }
+  image-slot.bf-photo-slot::part(ring) { opacity: 0.5; }
+
+  /* Toast */
+  @keyframes toastIn {
+    0%   { opacity: 0; transform: translate(-50%, 14px); }
+    100% { opacity: 1; transform: translate(-50%, 0);    }
+  }
+  @keyframes toastOut {
+    0%   { opacity: 1; transform: translate(-50%, 0);    }
+    100% { opacity: 0; transform: translate(-50%, -8px); }
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="image-slot.js"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="screens/shared.jsx"></script>
+<script type="text/babel" src="screens/store.jsx"></script>
+<script type="text/babel" src="screens/MemberDashboard.jsx"></script>
+<script type="text/babel" src="screens/QRPayment.jsx"></script>
+<script type="text/babel" src="screens/MemberCard.jsx"></script>
+<script type="text/babel" src="screens/HistoryScreen.jsx"></script>
+<script type="text/babel" src="screens/BoardScreen.jsx"></script>
+<script type="text/babel" src="screens/ProfileScreen.jsx"></script>
+<script type="text/babel" src="screens/FaultReport.jsx"></script>
+<script type="text/babel" src="screens/AdminDashboard.jsx"></script>
+<script type="text/babel" src="screens/MemberList.jsx"></script>
+<script type="text/babel" src="screens/MemberDetail.jsx"></script>
+<script type="text/babel" src="screens/ApprovalQueue.jsx"></script>
+<script type="text/babel" src="screens/AdminPayments.jsx"></script>
+<script type="text/babel" src="screens/AdminMessages.jsx"></script>
+<script type="text/babel" src="screens/AdminThread.jsx"></script>
+<script type="text/babel" src="screens/AdminMore.jsx"></script>
+<script type="text/babel" src="screens/AddMember.jsx"></script>
+
+<script type="text/babel" data-presets="env,react">
+// ── Tweak defaults ──────────────────────────────────────────────
+const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+  "accent": "#FF4D2E"
+}/*EDITMODE-END*/;
+
+const ACCENT_OPTIONS = ['#FF4D2E', '#FFCC00', '#BF5AF2', '#34C759'];
+
+// ── Screen registry ─────────────────────────────────────────────
+const SCREENS = {
+  // member flow
+  dashboard: { persona: 'member', title: 'Dashboard',        num: '04', comp: () => MemberDashboard },
+  qr:        { persona: 'member', title: 'Prodloužení (QR)', num: '05', comp: () => QRPayment },
+  card:      { persona: 'member', title: 'Členská karta',    num: '09', comp: () => MemberCard },
+  history:   { persona: 'member', title: 'Historie',          num: '06', comp: () => HistoryScreen },
+  board:     { persona: 'member', title: 'Nástěnka',          num: '07', comp: () => BoardScreen },
+  profile:   { persona: 'member', title: 'Profil',            num: '08', comp: () => ProfileScreen },
+  // admin flow
+  admin:      { persona: 'admin',  title: 'Přehled',          num: '10', comp: () => AdminDashboard },
+  list:       { persona: 'admin',  title: 'Seznam členů',     num: '11', comp: () => MemberList },
+  detail:     { persona: 'admin',  title: 'Detail člena',     num: '12', comp: () => MemberDetail },
+  approval:   { persona: 'admin',  title: 'Schvalování',      num: '13', comp: () => ApprovalQueue },
+  payments:   { persona: 'admin',  title: 'Platby',           num: '14', comp: () => AdminPayments },
+  messages:   { persona: 'admin',  title: 'Zprávy',           num: '15', comp: () => AdminMessages },
+  thread:     { persona: 'admin',  title: 'Konverzace',       num: '16', comp: () => AdminThread },
+  adminMore:  { persona: 'admin',  title: 'Více',             num: '17', comp: () => AdminMore },
+  addMember:  { persona: 'admin',  title: 'Nový člen',         num: '18', comp: () => AddMember },
+};
+
+const FLOW = {
+  member: ['dashboard', 'qr', 'card', 'history', 'board', 'profile'],
+  admin:  ['admin', 'list', 'payments', 'messages', 'adminMore', 'detail', 'thread', 'approval', 'addMember'],
+};
+
+const STARTS = { member: 'dashboard', admin: 'admin' };
+
+// ── Phone bezel ─────────────────────────────────────────────────
+function Phone({ children, screenKey }) {
+  return (
+    <div style={{
+      width: 376,
+      borderRadius: 48, position: 'relative',
+      background: '#0F0F10', padding: 8,
+      boxShadow: '0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06), inset 0 1px 0 rgba(255,255,255,0.04)',
+    }}>
+      <div style={{ borderRadius: 40, overflow: 'hidden', background: '#0F0F10', position: 'relative' }}>
+        {/* dynamic-island */}
+        <div style={{ position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)', width: 110, height: 30, borderRadius: 20, background: '#000', zIndex: 100 }}/>
+        <div className="screen-enter" key={screenKey}>
+          {children}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Toast ───────────────────────────────────────────────────────
+function Toast({ message, onDone }) {
+  React.useEffect(() => {
+    if (!message) return;
+    const t = setTimeout(onDone, 2400);
+    return () => clearTimeout(t);
+  }, [message]);
+  if (!message) return null;
+  return (
+    <div style={{
+      position: 'fixed', bottom: 36, left: '50%',
+      transform: 'translateX(-50%)',
+      background: 'rgba(20,20,22,0.92)',
+      backdropFilter: 'blur(20px)',
+      border: '1px solid rgba(255,255,255,0.10)',
+      borderRadius: 100, padding: '12px 20px',
+      fontSize: 13.5, fontWeight: 500, letterSpacing: -0.1,
+      color: '#F5F5F7',
+      animation: 'toastIn 220ms cubic-bezier(0.25,0.8,0.25,1)',
+      display: 'flex', alignItems: 'center', gap: 10,
+      zIndex: 999, boxShadow: '0 20px 40px rgba(0,0,0,0.4)',
+    }}>
+      <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--bf-accent, #FF4D2E)' }}/>
+      {message}
+    </div>
+  );
+}
+
+// ── Side panel: persona, flow, hint ─────────────────────────────
+function SidePanel({ persona, setPersona, current, go, history, onReset }) {
+  return (
+    <div style={{
+      width: 280, color: '#F5F5F7',
+      display: 'flex', flexDirection: 'column', gap: 24,
+      fontFamily: "'Inter', sans-serif",
+    }}>
+      <div>
+        <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 2, color: '#8E8E93', textTransform: 'uppercase' }}>BýtFit Klub</div>
+        <div style={{ fontSize: 22, fontWeight: 700, letterSpacing: -0.6, marginTop: 6 }}>Klikatelný prototyp</div>
+        <div style={{ fontSize: 13, color: '#8E8E93', marginTop: 6, lineHeight: 1.5 }}>
+          Klikej v telefonu — primární akce, spodní nav a řádky vedou dál. Vpravo přepínáš&nbsp;personu.
+        </div>
+      </div>
+
+      {/* Persona toggle */}
+      <div>
+        <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, color: '#5E5E63', textTransform: 'uppercase', marginBottom: 10 }}>Persona</div>
+        <div style={{
+          display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 0,
+          padding: 4, background: '#161618', border: '1px solid #2A2A2D', borderRadius: 12,
+        }}>
+          {['member','admin'].map(p => (
+            <button key={p}
+              onClick={() => setPersona(p)}
+              style={{
+                padding: '10px 12px', borderRadius: 9, border: 'none',
+                fontSize: 13.5, fontWeight: 600, cursor: 'pointer',
+                background: persona === p ? 'var(--bf-accent, #FF4D2E)' : 'transparent',
+                color: persona === p ? '#fff' : '#8E8E93',
+                letterSpacing: -0.2,
+                transition: 'background 160ms, color 160ms',
+              }}>
+              {p === 'member' ? 'Člen' : 'Majitel'}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Flow list */}
+      <div>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 10 }}>
+          <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, color: '#5E5E63', textTransform: 'uppercase' }}>Obrazovky</div>
+          <button onClick={onReset} style={{
+            fontSize: 11, color: '#8E8E93', background: 'transparent', border: 'none',
+            cursor: 'pointer', padding: 0, letterSpacing: -0.1,
+          }}>↺ reset</button>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          {FLOW[persona].map(key => {
+            const s = SCREENS[key];
+            const active = current === key;
+            return (
+              <button key={key} onClick={() => go(key)}
+                style={{
+                  textAlign: 'left', padding: '10px 12px', borderRadius: 10,
+                  background: active ? 'rgba(255,77,46,0.10)' : 'transparent',
+                  border: '1px solid ' + (active ? 'rgba(255,77,46,0.35)' : '#1F1F22'),
+                  color: active ? '#F5F5F7' : '#8E8E93',
+                  cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10,
+                  fontFamily: 'inherit',
+                  transition: 'background 140ms, border-color 140ms, color 140ms',
+                }}>
+                <span style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: active ? 'var(--bf-accent, #FF4D2E)' : '#5E5E63', letterSpacing: 0.4 }}>
+                  {s.num}
+                </span>
+                <span style={{ fontSize: 13.5, fontWeight: active ? 600 : 500, letterSpacing: -0.2 }}>{s.title}</span>
+                {active && <span style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--bf-accent, #FF4D2E)', fontWeight: 600 }}>●</span>}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* History breadcrumb */}
+      <div>
+        <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, color: '#5E5E63', textTransform: 'uppercase', marginBottom: 8 }}>Cesta</div>
+        <div style={{
+          fontFamily: "'JetBrains Mono', monospace", fontSize: 11,
+          color: '#8E8E93', lineHeight: 1.7, wordBreak: 'break-all',
+        }}>
+          {history.length === 0
+            ? <span style={{ color: '#5E5E63' }}>—</span>
+            : history.map((h, i) => (
+                <React.Fragment key={i}>
+                  {i > 0 && <span style={{ color: '#3a3a3d' }}> → </span>}
+                  <span style={{ color: i === history.length - 1 ? 'var(--bf-accent, #FF4D2E)' : '#8E8E93' }}>
+                    {SCREENS[h].num}
+                  </span>
+                </React.Fragment>
+              ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Right rail: keyboard hints + notes ──────────────────────────
+function RightRail({ current, history, back }) {
+  const s = SCREENS[current];
+  return (
+    <div style={{ width: 240, color: '#8E8E93', fontFamily: "'Inter', sans-serif", display: 'flex', flexDirection: 'column', gap: 22 }}>
+      <div>
+        <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, color: '#5E5E63', textTransform: 'uppercase', marginBottom: 8 }}>Aktuální</div>
+        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: 11, color: 'var(--bf-accent, #FF4D2E)', letterSpacing: 0.5 }}>{s.num}</div>
+        <div style={{ fontSize: 16, fontWeight: 600, color: '#F5F5F7', marginTop: 4, letterSpacing: -0.3 }}>{s.title}</div>
+      </div>
+
+      <button onClick={back} disabled={history.length < 2}
+        style={{
+          padding: '10px 14px', borderRadius: 10,
+          background: history.length < 2 ? 'transparent' : '#161618',
+          border: '1px solid #2A2A2D',
+          color: history.length < 2 ? '#3a3a3d' : '#F5F5F7',
+          cursor: history.length < 2 ? 'not-allowed' : 'pointer',
+          fontSize: 13, fontWeight: 500, letterSpacing: -0.2,
+          display: 'inline-flex', alignItems: 'center', gap: 8, width: 'fit-content',
+        }}>
+        ← zpět
+      </button>
+
+      <div>
+        <div style={{ fontSize: 10.5, fontWeight: 700, letterSpacing: 1.4, color: '#5E5E63', textTransform: 'uppercase', marginBottom: 10 }}>Hotspoty</div>
+        <div style={{ fontSize: 12.5, lineHeight: 1.6, color: '#8E8E93' }}>
+          {HOTSPOT_HINTS[current]?.map((h, i) => (
+            <div key={i} style={{ padding: '6px 0', borderBottom: '1px solid #1F1F22', display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+              <span>{h.where}</span>
+              <span style={{ color: '#F5F5F7', fontWeight: 500 }}>{h.to}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ fontSize: 11, color: '#5E5E63', lineHeight: 1.5 }}>
+        Pozn.: telefon je interní scroll — listuj uvnitř bezelu, abys viděl spodní nav.
+      </div>
+    </div>
+  );
+}
+
+const HOTSPOT_HINTS = {
+  dashboard: [
+    { where: 'Prodloužit členství', to: '→ QR' },
+    { where: 'Tvoje karta',         to: '→ Karta' },
+    { where: 'Nástěnka ikona',       to: '→ Nástěnka' },
+    { where: 'Spodní nav',          to: '→ vše' },
+  ],
+  qr: [
+    { where: 'Záložky tarifu',       to: '→ nový QR' },
+    { where: 'Zpět',                to: '→ Dashboard' },
+  ],
+  card: [
+    { where: '✕ zavřít',            to: '→ Dashboard' },
+  ],
+  history: [
+    { where: 'Filtry',              to: '→ filtruje seznam' },
+    { where: 'Spodní nav',          to: '→ ostatní záložky' },
+  ],
+  board: [
+    { where: 'Filtry typu',         to: '→ filtruje příspěvky' },
+    { where: 'Spodní nav',          to: '→ ostatní záložky' },
+  ],
+  profile: [
+    { where: 'Přepínače',            to: '→ toggle' },
+    { where: 'Téma / jazyk',         to: '→ segment' },
+    { where: 'Spodní nav',          to: '→ ostatní záložky' },
+  ],
+  admin: [
+    { where: 'Rychlé akce',         to: '→ Zpráva / Platby / +Člen' },
+    { where: 'Čekající registrace', to: '→ Schvalování' },
+    { where: 'Končí brzy',          to: '→ Seznam' },
+    { where: 'Spodní nav',          to: '→ vše' },
+  ],
+  list: [
+    { where: 'Hledat',              to: '→ filtruje' },
+    { where: 'Filtr chips',         to: '→ stav' },
+    { where: 'Ikona sliderů',       to: '→ Řazení' },
+    { where: '+ tlačítko',           to: '→ Nový člen' },
+    { where: 'Řádek člena',          to: '→ Detail' },
+  ],
+  detail: [
+    { where: 'Zpráva',              to: '→ Vlákno' },
+    { where: 'Zpět',                to: '→ Seznam' },
+  ],
+  approval: [
+    { where: 'Zpět',                to: '→ Admin' },
+    { where: 'Schválit',            to: '→ Admin · toast' },
+    { where: 'Zamítnout',           to: '→ Admin · toast' },
+  ],
+  payments: [
+    { where: 'Filtr stavu',         to: '→ Přijato/Čeká/Po lhůtě' },
+    { where: 'Hledat',              to: '→ filtr člena' },
+    { where: 'Připomenout',         to: '→ odesílá zprávu' },
+    { where: 'Řádek',                to: '→ Detail člena' },
+  ],
+  messages: [
+    { where: 'Hledat',              to: '→ filtruje vlákna' },
+    { where: 'Vlákno',              to: '→ Konverzace' },
+    { where: 'Tužka',               to: '→ Nové vlákno' },
+    { where: 'Hromadně dlužníci',  to: '→ označit nepreč.' },
+  ],
+  thread: [
+    { where: 'Hlavička',            to: '→ Detail' },
+    { where: 'Šablony',             to: '→ vyplní kompozér' },
+    { where: 'Odeslat',             to: '→ přidá do vlákna' },
+  ],
+  adminMore: [
+    { where: 'Schvalování',         to: '→ Schválení' },
+    { where: 'Nástěnka',             to: '→ Nástěnka klubu' },
+    { where: 'Hromadná zpráva',     to: '→ Zprávy' },
+  ],
+  addMember: [
+    { where: 'Tarif',               to: '→ Standard / Student' },
+    { where: 'Délka',               to: '→ 3 / 6 / 12 měs.' },
+    { where: 'Přidat člena',         to: '→ Seznam · toast' },
+  ],
+};
+
+// ── App ─────────────────────────────────────────────────────────
+function App() {
+  const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+  const [persona, setPersonaRaw] = React.useState('member');
+  const [current, setCurrent] = React.useState('dashboard');
+  const [history, setHistory] = React.useState(['dashboard']);
+  const [params, setParams] = React.useState({});
+  const [toast, setToast] = React.useState(null);
+
+  // Accent CSS var
+  React.useEffect(() => {
+    document.documentElement.style.setProperty('--bf-accent', t.accent);
+    const hex = t.accent.replace('#','');
+    const r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+    document.documentElement.style.setProperty('--bf-accent-soft', `rgba(${r},${g},${b},0.14)`);
+  }, [t.accent]);
+
+  const go = React.useCallback((key, extra) => {
+    if (!SCREENS[key]) return;
+    setCurrent(key);
+    setHistory(h => (h[h.length - 1] === key ? h : [...h, key]));
+    // sync persona to screen
+    setPersonaRaw(SCREENS[key].persona);
+    setParams(extra || {});
+    if (extra && extra.toast) setToast(extra.toast);
+  }, []);
+
+  const back = React.useCallback(() => {
+    setHistory(h => {
+      if (h.length < 2) return h;
+      const nh = h.slice(0, -1);
+      const prev = nh[nh.length - 1];
+      setCurrent(prev);
+      setPersonaRaw(SCREENS[prev].persona);
+      return nh;
+    });
+  }, []);
+
+  const setPersona = React.useCallback((p) => {
+    setPersonaRaw(p);
+    const start = STARTS[p];
+    setCurrent(start);
+    setHistory([start]);
+  }, []);
+
+  const onReset = React.useCallback(() => {
+    const start = STARTS[persona];
+    setCurrent(start);
+    setHistory([start]);
+    setToast(null);
+  }, [persona]);
+
+  // Keyboard: esc = back, 1/2 personas
+  React.useEffect(() => {
+    const onKey = (e) => {
+      if (e.key === 'Escape') back();
+      if (e.key === '1') setPersona('member');
+      if (e.key === '2') setPersona('admin');
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [back, setPersona]);
+
+  const ScreenComp = SCREENS[current].comp();
+
+  return (
+    <>
+      <div className="stage">
+        <SidePanel persona={persona} setPersona={setPersona} current={current} go={go} history={history} onReset={onReset}/>
+        <Phone screenKey={current}>
+          <ScreenComp onNav={go} goBack={history.length > 1 ? back : null} {...params}/>
+        </Phone>
+        <RightRail current={current} history={history} back={back}/>
+      </div>
+      <Toast message={toast} onDone={() => setToast(null)}/>
+      <TweaksRoot t={t} setTweak={setTweak}/>
+    </>
+  );
+}
+
+function TweaksRoot({ t, setTweak }) {
+  return (
+    <TweaksPanel title="Tweaks">
+      <TweakSection label="Vzhled">
+        <TweakColor
+          label="Akcentní barva"
+          value={t.accent}
+          onChange={(v) => setTweak('accent', v)}
+          options={ACCENT_OPTIONS}
+        />
+      </TweakSection>
+    </TweaksPanel>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
