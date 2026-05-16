@@ -30,7 +30,9 @@ jobs:
 
       - name: Build web
         # base-href must match the project-site path: https://<user>.github.io/gympass/
-        run: flutter build web --release --base-href /gympass/ --no-tree-shake-icons
+        # pwa-strategy=none: no offline service worker — avoids stale-cache on
+        # every redeploy (this is a frequently-iterated prototype).
+        run: flutter build web --release --base-href /gympass/ --no-tree-shake-icons --pwa-strategy=none
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
