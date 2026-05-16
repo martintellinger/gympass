@@ -31,6 +31,62 @@ class T {
   static const Color errorSoft = Color(0x24FF3B30);
 
   static const Color mutedSoft = Color(0x2A8E8E93); // rgba(142,142,147,0.16)
+
+  /// Board "event" post accent (iOS systemBlue).
+  static const Color event = Color(0xFF5AC8FA);
+
+  // ── Scrims (overlay dimming for sheets / modals / image captions) ──
+  static const Color scrimLight = Color(0x66000000); // 0.40
+  static const Color scrimMedium = Color(0x99000000); // 0.60
+  static const Color scrim = Color(0xA6000000); // 0.65
+  static const Color scrimStrong = Color(0xB3000000); // 0.70
+  static const Color scrimSheet = Color(0x80000000); // 0.50 modal barrier
+
+  /// Heavy translucent panel backgrounds (frosted bars / composers).
+  static const Color glassBar = Color(0xF20F0F10); // bg @ 0.95
+  static const Color glassBarSoft = Color(0xCC141416); // surface @ 0.80
+
+  // ── Elevated surface gradients (card sheen, prototype-faithful) ──
+  static const List<Color> cardSheen = [Color(0xFF161618), Color(0xFF0E0E10)];
+  static const List<Color> cardSheenSoft = [
+    Color(0xFF1E1E20),
+    Color(0xFF161618)
+  ];
+  static const List<Color> cardSheenRaised = [
+    Color(0xFF1A1A1C),
+    Color(0xFF232326)
+  ];
+
+  /// Radial accent glow used behind hero cards.
+  static const List<Color> accentGlowStrong = [
+    Color(0x38FF4D2E),
+    Color(0x00FF4D2E)
+  ];
+  static const List<Color> accentGlow = [Color(0x2EFF4D2E), Color(0x00FF4D2E)];
+}
+
+/// Spacing scale (4-pt grid). Use instead of ad-hoc magic numbers.
+class Space {
+  Space._();
+  static const double xs = 4;
+  static const double sm = 8;
+  static const double md = 12;
+  static const double lg = 16;
+  static const double xl = 20;
+  static const double xxl = 24;
+
+  /// Bottom content inset that clears the persistent tab bar.
+  static const double navClearance = 110;
+}
+
+/// Corner-radius scale.
+class Radii {
+  Radii._();
+  static const double sm = 8;
+  static const double md = 12;
+  static const double lg = 16;
+  static const double xl = 20;
+  static const double pill = 999;
 }
 
 /// Status keys used by StatusPill / StatusDot.
