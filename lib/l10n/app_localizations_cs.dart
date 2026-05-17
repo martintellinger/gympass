@@ -706,6 +706,189 @@ class LCs extends L {
   String get amoreBackupSub => 'Poslední záloha · dnes 03:00';
 
   @override
+  String get amoreImportLabel => 'Import z Excelu';
+
+  @override
+  String get amoreImportSub => 'Migrace a opakovaný import s rozdílem';
+
+  @override
+  String get ximpTitle => 'Import z Excelu';
+
+  @override
+  String ximpStepOf(int step, int total) {
+    return '$step/$total';
+  }
+
+  @override
+  String get ximpPickTitle => 'Migrace ze seznamu členů';
+
+  @override
+  String get ximpPickBody =>
+      'Nahraj aktuální Excel (seznam_clenu.xlsx). App ti ukáže, co je nové a co se změnilo — nic nepřepíše bez tvého potvrzení.';
+
+  @override
+  String get ximpPickCta => 'Vybrat soubor (.xlsx)';
+
+  @override
+  String get ximpPickNote =>
+      'Excel zůstává hlavní evidence. Import jde opakovat — stejný soubor nic nerozbije.';
+
+  @override
+  String get ximpParsing => 'Čtu a porovnávám řádky…';
+
+  @override
+  String get ximpFieldName => 'Jméno';
+
+  @override
+  String get ximpFieldEmail => 'E-mail';
+
+  @override
+  String get ximpFieldPhone => 'Telefon';
+
+  @override
+  String get ximpFieldTariff => 'Tarif';
+
+  @override
+  String get ximpFieldPrice => 'Cena za měsíc';
+
+  @override
+  String get ximpFieldKey => 'Klíč';
+
+  @override
+  String ximpMappingTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Načteno $count řádků',
+      few: 'Načteny $count řádky',
+      one: 'Načten $count řádek',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ximpMappingBody =>
+      'Sloupce z Excelu napárované na pole v aplikaci. Co aplikace nezná, zůstává jen v Excelu.';
+
+  @override
+  String get ximpMappingCta => 'Pokračovat na rozdíl';
+
+  @override
+  String ximpSumAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count nových',
+      few: '$count noví',
+      one: '$count nový',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ximpSumChanged(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count změn',
+      few: '$count změny',
+      one: '$count změna',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ximpSumConflict(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count konfliktů',
+      few: '$count konflikty',
+      one: '$count konflikt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ximpSumUnchanged(int count) {
+    return '$count beze změny';
+  }
+
+  @override
+  String get ximpKindAdded => 'Nový';
+
+  @override
+  String get ximpKindChanged => 'Změna';
+
+  @override
+  String get ximpKindConflict => 'Konflikt';
+
+  @override
+  String get ximpKindUnchanged => 'Beze změny';
+
+  @override
+  String ximpChangedFields(Object fields) {
+    return 'Mění se: $fields';
+  }
+
+  @override
+  String get ximpIncludeNew => 'Přidat tohoto člena';
+
+  @override
+  String get ximpApplyChange => 'Použít tuto změnu';
+
+  @override
+  String get ximpKeepApp => 'Appka';
+
+  @override
+  String get ximpTakeExcel => 'Excel';
+
+  @override
+  String get ximpSkip => 'Přeskočit';
+
+  @override
+  String ximpApplyCta(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Importovat $count záznamů',
+      few: 'Importovat $count záznamy',
+      one: 'Importovat $count záznam',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ximpDoneTitle => 'Hotovo';
+
+  @override
+  String ximpDoneBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Zapsáno $count záznamů do evidence.',
+      few: 'Zapsány $count záznamy do evidence.',
+      one: 'Zapsán $count záznam do evidence.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ximpDoneCta => 'Zavřít';
+
+  @override
+  String ximpDoneToast(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Import · $count záznamů',
+      few: 'Import · $count záznamy',
+      one: 'Import · $count záznam',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get amoreSectionAccount => 'Účet';
 
   @override

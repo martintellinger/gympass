@@ -138,6 +138,13 @@ class AdminMoreScreen extends ConsumerWidget {
                 _SectionLabel(l.amoreSectionData),
                 _MoreCard(children: [
                   _MoreRow(
+                    icon: 'copy',
+                    label: l.amoreImportLabel,
+                    sub: l.amoreImportSub,
+                    onTap: () => nav('excelImport'),
+                  ),
+                  const _MoreDivider(),
+                  _MoreRow(
                     icon: 'download',
                     label: l.amoreExportLabel,
                     sub: l.amoreExportSub,

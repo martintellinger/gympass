@@ -707,6 +707,182 @@ class LEn extends L {
   String get amoreBackupSub => 'Last backup · today 03:00';
 
   @override
+  String get amoreImportLabel => 'Import from Excel';
+
+  @override
+  String get amoreImportSub => 'Migration and repeatable import with diff';
+
+  @override
+  String get ximpTitle => 'Import from Excel';
+
+  @override
+  String ximpStepOf(int step, int total) {
+    return '$step/$total';
+  }
+
+  @override
+  String get ximpPickTitle => 'Migrate from the members list';
+
+  @override
+  String get ximpPickBody =>
+      'Upload the current Excel (seznam_clenu.xlsx). The app shows what\'s new and what changed — nothing is overwritten without your confirmation.';
+
+  @override
+  String get ximpPickCta => 'Choose file (.xlsx)';
+
+  @override
+  String get ximpPickNote =>
+      'Excel stays the source of record. The import is repeatable — the same file breaks nothing.';
+
+  @override
+  String get ximpParsing => 'Reading and comparing rows…';
+
+  @override
+  String get ximpFieldName => 'Name';
+
+  @override
+  String get ximpFieldEmail => 'E-mail';
+
+  @override
+  String get ximpFieldPhone => 'Phone';
+
+  @override
+  String get ximpFieldTariff => 'Tariff';
+
+  @override
+  String get ximpFieldPrice => 'Price per month';
+
+  @override
+  String get ximpFieldKey => 'Key';
+
+  @override
+  String ximpMappingTitle(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count rows loaded',
+      one: '$count row loaded',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ximpMappingBody =>
+      'Excel columns mapped to fields in the app. Anything the app doesn\'t model stays in Excel only.';
+
+  @override
+  String get ximpMappingCta => 'Continue to diff';
+
+  @override
+  String ximpSumAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count new',
+      one: '$count new',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ximpSumChanged(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count changes',
+      one: '$count change',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ximpSumConflict(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count conflicts',
+      one: '$count conflict',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String ximpSumUnchanged(int count) {
+    return '$count unchanged';
+  }
+
+  @override
+  String get ximpKindAdded => 'New';
+
+  @override
+  String get ximpKindChanged => 'Change';
+
+  @override
+  String get ximpKindConflict => 'Conflict';
+
+  @override
+  String get ximpKindUnchanged => 'Unchanged';
+
+  @override
+  String ximpChangedFields(Object fields) {
+    return 'Changing: $fields';
+  }
+
+  @override
+  String get ximpIncludeNew => 'Add this member';
+
+  @override
+  String get ximpApplyChange => 'Apply this change';
+
+  @override
+  String get ximpKeepApp => 'App';
+
+  @override
+  String get ximpTakeExcel => 'Excel';
+
+  @override
+  String get ximpSkip => 'Skip';
+
+  @override
+  String ximpApplyCta(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Import $count records',
+      one: 'Import $count record',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ximpDoneTitle => 'Done';
+
+  @override
+  String ximpDoneBody(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count records written to the roster.',
+      one: '$count record written to the roster.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get ximpDoneCta => 'Close';
+
+  @override
+  String ximpDoneToast(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Import · $count records',
+      one: 'Import · $count record',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get amoreSectionAccount => 'Account';
 
   @override

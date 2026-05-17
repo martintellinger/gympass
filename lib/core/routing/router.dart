@@ -9,6 +9,7 @@ import '../../features/admin/admin_payments.dart';
 import '../../features/admin/admin_thread.dart';
 import '../../features/admin/approval_queue.dart';
 import '../../features/admin/broadcast_composer.dart';
+import '../../features/admin/excel_import/excel_import_wizard.dart';
 import '../../features/admin/member_detail.dart';
 import '../../features/admin/member_list.dart';
 import '../../features/member/board_screen.dart';
@@ -77,6 +78,8 @@ final appRouter = GoRouter(
         path: '/admin/approval',
         builder: (c, s) => const ApprovalQueueScreen()),
     GoRoute(path: '/admin/add', builder: (c, s) => const AddMemberScreen()),
+    GoRoute(
+        path: '/admin/import', builder: (c, s) => const ExcelImportWizard()),
     GoRoute(
         path: '/admin/broadcast',
         builder: (c, s) => const BroadcastComposerScreen()),

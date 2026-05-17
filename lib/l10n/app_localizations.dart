@@ -1375,6 +1375,228 @@ abstract class L {
   /// **'Poslední záloha · dnes 03:00'**
   String get amoreBackupSub;
 
+  /// No description provided for @amoreImportLabel.
+  ///
+  /// In cs, this message translates to:
+  /// **'Import z Excelu'**
+  String get amoreImportLabel;
+
+  /// No description provided for @amoreImportSub.
+  ///
+  /// In cs, this message translates to:
+  /// **'Migrace a opakovaný import s rozdílem'**
+  String get amoreImportSub;
+
+  /// No description provided for @ximpTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Import z Excelu'**
+  String get ximpTitle;
+
+  /// No description provided for @ximpStepOf.
+  ///
+  /// In cs, this message translates to:
+  /// **'{step}/{total}'**
+  String ximpStepOf(int step, int total);
+
+  /// No description provided for @ximpPickTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Migrace ze seznamu členů'**
+  String get ximpPickTitle;
+
+  /// No description provided for @ximpPickBody.
+  ///
+  /// In cs, this message translates to:
+  /// **'Nahraj aktuální Excel (seznam_clenu.xlsx). App ti ukáže, co je nové a co se změnilo — nic nepřepíše bez tvého potvrzení.'**
+  String get ximpPickBody;
+
+  /// No description provided for @ximpPickCta.
+  ///
+  /// In cs, this message translates to:
+  /// **'Vybrat soubor (.xlsx)'**
+  String get ximpPickCta;
+
+  /// No description provided for @ximpPickNote.
+  ///
+  /// In cs, this message translates to:
+  /// **'Excel zůstává hlavní evidence. Import jde opakovat — stejný soubor nic nerozbije.'**
+  String get ximpPickNote;
+
+  /// No description provided for @ximpParsing.
+  ///
+  /// In cs, this message translates to:
+  /// **'Čtu a porovnávám řádky…'**
+  String get ximpParsing;
+
+  /// No description provided for @ximpFieldName.
+  ///
+  /// In cs, this message translates to:
+  /// **'Jméno'**
+  String get ximpFieldName;
+
+  /// No description provided for @ximpFieldEmail.
+  ///
+  /// In cs, this message translates to:
+  /// **'E-mail'**
+  String get ximpFieldEmail;
+
+  /// No description provided for @ximpFieldPhone.
+  ///
+  /// In cs, this message translates to:
+  /// **'Telefon'**
+  String get ximpFieldPhone;
+
+  /// No description provided for @ximpFieldTariff.
+  ///
+  /// In cs, this message translates to:
+  /// **'Tarif'**
+  String get ximpFieldTariff;
+
+  /// No description provided for @ximpFieldPrice.
+  ///
+  /// In cs, this message translates to:
+  /// **'Cena za měsíc'**
+  String get ximpFieldPrice;
+
+  /// No description provided for @ximpFieldKey.
+  ///
+  /// In cs, this message translates to:
+  /// **'Klíč'**
+  String get ximpFieldKey;
+
+  /// No description provided for @ximpMappingTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count, plural, one{Načten {count} řádek} few{Načteny {count} řádky} other{Načteno {count} řádků}}'**
+  String ximpMappingTitle(int count);
+
+  /// No description provided for @ximpMappingBody.
+  ///
+  /// In cs, this message translates to:
+  /// **'Sloupce z Excelu napárované na pole v aplikaci. Co aplikace nezná, zůstává jen v Excelu.'**
+  String get ximpMappingBody;
+
+  /// No description provided for @ximpMappingCta.
+  ///
+  /// In cs, this message translates to:
+  /// **'Pokračovat na rozdíl'**
+  String get ximpMappingCta;
+
+  /// No description provided for @ximpSumAdded.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count, plural, one{{count} nový} few{{count} noví} other{{count} nových}}'**
+  String ximpSumAdded(int count);
+
+  /// No description provided for @ximpSumChanged.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count, plural, one{{count} změna} few{{count} změny} other{{count} změn}}'**
+  String ximpSumChanged(int count);
+
+  /// No description provided for @ximpSumConflict.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count, plural, one{{count} konflikt} few{{count} konflikty} other{{count} konfliktů}}'**
+  String ximpSumConflict(int count);
+
+  /// No description provided for @ximpSumUnchanged.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count} beze změny'**
+  String ximpSumUnchanged(int count);
+
+  /// No description provided for @ximpKindAdded.
+  ///
+  /// In cs, this message translates to:
+  /// **'Nový'**
+  String get ximpKindAdded;
+
+  /// No description provided for @ximpKindChanged.
+  ///
+  /// In cs, this message translates to:
+  /// **'Změna'**
+  String get ximpKindChanged;
+
+  /// No description provided for @ximpKindConflict.
+  ///
+  /// In cs, this message translates to:
+  /// **'Konflikt'**
+  String get ximpKindConflict;
+
+  /// No description provided for @ximpKindUnchanged.
+  ///
+  /// In cs, this message translates to:
+  /// **'Beze změny'**
+  String get ximpKindUnchanged;
+
+  /// No description provided for @ximpChangedFields.
+  ///
+  /// In cs, this message translates to:
+  /// **'Mění se: {fields}'**
+  String ximpChangedFields(Object fields);
+
+  /// No description provided for @ximpIncludeNew.
+  ///
+  /// In cs, this message translates to:
+  /// **'Přidat tohoto člena'**
+  String get ximpIncludeNew;
+
+  /// No description provided for @ximpApplyChange.
+  ///
+  /// In cs, this message translates to:
+  /// **'Použít tuto změnu'**
+  String get ximpApplyChange;
+
+  /// No description provided for @ximpKeepApp.
+  ///
+  /// In cs, this message translates to:
+  /// **'Appka'**
+  String get ximpKeepApp;
+
+  /// No description provided for @ximpTakeExcel.
+  ///
+  /// In cs, this message translates to:
+  /// **'Excel'**
+  String get ximpTakeExcel;
+
+  /// No description provided for @ximpSkip.
+  ///
+  /// In cs, this message translates to:
+  /// **'Přeskočit'**
+  String get ximpSkip;
+
+  /// No description provided for @ximpApplyCta.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count, plural, one{Importovat {count} záznam} few{Importovat {count} záznamy} other{Importovat {count} záznamů}}'**
+  String ximpApplyCta(int count);
+
+  /// No description provided for @ximpDoneTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Hotovo'**
+  String get ximpDoneTitle;
+
+  /// No description provided for @ximpDoneBody.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count, plural, one{Zapsán {count} záznam do evidence.} few{Zapsány {count} záznamy do evidence.} other{Zapsáno {count} záznamů do evidence.}}'**
+  String ximpDoneBody(int count);
+
+  /// No description provided for @ximpDoneCta.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zavřít'**
+  String get ximpDoneCta;
+
+  /// No description provided for @ximpDoneToast.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count, plural, one{Import · {count} záznam} few{Import · {count} záznamy} other{Import · {count} záznamů}}'**
+  String ximpDoneToast(int count);
+
   /// No description provided for @amoreSectionAccount.
   ///
   /// In cs, this message translates to:

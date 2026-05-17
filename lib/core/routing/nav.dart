@@ -44,6 +44,8 @@ String routeToPath(String route, {Object? arg}) {
       return '/admin/add';
     case 'broadcast':
       return '/admin/broadcast';
+    case 'excelImport':
+      return '/admin/import';
     case 'detail':
       return '/admin/member/${arg ?? ''}';
     case 'thread':

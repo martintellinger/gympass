@@ -220,6 +220,76 @@
   "amoreExportSub": "For accounting · last 12 months",
   "amoreBackupLabel": "Database backup",
   "amoreBackupSub": "Last backup · today 03:00",
+  "amoreImportLabel": "Import from Excel",
+  "amoreImportSub": "Migration and repeatable import with diff",
+  "ximpTitle": "Import from Excel",
+  "ximpStepOf": "{step}/{total}",
+  "@ximpStepOf": {
+    "placeholders": {
+      "step": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "ximpPickTitle": "Migrate from the members list",
+  "ximpPickBody": "Upload the current Excel (seznam_clenu.xlsx). The app shows what's new and what changed — nothing is overwritten without your confirmation.",
+  "ximpPickCta": "Choose file (.xlsx)",
+  "ximpPickNote": "Excel stays the source of record. The import is repeatable — the same file breaks nothing.",
+  "ximpParsing": "Reading and comparing rows…",
+  "ximpFieldName": "Name",
+  "ximpFieldEmail": "E-mail",
+  "ximpFieldPhone": "Phone",
+  "ximpFieldTariff": "Tariff",
+  "ximpFieldPrice": "Price per month",
+  "ximpFieldKey": "Key",
+  "ximpMappingTitle": "{count, plural, one{{count} row loaded} other{{count} rows loaded}}",
+  "@ximpMappingTitle": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ximpMappingBody": "Excel columns mapped to fields in the app. Anything the app doesn't model stays in Excel only.",
+  "ximpMappingCta": "Continue to diff",
+  "ximpSumAdded": "{count, plural, one{{count} new} other{{count} new}}",
+  "@ximpSumAdded": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ximpSumChanged": "{count, plural, one{{count} change} other{{count} changes}}",
+  "@ximpSumChanged": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ximpSumConflict": "{count, plural, one{{count} conflict} other{{count} conflicts}}",
+  "@ximpSumConflict": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ximpSumUnchanged": "{count} unchanged",
+  "@ximpSumUnchanged": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ximpKindAdded": "New",
+  "ximpKindChanged": "Change",
+  "ximpKindConflict": "Conflict",
+  "ximpKindUnchanged": "Unchanged",
+  "ximpChangedFields": "Changing: {fields}",
+  "@ximpChangedFields": {
+    "placeholders": { "fields": {} }
+  },
+  "ximpIncludeNew": "Add this member",
+  "ximpApplyChange": "Apply this change",
+  "ximpKeepApp": "App",
+  "ximpTakeExcel": "Excel",
+  "ximpSkip": "Skip",
+  "ximpApplyCta": "{count, plural, one{Import {count} record} other{Import {count} records}}",
+  "@ximpApplyCta": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ximpDoneTitle": "Done",
+  "ximpDoneBody": "{count, plural, one{{count} record written to the roster.} other{{count} records written to the roster.}}",
+  "@ximpDoneBody": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ximpDoneCta": "Close",
+  "ximpDoneToast": "{count, plural, one{Import · {count} record} other{Import · {count} records}}",
+  "@ximpDoneToast": {
+    "placeholders": { "count": { "type": "int" } }
+  },
   "amoreSectionAccount": "Account",
   "amoreHelpLabel": "Help & FAQ",
   "amoreHelpSub": "App rules, questions",

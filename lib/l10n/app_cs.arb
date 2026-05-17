@@ -306,6 +306,76 @@
   "amoreExportSub": "Pro účetnictví · poslední 12 měsíců",
   "amoreBackupLabel": "Záloha databáze",
   "amoreBackupSub": "Poslední záloha · dnes 03:00",
+  "amoreImportLabel": "Import z Excelu",
+  "amoreImportSub": "Migrace a opakovaný import s rozdílem",
+  "ximpTitle": "Import z Excelu",
+  "ximpStepOf": "{step}/{total}",
+  "@ximpStepOf": {
+    "placeholders": {
+      "step": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "ximpPickTitle": "Migrace ze seznamu členů",
+  "ximpPickBody": "Nahraj aktuální Excel (seznam_clenu.xlsx). App ti ukáže, co je nové a co se změnilo — nic nepřepíše bez tvého potvrzení.",
+  "ximpPickCta": "Vybrat soubor (.xlsx)",
+  "ximpPickNote": "Excel zůstává hlavní evidence. Import jde opakovat — stejný soubor nic nerozbije.",
+  "ximpParsing": "Čtu a porovnávám řádky…",
+  "ximpFieldName": "Jméno",
+  "ximpFieldEmail": "E-mail",
+  "ximpFieldPhone": "Telefon",
+  "ximpFieldTariff": "Tarif",
+  "ximpFieldPrice": "Cena za měsíc",
+  "ximpFieldKey": "Klíč",
+  "ximpMappingTitle": "{count, plural, one{Načten {count} řádek} few{Načteny {count} řádky} other{Načteno {count} řádků}}",
+  "@ximpMappingTitle": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ximpMappingBody": "Sloupce z Excelu napárované na pole v aplikaci. Co aplikace nezná, zůstává jen v Excelu.",
+  "ximpMappingCta": "Pokračovat na rozdíl",
+  "ximpSumAdded": "{count, plural, one{{count} nový} few{{count} noví} other{{count} nových}}",
+  "@ximpSumAdded": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ximpSumChanged": "{count, plural, one{{count} změna} few{{count} změny} other{{count} změn}}",
+  "@ximpSumChanged": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ximpSumConflict": "{count, plural, one{{count} konflikt} few{{count} konflikty} other{{count} konfliktů}}",
+  "@ximpSumConflict": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ximpSumUnchanged": "{count} beze změny",
+  "@ximpSumUnchanged": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ximpKindAdded": "Nový",
+  "ximpKindChanged": "Změna",
+  "ximpKindConflict": "Konflikt",
+  "ximpKindUnchanged": "Beze změny",
+  "ximpChangedFields": "Mění se: {fields}",
+  "@ximpChangedFields": {
+    "placeholders": { "fields": {} }
+  },
+  "ximpIncludeNew": "Přidat tohoto člena",
+  "ximpApplyChange": "Použít tuto změnu",
+  "ximpKeepApp": "Appka",
+  "ximpTakeExcel": "Excel",
+  "ximpSkip": "Přeskočit",
+  "ximpApplyCta": "{count, plural, one{Importovat {count} záznam} few{Importovat {count} záznamy} other{Importovat {count} záznamů}}",
+  "@ximpApplyCta": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ximpDoneTitle": "Hotovo",
+  "ximpDoneBody": "{count, plural, one{Zapsán {count} záznam do evidence.} few{Zapsány {count} záznamy do evidence.} other{Zapsáno {count} záznamů do evidence.}}",
+  "@ximpDoneBody": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "ximpDoneCta": "Zavřít",
+  "ximpDoneToast": "{count, plural, one{Import · {count} záznam} few{Import · {count} záznamy} other{Import · {count} záznamů}}",
+  "@ximpDoneToast": {
+    "placeholders": { "count": { "type": "int" } }
+  },
   "amoreSectionAccount": "Účet",
   "amoreHelpLabel": "Nápověda & FAQ",
   "amoreHelpSub": "Pravidla aplikace, dotazy",
