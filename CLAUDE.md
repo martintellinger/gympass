@@ -204,4 +204,24 @@ lib/
 - [~] **Fáze 11 — Polish**: ✅ haptika (`core/utils/haptics.dart`, centrálně v AppButton/BottomNav/toast), press+entrance animace, themed toast, empty states sjednoceny (history doplněn), Skeleton primitiv · ⬜ error/offline stavy a skutečný skeleton-loading vznikají s async/Supabase vrstvou
 - [ ] **Fáze 12 — Build & TestFlight/Internal track** (Android SDK + CocoaPods nejsou v tomto prostředí; `flutter build web` ✓, `flutter analyze` 0 issues, `flutter test` ✓)
 
+### Testy & doménová logika (2026-05-17)
+
+- **Test suite: 80 testů, zelená** (`flutter test`). Pokrytí:
+  - `test/format_test.dart`, `test/store_test.dart` — formátování + mock store.
+  - `test/import_diff_test.dart`, `test/wizard_flow_test.dart` — Excel migrace.
+  - `test/screens_smoke_test.dart` — všech 18 obrazovek render v cs/en ×
+    dark/light na design rámci 402×874 (chytá chybějící l10n / null / crash).
+  - `test/domain/*` — 41 testů doménové vrstvy.
+- **`lib/core/domain/` — čisté, otestované business funkce** (zatím
+  NEnapojené na UI/store; napojí se s Supabase — UI dál běží na mock storu):
+  `membership.dart` (expirace + billing_day vč. edge 31→poslední den měsíce,
+  přičítání platby k expiraci §2–§4), `deposit.dart` (kauce +30 dní §5),
+  `notifications.dart` (plán −14/−3/0/+1/+7/+30 §10), `opening_hours.dart`
+  (indikátor otevřeno/zavřeno §14–15), `revenue.dart` (oddělení
+  is_historical §9). Produktové předpoklady popsány v doc-comments + handoffu.
+- **Smoke test odhalil a opravil 8 reálných layout bugů** na 402px (design
+  šířka): infinite-height crash na admin dashboardu + 7× horizontal
+  overflow (history/board/member_list/thread/wizard/dashboard) — text
+  zabalen do Flexible/ellipsis, akční chipy do Wrap.
+
 Claude Code: po dokončení fáze odškrtni checkbox a commitni `chore: complete phase X`.
