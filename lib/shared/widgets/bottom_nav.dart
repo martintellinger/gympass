@@ -75,11 +75,13 @@ class BottomNav extends StatelessWidget {
             builder: (context, c) {
               final n = items.length;
               final slotW = c.maxWidth / n;
-              const capsuleH = 44.0;
+              // Bigger active chip without growing the bar: rowH (and the
+              // outer padding) stay fixed, only the chip itself grows.
+              const capsuleH = 50.0;
               // Row taller than the chip → visible breathing room above
               // and below the active selection chip ((rowH-capsuleH)/2).
               const rowH = 56.0;
-              final capsuleW = slotW.clamp(46.0, 68.0);
+              final capsuleW = slotW.clamp(52.0, 78.0);
 
               return SizedBox(
                 height: rowH,
