@@ -22,7 +22,7 @@ import '../../features/member/qr_payment.dart';
 import '../../shared/widgets/app_shell.dart';
 import 'persona_picker.dart';
 
-final _memberKeys = List.generate(4, (_) => GlobalKey<NavigatorState>());
+final _memberKeys = List.generate(5, (_) => GlobalKey<NavigatorState>());
 final _adminKeys = List.generate(5, (_) => GlobalKey<NavigatorState>());
 
 StatefulShellBranch _branch(GlobalKey<NavigatorState> key, String path,
@@ -49,6 +49,8 @@ final appRouter = GoRouter(
             (c, s) => const HistoryScreenView()),
         _branch(_memberKeys[3], '/member/board',
             (c, s) => const BoardScreenView()),
+        _branch(_memberKeys[4], '/member/profile',
+            (c, s) => const ProfileScreenView()),
       ],
     ),
 
@@ -70,9 +72,6 @@ final appRouter = GoRouter(
     ),
 
     // ── Full-screen sub-pages (push above the shell, no tab bar) ──
-    GoRoute(
-        path: '/member/profile',
-        builder: (c, s) => const ProfileScreenView()),
     GoRoute(path: '/member/qr', builder: (c, s) => const QrPaymentScreen()),
     GoRoute(path: '/member/fault', builder: (c, s) => const FaultReportScreen()),
     GoRoute(

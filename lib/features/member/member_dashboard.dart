@@ -9,7 +9,6 @@ import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_button.dart';
 import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/app_icon.dart';
-import '../../shared/widgets/round_icon_button.dart';
 import '../../shared/widgets/screen_frame.dart';
 import '../../shared/widgets/status_pill.dart';
 
@@ -33,24 +32,14 @@ class MemberDashboardScreen extends ConsumerWidget {
                 // Top header — minimal
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 4, 24, 0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'BÝTFIT',
-                        style: AppType.ui(
-                          size: 13,
-                          weight: FontWeight.w600,
-                          color: T.text2,
-                          letterSpacing: 0.4,
-                        ),
-                      ),
-                      RoundIconButton(
-                        icon: 'user',
-                        iconColor: T.text2,
-                        onTap: () => nav('profile'),
-                      ),
-                    ],
+                  child: Text(
+                    'BÝTFIT',
+                    style: AppType.ui(
+                      size: 13,
+                      weight: FontWeight.w600,
+                      color: T.text2,
+                      letterSpacing: 0.4,
+                    ),
                   ),
                 ),
 

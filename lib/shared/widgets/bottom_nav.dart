@@ -202,7 +202,7 @@ class BottomNav extends StatelessWidget {
   }
 }
 
-const memberNavRoutes = ['dashboard', 'card', 'history', 'board'];
+const memberNavRoutes = ['dashboard', 'card', 'history', 'board', 'profile'];
 
 class MemberBottomNav extends StatelessWidget {
   final int active;
@@ -227,6 +227,7 @@ class MemberBottomNav extends StatelessWidget {
         NavItem(icon: 'card', label: l.navCard),
         NavItem(icon: 'history', label: l.navHistory),
         NavItem(icon: 'board', label: l.navBoard),
+        NavItem(icon: 'user', label: l.navProfile),
       ],
     );
   }
