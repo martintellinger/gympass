@@ -59,17 +59,6 @@ class AdminDashboardScreen extends ConsumerWidget {
                         ],
                       ),
                     ),
-                    Container(
-                      width: 36,
-                      height: 36,
-                      decoration: BoxDecoration(
-                        color: T.surface,
-                        shape: BoxShape.circle,
-                        border: Border.all(color: T.border),
-                      ),
-                      alignment: Alignment.center,
-                      child: AppIcon('bell', size: 18, color: T.text2),
-                    ),
                   ],
                 ),
 
