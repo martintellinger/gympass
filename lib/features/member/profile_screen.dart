@@ -205,7 +205,7 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                     icon: 'message',
                     label: L.of(context).profWriteToOlda,
                     sub: L.of(context).profWriteToOldaSub,
-                    onTap: () => nav('thread', arg: 'pavel'),
+                    onTap: () => nav('mthread', arg: 'olda'),
                   ),
                 ]),
 

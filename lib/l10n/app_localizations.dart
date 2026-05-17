@@ -2568,6 +2568,90 @@ abstract class L {
   /// In cs, this message translates to:
   /// **'Použít'**
   String get mlistSheetApply;
+
+  /// No description provided for @mmsgTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zprávy'**
+  String get mmsgTitle;
+
+  /// No description provided for @mmsgAllRead.
+  ///
+  /// In cs, this message translates to:
+  /// **'Vše přečteno'**
+  String get mmsgAllRead;
+
+  /// No description provided for @mmsgUnreadCount.
+  ///
+  /// In cs, this message translates to:
+  /// **'{count, plural, one{{count} nepřečtená} few{{count} nepřečtené} other{{count} nepřečtených}}'**
+  String mmsgUnreadCount(int count);
+
+  /// No description provided for @mmsgOwnerTag.
+  ///
+  /// In cs, this message translates to:
+  /// **'PROVOZ'**
+  String get mmsgOwnerTag;
+
+  /// No description provided for @mmsgYouPrefix.
+  ///
+  /// In cs, this message translates to:
+  /// **'Já:'**
+  String get mmsgYouPrefix;
+
+  /// No description provided for @mmsgNoMessagesYet.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zatím žádné zprávy'**
+  String get mmsgNoMessagesYet;
+
+  /// No description provided for @mmsgComposeTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Nová zpráva'**
+  String get mmsgComposeTitle;
+
+  /// No description provided for @mmsgComposeSearchHint.
+  ///
+  /// In cs, this message translates to:
+  /// **'Hledat člena…'**
+  String get mmsgComposeSearchHint;
+
+  /// No description provided for @mthrOwnerName.
+  ///
+  /// In cs, this message translates to:
+  /// **'Olda'**
+  String get mthrOwnerName;
+
+  /// No description provided for @mthrOwnerRole.
+  ///
+  /// In cs, this message translates to:
+  /// **'Provozovatel · BýtFit Klub'**
+  String get mthrOwnerRole;
+
+  /// No description provided for @mthrMemberRole.
+  ///
+  /// In cs, this message translates to:
+  /// **'člen'**
+  String get mthrMemberRole;
+
+  /// No description provided for @mthrEmptyOwner.
+  ///
+  /// In cs, this message translates to:
+  /// **'Napiš Oldovi cokoliv — od dotazu k platbě po hlášení závady.'**
+  String get mthrEmptyOwner;
+
+  /// No description provided for @mthrEmptyPeer.
+  ///
+  /// In cs, this message translates to:
+  /// **'Začni konverzaci s {name}.'**
+  String mthrEmptyPeer(String name);
+
+  /// No description provided for @mthrComposerHint.
+  ///
+  /// In cs, this message translates to:
+  /// **'Napiš {name}…'**
+  String mthrComposerHint(String name);
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

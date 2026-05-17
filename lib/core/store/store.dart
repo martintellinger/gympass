@@ -9,6 +9,16 @@ import 'models.dart';
 final DateTime kNow = DateTime(2026, 5, 16, 9, 41, 0);
 DateTime _ago(int min) => kNow.subtract(Duration(minutes: min));
 
+/// The logged-in member in this mock build (auth not wired yet — every
+/// member screen acts as Pavel). Owner conversation uses the sentinel id
+/// [kOwnerId] so member↔owner and member↔member share one inbox.
+const String kCurrentMemberId = 'pavel';
+const String kOwnerId = 'olda';
+
+/// Canonical key for a member↔member thread — order-independent so
+/// (pavel,eva) and (eva,pavel) map to the same conversation.
+String pairKey(String a, String b) => (([a, b])..sort()).join('|');
+
 /// Mock store — 1:1 port of store.jsx, exposed as a ChangeNotifier so
 /// Riverpod widgets re-render on mutation (replaces the JS pub/sub).
 class GymStore extends ChangeNotifier {
@@ -59,6 +69,20 @@ class GymStore extends ChangeNotifier {
     ],
     'lukas': [
       Message(from: 'olda', text: 'Lukáši, končí ti za 3 dny — pošlu QR?', at: _ago(60 * 3)),
+    ],
+  };
+
+  /// Member↔member conversations, keyed by [pairKey]. `Message.from` holds
+  /// the sender's member id (not 'olda'/'member' like owner threads).
+  final Map<String, List<Message>> peerThreads = {
+    'eva|pavel': [
+      Message(from: 'eva', text: 'Ahoj Pavle, nešel bys zítra v 18 na nohy? Ať na to nejsem sám.', at: _ago(60 * 5)),
+      Message(from: 'pavel', text: 'Jo můžu, akorát dorazím spíš v 18:15.', at: _ago(60 * 4)),
+      Message(from: 'eva', text: 'Super, dík. Budu u stojanu.', at: _ago(40)),
+    ],
+    'adam|pavel': [
+      Message(from: 'pavel', text: 'Adame, nezapomněl jsi tu včera ručník u laviček?', at: _ago(60 * 26)),
+      Message(from: 'adam', text: 'Jo to je můj, dík žes napsal. Vyzvednu si ho dnes.', at: _ago(60 * 25), read: true),
     ],
   };
 
@@ -194,6 +218,114 @@ class GymStore extends ChangeNotifier {
 
   int totalUnread() =>
       threads.values.fold(0, (s, msgs) => s + _unread(msgs));
+
+  // ── Member-side messaging (owner conversation + member↔member) ──────────
+
+  /// Trailing unread messages *not* sent by [meId]. For the owner thread the
+  /// counterpart is `'olda'`; for peer threads it is the other member's id.
+  int _trailingUnread(List<Message> msgs, bool Function(Message) fromOther) {
+    var c = 0;
+    for (var i = msgs.length - 1; i >= 0; i--) {
+      if (fromOther(msgs[i]) && !msgs[i].read) {
+        c++;
+      } else {
+        break;
+      }
+    }
+    return c;
+  }
+
+  /// Normalised bubble list for [meId]'s view of a conversation. [peerId] is
+  /// [kOwnerId] for the owner thread, otherwise another member's id.
+  List<({bool mine, String text, DateTime at})> memberThread(
+      String meId, String peerId) {
+    if (peerId == kOwnerId) {
+      return threadFor(meId)
+          .map((m) => (mine: m.from == 'member', text: m.text, at: m.at))
+          .toList();
+    }
+    final list = peerThreads[pairKey(meId, peerId)] ?? const <Message>[];
+    return list
+        .map((m) => (mine: m.from == meId, text: m.text, at: m.at))
+        .toList();
+  }
+
+  void memberSend(String meId, String peerId, String text) {
+    final t = text.trim();
+    if (t.isEmpty) return;
+    if (peerId == kOwnerId) {
+      sendMessage(meId, t, from: 'member');
+      return;
+    }
+    final k = pairKey(meId, peerId);
+    peerThreads.putIfAbsent(k, () => []);
+    peerThreads[k]!
+        .add(Message(from: meId, text: t, at: DateTime.now(), read: true));
+    notifyListeners();
+  }
+
+  void memberMarkRead(String meId, String peerId) {
+    if (peerId == kOwnerId) {
+      for (final m in threads[meId] ?? const <Message>[]) {
+        if (m.from == 'olda') m.read = true;
+      }
+    } else {
+      for (final m in peerThreads[pairKey(meId, peerId)] ??
+          const <Message>[]) {
+        if (m.from != meId) m.read = true;
+      }
+    }
+    notifyListeners();
+  }
+
+  /// The member's inbox: the owner conversation (always present, even empty)
+  /// plus every member↔member thread they take part in, newest first.
+  List<MemberConvo> memberInbox(String meId) {
+    final out = <MemberConvo>[];
+
+    final owner = threads[meId] ?? const <Message>[];
+    if (owner.isEmpty) {
+      out.add(MemberConvo(
+        peerId: kOwnerId,
+        isOwner: true,
+        lastText: '',
+        lastAt: kNow,
+        lastMine: false,
+        unread: 0,
+      ));
+    } else {
+      final last = owner.last;
+      out.add(MemberConvo(
+        peerId: kOwnerId,
+        isOwner: true,
+        lastText: last.text,
+        lastAt: last.at,
+        lastMine: last.from == 'member',
+        unread: _trailingUnread(owner, (m) => m.from == 'olda'),
+      ));
+    }
+
+    for (final e in peerThreads.entries) {
+      final parts = e.key.split('|');
+      if (!parts.contains(meId) || e.value.isEmpty) continue;
+      final otherId = parts.first == meId ? parts.last : parts.first;
+      final last = e.value.last;
+      out.add(MemberConvo(
+        peerId: otherId,
+        isOwner: false,
+        lastText: last.text,
+        lastAt: last.at,
+        lastMine: last.from == meId,
+        unread: _trailingUnread(e.value, (m) => m.from != meId),
+      ));
+    }
+
+    out.sort((a, b) => b.lastAt.compareTo(a.lastAt));
+    return out;
+  }
+
+  int memberUnreadTotal(String meId) =>
+      memberInbox(meId).fold(0, (s, c) => s + c.unread);
 }
 
 final storeProvider = ChangeNotifierProvider<GymStore>((ref) => GymStore());

@@ -17,6 +17,8 @@ import '../../features/member/fault_report.dart';
 import '../../features/member/history_screen.dart';
 import '../../features/member/member_card.dart';
 import '../../features/member/member_dashboard.dart';
+import '../../features/member/member_messages.dart';
+import '../../features/member/member_thread.dart';
 import '../../features/member/profile_screen.dart';
 import '../../features/member/qr_payment.dart';
 import '../../shared/widgets/app_shell.dart';
@@ -43,8 +45,8 @@ final appRouter = GoRouter(
       branches: [
         _branch(_memberKeys[0], '/member/dashboard',
             (c, s) => const MemberDashboardScreen()),
-        _branch(_memberKeys[1], '/member/card',
-            (c, s) => const MemberCardScreen()),
+        _branch(_memberKeys[1], '/member/messages',
+            (c, s) => const MemberMessagesScreen()),
         _branch(_memberKeys[2], '/member/history',
             (c, s) => const HistoryScreenView()),
         _branch(_memberKeys[3], '/member/board',
@@ -72,8 +74,14 @@ final appRouter = GoRouter(
     ),
 
     // ── Full-screen sub-pages (push above the shell, no tab bar) ──
+    GoRoute(path: '/member/card', builder: (c, s) => const MemberCardScreen()),
     GoRoute(path: '/member/qr', builder: (c, s) => const QrPaymentScreen()),
     GoRoute(path: '/member/fault', builder: (c, s) => const FaultReportScreen()),
+    GoRoute(
+      path: '/member/thread/:id',
+      builder: (c, s) =>
+          MemberThreadScreen(peerId: s.pathParameters['id'] ?? 'olda'),
+    ),
     GoRoute(
         path: '/admin/approval',
         builder: (c, s) => const ApprovalQueueScreen()),

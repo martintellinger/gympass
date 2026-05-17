@@ -204,16 +204,24 @@ class BottomNav extends StatelessWidget {
   }
 }
 
-const memberNavRoutes = ['dashboard', 'card', 'history', 'board', 'profile'];
+const memberNavRoutes = [
+  'dashboard',
+  'mmessages',
+  'history',
+  'board',
+  'profile'
+];
 
 class MemberBottomNav extends StatelessWidget {
   final int active;
   final ValueChanged<int>? onIndex;
+  final int unread;
   final double bottomInset;
   const MemberBottomNav({
     super.key,
     required this.active,
     this.onIndex,
+    this.unread = 0,
     this.bottomInset = 0,
   });
 
@@ -226,7 +234,7 @@ class MemberBottomNav extends StatelessWidget {
       onItemClick: onIndex,
       items: [
         NavItem(icon: 'home', label: l.navHome),
-        NavItem(icon: 'card', label: l.navCard),
+        NavItem(icon: 'message', label: l.navMessages, badge: unread),
         NavItem(icon: 'history', label: l.navHistory),
         NavItem(icon: 'board', label: l.navBoard),
         NavItem(icon: 'user', label: l.navProfile),

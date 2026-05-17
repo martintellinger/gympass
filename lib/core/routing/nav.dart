@@ -23,6 +23,10 @@ String routeToPath(String route, {Object? arg}) {
       return '/member/board';
     case 'profile':
       return '/member/profile';
+    case 'mmessages':
+      return '/member/messages';
+    case 'mthread':
+      return '/member/thread/${arg ?? 'olda'}';
     case 'qr':
       return '/member/qr';
     case 'fault':
@@ -59,7 +63,7 @@ String routeToPath(String route, {Object? arg}) {
 /// (`go`) so tabs never pile up on top of each other. Everything else is a
 /// drill-in (`push`) so the hardware / on-screen back button can pop it.
 const _tabRoutes = {
-  'dashboard', 'card', 'history', 'board', 'profile', // member
+  'dashboard', 'mmessages', 'history', 'board', 'profile', // member
   'admin', 'list', 'payments', 'messages', 'adminMore', // admin
 };
 

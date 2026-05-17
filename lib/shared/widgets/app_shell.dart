@@ -10,13 +10,15 @@ import 'bottom_nav.dart';
 /// mounted (indexedStack), so screen state survives tab switches and the
 /// bar below is built exactly once for the lifetime of the shell — it never
 /// rebuilds or re-blurs when you change tabs (only [currentIndex] changes).
-class MemberShell extends StatelessWidget {
+class MemberShell extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
   const MemberShell({super.key, required this.navigationShell});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final inset = MediaQuery.of(context).viewPadding.bottom;
+    final unread =
+        ref.watch(storeProvider).memberUnreadTotal(kCurrentMemberId);
     return Scaffold(
       backgroundColor: T.bg,
       body: Stack(
@@ -28,6 +30,7 @@ class MemberShell extends StatelessWidget {
             bottom: 0,
             child: MemberBottomNav(
               active: navigationShell.currentIndex,
+              unread: unread,
               bottomInset: inset,
               onIndex: (i) => navigationShell.goBranch(
                 i,

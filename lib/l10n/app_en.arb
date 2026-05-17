@@ -486,5 +486,34 @@
   "mlistKeyOptAll": "All",
   "mlistKeyOptWith": "With key",
   "mlistKeyOptWithout": "Without key",
-  "mlistSheetApply": "Apply"
+  "mlistSheetApply": "Apply",
+  "mmsgTitle": "Messages",
+  "mmsgAllRead": "All read",
+  "mmsgUnreadCount": "{count, plural, one{{count} unread} other{{count} unread}}",
+  "@mmsgUnreadCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "mmsgOwnerTag": "OWNER",
+  "mmsgYouPrefix": "You:",
+  "mmsgNoMessagesYet": "No messages yet",
+  "mmsgComposeTitle": "New message",
+  "mmsgComposeSearchHint": "Search member…",
+  "mthrOwnerName": "Olda",
+  "mthrOwnerRole": "Owner · BýtFit Klub",
+  "mthrMemberRole": "member",
+  "mthrEmptyOwner": "Write to Olda about anything — from a payment question to reporting a fault.",
+  "mthrEmptyPeer": "Start a conversation with {name}.",
+  "@mthrEmptyPeer": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "mthrComposerHint": "Message {name}…",
+  "@mthrComposerHint": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  }
 }

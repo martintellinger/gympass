@@ -152,6 +152,13 @@ Systém zpráv má **dvě vrstvy**:
   - Majitel založí vlákno z detailu člena
 - Push notifikace o nepřečtených zprávách (s respektem k nastavení v profilu — viz 4.8).
 
+**C) Konverzace 1:1 mezi členy navzájem** — člen ↔ člen
+
+- **Záložka „Zprávy" v member navigaci** (nahradila „Karta"; karta zůstává dostupná z dashboardu). Jednotný inbox: konverzace s majitelem (vždy nahoře/přítomná, odznak „PROVOZ") + vlákna s ostatními členy, řazeno podle poslední zprávy, badge nepřečtených na tabu.
+- **Nová konverzace:** tlačítko „+" → výběr člena ze seznamu (vyhledávání podle jména).
+- **Vlákno** používá stejný vizuál jako majitelské (bubliny, seskupení po dnech). Vlastní zprávy vpravo (akcent), protistrana vlevo.
+- **Rozsah MVP:** prostý 1:1 text. **Bez** moderace ze strany majitele, blokování a skupinových konverzací — drží se to jednoduché pro ~34 lidí, kteří se navzájem znají z Klubu. Tyto kontroly (blokování / nahlášení / opt-out z member-to-member) jsou kandidáti pro fázi 2, pokud se objeví potřeba.
+
 ### 4.5 Správa klíčů (správce)
 
 V detailu člena:
@@ -536,7 +543,7 @@ notification_preferences
 | **Multi-pobočka** | **Neřešíme.** Jedna posilovna, jednoduchá architektura bez tenant ID. |
 | **App Store / Play Store** | Vyřešíme později. Pro MVP development lze testovat přes TestFlight (iOS) a internal testing track (Android). |
 | **Excel po migraci** | Excel **zůstává v provozu jako pomocný nástroj** pro import a kontrolu dat. Kamarád ho lehce upraví — přidá sloupec s datem expirace — a tento upravený Excel slouží jako zdroj pravdy pro počáteční import a pro průběžnou kontrolu. **App musí podporovat re-import a porovnání s aktuálním stavem v databázi.** |
-| **Komunikace** | Hybrid: **broadcast od majitele** + **1:1 konverzace** mezi majitelem a členem. Členové můžou taky psát majiteli (přes "Napsat Oldovi" v profilu nebo přes "Nahlásit závadu"). |
+| **Komunikace** | Hybrid: **broadcast od majitele** + **1:1 konverzace** majitel ↔ člen + **1:1 konverzace člen ↔ člen** (záložka „Zprávy" v member app, jednotný inbox). Členové můžou psát majiteli (přes „Napsat Oldovi" / „Nahlásit závadu") i mezi sebou. Bez moderace/blokování v MVP (viz 4.4 C). |
 | **Nástěnka** | Centrální informační prostor klubu, 7 typů postů. Členové můžou navrhovat posty (typy `event`, `info`), majitel schvaluje před zveřejněním. |
 | **Notifikace** | Granularita: master / výpadky / promo. Promo vypnuté výchozí (anti-spam). |
 | **Otevírací doba** | Klub je samoobslužný **24/7 s fyzickým klíčem** pro členy. Editovatelné nastavení v AdminMore > Klub > Otevírací doba slouží jako **informace pro členy** (např. "kdy je Olda obvykle v Klubu", "kdy je doporučená doba bez návalu") a jako **vstup pro indikátor "otevřeno / zavřeno"** na nástěnce. Olda si nastaví sám, formát: po-ne s rozsahem od-do, případně "zavřeno". Změny logují do audit_logu. |

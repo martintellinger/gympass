@@ -1529,4 +1529,60 @@ class LCs extends L {
 
   @override
   String get mlistSheetApply => 'Použít';
+
+  @override
+  String get mmsgTitle => 'Zprávy';
+
+  @override
+  String get mmsgAllRead => 'Vše přečteno';
+
+  @override
+  String mmsgUnreadCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count nepřečtených',
+      few: '$count nepřečtené',
+      one: '$count nepřečtená',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mmsgOwnerTag => 'PROVOZ';
+
+  @override
+  String get mmsgYouPrefix => 'Já:';
+
+  @override
+  String get mmsgNoMessagesYet => 'Zatím žádné zprávy';
+
+  @override
+  String get mmsgComposeTitle => 'Nová zpráva';
+
+  @override
+  String get mmsgComposeSearchHint => 'Hledat člena…';
+
+  @override
+  String get mthrOwnerName => 'Olda';
+
+  @override
+  String get mthrOwnerRole => 'Provozovatel · BýtFit Klub';
+
+  @override
+  String get mthrMemberRole => 'člen';
+
+  @override
+  String get mthrEmptyOwner =>
+      'Napiš Oldovi cokoliv — od dotazu k platbě po hlášení závady.';
+
+  @override
+  String mthrEmptyPeer(String name) {
+    return 'Začni konverzaci s $name.';
+  }
+
+  @override
+  String mthrComposerHint(String name) {
+    return 'Napiš $name…';
+  }
 }

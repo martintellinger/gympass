@@ -614,5 +614,34 @@
   "mlistKeyOptAll": "Všichni",
   "mlistKeyOptWith": "S klíčem",
   "mlistKeyOptWithout": "Bez klíče",
-  "mlistSheetApply": "Použít"
+  "mlistSheetApply": "Použít",
+  "mmsgTitle": "Zprávy",
+  "mmsgAllRead": "Vše přečteno",
+  "mmsgUnreadCount": "{count, plural, one{{count} nepřečtená} few{{count} nepřečtené} other{{count} nepřečtených}}",
+  "@mmsgUnreadCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "mmsgOwnerTag": "PROVOZ",
+  "mmsgYouPrefix": "Já:",
+  "mmsgNoMessagesYet": "Zatím žádné zprávy",
+  "mmsgComposeTitle": "Nová zpráva",
+  "mmsgComposeSearchHint": "Hledat člena…",
+  "mthrOwnerName": "Olda",
+  "mthrOwnerRole": "Provozovatel · BýtFit Klub",
+  "mthrMemberRole": "člen",
+  "mthrEmptyOwner": "Napiš Oldovi cokoliv — od dotazu k platbě po hlášení závady.",
+  "mthrEmptyPeer": "Začni konverzaci s {name}.",
+  "@mthrEmptyPeer": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "mthrComposerHint": "Napiš {name}…",
+  "@mthrComposerHint": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  }
 }

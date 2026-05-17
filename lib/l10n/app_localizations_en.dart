@@ -1515,4 +1515,59 @@ class LEn extends L {
 
   @override
   String get mlistSheetApply => 'Apply';
+
+  @override
+  String get mmsgTitle => 'Messages';
+
+  @override
+  String get mmsgAllRead => 'All read';
+
+  @override
+  String mmsgUnreadCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count unread',
+      one: '$count unread',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get mmsgOwnerTag => 'OWNER';
+
+  @override
+  String get mmsgYouPrefix => 'You:';
+
+  @override
+  String get mmsgNoMessagesYet => 'No messages yet';
+
+  @override
+  String get mmsgComposeTitle => 'New message';
+
+  @override
+  String get mmsgComposeSearchHint => 'Search member…';
+
+  @override
+  String get mthrOwnerName => 'Olda';
+
+  @override
+  String get mthrOwnerRole => 'Owner · BýtFit Klub';
+
+  @override
+  String get mthrMemberRole => 'member';
+
+  @override
+  String get mthrEmptyOwner =>
+      'Write to Olda about anything — from a payment question to reporting a fault.';
+
+  @override
+  String mthrEmptyPeer(String name) {
+    return 'Start a conversation with $name.';
+  }
+
+  @override
+  String mthrComposerHint(String name) {
+    return 'Message $name…';
+  }
 }

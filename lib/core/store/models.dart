@@ -110,3 +110,23 @@ class ThreadSummary {
     required this.unread,
   });
 }
+
+/// One row in the member-side inbox. [peerId] is the sentinel `'olda'` for the
+/// owner conversation, otherwise another member's id. [lastMine] is true when
+/// the last message was sent by the current member (renders a "Já:" prefix).
+class MemberConvo {
+  final String peerId;
+  final bool isOwner;
+  final String lastText;
+  final DateTime lastAt;
+  final bool lastMine;
+  final int unread;
+  const MemberConvo({
+    required this.peerId,
+    required this.isOwner,
+    required this.lastText,
+    required this.lastAt,
+    required this.lastMine,
+    required this.unread,
+  });
+}
