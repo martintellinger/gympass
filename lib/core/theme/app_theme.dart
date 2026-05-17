@@ -38,6 +38,51 @@ class AppType {
         letterSpacing: letterSpacing,
         height: height,
       );
+
+  // ── Semantic type scale ────────────────────────────────────────────────
+  // Named roles mapped to the recurring sizes/weights of the prototype.
+  // Prefer these in new/extracted code; `ui`/`mono` stay as the escape
+  // hatch for bespoke one-offs. Color/height overridable per use.
+
+  /// Oversized hero numeral (e.g. the remaining-days count).
+  static TextStyle hero({Color color = T.text}) =>
+      ui(size: 48, weight: FontWeight.w800, color: color, letterSpacing: -1.5);
+
+  /// Landing / persona display.
+  static TextStyle display({Color color = T.text}) =>
+      ui(size: 32, weight: FontWeight.w700, color: color, letterSpacing: -0.6);
+
+  /// Screen title (board, history, messages…).
+  static TextStyle h1({Color color = T.text}) =>
+      ui(size: 28, weight: FontWeight.w700, color: color, letterSpacing: -0.8);
+
+  /// Section / card heading.
+  static TextStyle h2({Color color = T.text}) =>
+      ui(size: 22, weight: FontWeight.w700, color: color, letterSpacing: -0.4);
+
+  /// Prominent row / card title.
+  static TextStyle title({Color color = T.text}) =>
+      ui(size: 17, weight: FontWeight.w600, color: color);
+
+  /// Default body copy.
+  static TextStyle body({Color color = T.text}) =>
+      ui(size: 15, weight: FontWeight.w400, color: color, height: 1.4);
+
+  /// Compact body / secondary text.
+  static TextStyle bodySm({Color color = T.text2}) =>
+      ui(size: 13.5, weight: FontWeight.w400, color: color, height: 1.4);
+
+  /// Field / row label.
+  static TextStyle label({Color color = T.text}) =>
+      ui(size: 13, weight: FontWeight.w500, color: color);
+
+  /// Tiny meta / caption.
+  static TextStyle caption({Color color = T.text2}) =>
+      ui(size: 12, weight: FontWeight.w500, color: color);
+
+  /// Uppercase section kicker / overline.
+  static TextStyle overline({Color color = T.text2}) => ui(
+      size: 12, weight: FontWeight.w600, color: color, letterSpacing: 0.4);
 }
 
 class AppTheme {
