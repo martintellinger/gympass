@@ -206,12 +206,19 @@ lib/
 
 ### Testy & doménová logika (2026-05-17)
 
-- **Test suite: 80 testů, zelená** (`flutter test`). Pokrytí:
+- **Member self-pauza členství (2026-05-17):** člen si v profilu (08) může
+  pozastavit členství (dovolená / dlouhodobá nemoc) — **jen na konci
+  předplatného** (`daysNum ≤ 0`); pauza v průběhu je na majiteli (locked
+  řádek odkáže člena „Napsat Oldovi"). Samoobsluha bez schválení, bez
+  limitů; Olda dostane zprávu do 1:1 vlákna. Expirace i 30denní lhůta kauce
+  (§5) zamrznou — `domain/membership.dart#expiryAfterPause` (otestováno).
+  Mock: `Member.pausedAt/pauseReason`, `GymStore.pause/resumeMembership`.
+- **Test suite: 99 testů, zelená** (`flutter test`). Pokrytí:
   - `test/format_test.dart`, `test/store_test.dart` — formátování + mock store.
   - `test/import_diff_test.dart`, `test/wizard_flow_test.dart` — Excel migrace.
   - `test/screens_smoke_test.dart` — všech 18 obrazovek render v cs/en ×
     dark/light na design rámci 402×874 (chytá chybějící l10n / null / crash).
-  - `test/domain/*` — 41 testů doménové vrstvy.
+  - `test/domain/*` — 46 testů doménové vrstvy (vč. `expiryAfterPause`).
 - **`lib/core/domain/` — čisté, otestované business funkce** (zatím
   NEnapojené na UI/store; napojí se s Supabase — UI dál běží na mock storu):
   `membership.dart` (expirace + billing_day vč. edge 31→poslední den měsíce,
