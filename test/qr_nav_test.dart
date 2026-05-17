@@ -2,8 +2,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:bytfit_klub/app.dart';
+import 'package:bytfit_klub/features/auth/application/auth_notifier.dart';
 
 void main() {
+  setUp(authNotifier.debugUseMock);
   testWidgets('extend membership opens QR payment', (tester) async {
     await tester.pumpWidget(const ProviderScope(child: BytFitApp()));
     await tester.pumpAndSettle();

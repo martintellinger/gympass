@@ -1715,4 +1715,119 @@ class LCs extends L {
   String mthrComposerHint(String name) {
     return 'Napiš $name…';
   }
+
+  @override
+  String get authLoginTitle => 'Vítej zpět';
+
+  @override
+  String get authLoginSubtitle => 'Přihlas se do BýtFit Klubu.';
+
+  @override
+  String get authEmail => 'E-mail';
+
+  @override
+  String get authPassword => 'Heslo';
+
+  @override
+  String get authSignIn => 'Přihlásit se';
+
+  @override
+  String get authNoAccount => 'Nemáš účet?';
+
+  @override
+  String get authRegisterLink => 'Zaregistruj se';
+
+  @override
+  String get authHaveAccount => 'Už máš účet?';
+
+  @override
+  String get authLoginLink => 'Přihlas se';
+
+  @override
+  String get authRegisterTitle => 'Registrace';
+
+  @override
+  String get authRegisterSubtitle =>
+      'Vytvoř si účet. Než tě Olda schválí, počkáš na potvrzení.';
+
+  @override
+  String get authFirstName => 'Jméno';
+
+  @override
+  String get authLastName => 'Příjmení';
+
+  @override
+  String get authPhone => 'Telefon';
+
+  @override
+  String get authTariff => 'Tarif';
+
+  @override
+  String get authTariffStandard => 'Standard';
+
+  @override
+  String get authTariffStudent => 'Student';
+
+  @override
+  String get authStudentProof => 'ISIC / potvrzení o studiu';
+
+  @override
+  String get authStudentProofPick => 'Nahrát fotku';
+
+  @override
+  String get authStudentProofPicked => 'Příloha přidána';
+
+  @override
+  String get authGdpr => 'Souhlasím se zpracováním osobních údajů (GDPR).';
+
+  @override
+  String get authCreateAccount => 'Vytvořit účet';
+
+  @override
+  String get authPendingTitle => 'Čeká na schválení';
+
+  @override
+  String get authPendingBody =>
+      'Jakmile tě Olda ověří a předá ti klíč, dostaneš oznámení a uvidíš svoje členství.';
+
+  @override
+  String get authConfirmEmailTitle => 'Potvrď svůj e-mail';
+
+  @override
+  String get authConfirmEmailBody =>
+      'Poslali jsme ti potvrzovací odkaz. Po potvrzení se vrať a přihlas se.';
+
+  @override
+  String get authRefresh => 'Zkontrolovat znovu';
+
+  @override
+  String get authSignOut => 'Odhlásit se';
+
+  @override
+  String get authErrInvalid => 'Nesprávný e-mail nebo heslo.';
+
+  @override
+  String get authErrGeneric => 'Něco se nepovedlo. Zkus to znovu.';
+
+  @override
+  String get authErrFields => 'Vyplň prosím všechna pole.';
+
+  @override
+  String get authErrEmail => 'Zadej platný e-mail.';
+
+  @override
+  String get authErrPassword => 'Heslo musí mít alespoň 6 znaků.';
+
+  @override
+  String get authErrGdpr => 'Pro registraci musíš potvrdit souhlas s GDPR.';
+
+  @override
+  String get authErrStudentProof =>
+      'Pro studentský tarif nahraj ISIC nebo potvrzení o studiu.';
+
+  @override
+  String get authRegisteredTitle => 'Účet vytvořen';
+
+  @override
+  String get authBusy => 'Pracuji…';
 }

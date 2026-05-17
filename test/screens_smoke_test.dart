@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:bytfit_klub/app.dart';
 import 'package:bytfit_klub/core/routing/router.dart';
 import 'package:bytfit_klub/core/theme/app_theme.dart';
+import 'package:bytfit_klub/features/auth/application/auth_notifier.dart';
 
 /// Every navigable destination — the 18 prototype screens plus the
 /// push-above sub-pages (incl. parametrised detail/thread).
@@ -44,6 +45,7 @@ Future<void> _settle(WidgetTester tester) async {
 }
 
 void main() {
+  setUp(authNotifier.debugUseMock);
   for (final locale in const ['cs', 'en']) {
     for (final mode in const [ThemeMode.dark, ThemeMode.light]) {
       testWidgets('renders every screen — $locale / ${mode.name}',

@@ -5,8 +5,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:bytfit_klub/app.dart';
 import 'package:bytfit_klub/core/routing/router.dart';
 import 'package:bytfit_klub/core/store/store.dart';
+import 'package:bytfit_klub/features/auth/application/auth_notifier.dart';
 
 void main() {
+  setUp(authNotifier.debugUseMock);
   testWidgets('Excel import wizard: pick → parse → mapping → diff → done',
       (tester) async {
     await tester.binding.setSurfaceSize(const Size(402, 874));

@@ -1,9 +1,48 @@
-# Supabase napojení — připravená vrstva a co zbývá rozhodnout
+# Supabase napojení — STAV: AUTH ŽIVĚ, zbývá nasadit DB schéma
 
-Tahle složka + `lib/core/data/` + `lib/core/env/` je **neblokující příprava**
-na backend. Aplikace dál běží beze změny na in-memory mocku — žádná
-obrazovka zatím není přepojená. Cílem bylo postavit šev, aby pozdější
-napojení bylo mechanické.
+## ⚡ Co musíš udělat ty (jediný blokující krok)
+
+Projekt `yktounljghdypfhbdxws` je prázdný (žádné tabulky). Kód je hotový a
+otestovaný; chybí jen **nasadit databázi**, což vyžaduje přístup do SQL
+editoru (anon/publishable klíč na DDL nestačí):
+
+1. Otevři **Supabase → SQL editor**, vlož celý obsah
+   [`docs/backend/setup.sql`](setup.sql) a klikni **Run**. (Schéma + trigger
+   registrace + RLS + storage bucket + seed tarifů a otevírací doby.)
+2. Zaregistruj se jednou v app jako Olda → vznikne `pending` člen. Pak v SQL
+   editoru: `update members set role='admin', status='active' where email='…';`
+3. (Volitelné, hladší demo) Authentication → Providers → Email → vypni
+   „Confirm email" (schvalování je stejně ruční, brief §4.1).
+
+Hotovo. Login i registrace pak fungují bez další změny v kódu.
+
+## Co je ŽIVĚ napojené (ověřeno proti reálnému projektu)
+
+- `Supabase.initialize` v `main.dart` (default creds v `AppEnv`, lze
+  přebít přes `--dart-define`).
+- **Přihlášení + registrace + čekání na schválení** (obrazovky 01–03,
+  `lib/features/auth/`), `go_router` redirect guard řízený auth stavem.
+- Registrace volá `signUp` s metadaty (jméno, příjmení, telefon, tarif,
+  ISIC url) → DB trigger `handle_new_user` z nich vyrobí `pending` člena.
+  Ověřeno: signUp vrací 200 a metadata se ukládají přesně; projekt
+  vyžaduje potvrzení e-mailu (UI to řeší obrazovkou „Potvrď e-mail").
+- Student: upload ISIC přes `file_picker` do bucketu `student-proofs`
+  (best-effort, registraci neblokuje).
+
+## Co zůstává na mocku (záměrně — architektura B, samostatná dávka)
+
+Žádná z 18 obrazovek aplikace ještě nečte z `gymRepositoryProvider` —
+běží dál na `storeProvider` (in-memory). `SupabaseGymRepository` je
+stále dokumentovaný stub. Přepojování obrazovka-po-obrazovce na
+`AsyncValue` providery nad repository je další fáze (viz níže), není
+součástí tohoto kroku. Smoke-test guardrail (18 obrazovek) zůstává
+zelený, protože widget testy volají `authNotifier.debugUseMock()`.
+
+---
+
+Tahle složka + `lib/core/data/` + `lib/core/env/` byla **příprava**
+na backend; auth vrstva ji teď používá. Cílem bylo postavit šev, aby
+napojení dat bylo mechanické.
 
 ## Co je hotové (v repu)
 

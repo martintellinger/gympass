@@ -1700,4 +1700,120 @@ class LEn extends L {
   String mthrComposerHint(String name) {
     return 'Message $name…';
   }
+
+  @override
+  String get authLoginTitle => 'Welcome back';
+
+  @override
+  String get authLoginSubtitle => 'Sign in to BýtFit Klub.';
+
+  @override
+  String get authEmail => 'E-mail';
+
+  @override
+  String get authPassword => 'Password';
+
+  @override
+  String get authSignIn => 'Sign in';
+
+  @override
+  String get authNoAccount => 'No account yet?';
+
+  @override
+  String get authRegisterLink => 'Register';
+
+  @override
+  String get authHaveAccount => 'Already have an account?';
+
+  @override
+  String get authLoginLink => 'Sign in';
+
+  @override
+  String get authRegisterTitle => 'Register';
+
+  @override
+  String get authRegisterSubtitle =>
+      'Create an account. You\'ll wait for Olda\'s approval.';
+
+  @override
+  String get authFirstName => 'First name';
+
+  @override
+  String get authLastName => 'Last name';
+
+  @override
+  String get authPhone => 'Phone';
+
+  @override
+  String get authTariff => 'Plan';
+
+  @override
+  String get authTariffStandard => 'Standard';
+
+  @override
+  String get authTariffStudent => 'Student';
+
+  @override
+  String get authStudentProof => 'ISIC / proof of study';
+
+  @override
+  String get authStudentProofPick => 'Upload photo';
+
+  @override
+  String get authStudentProofPicked => 'Attachment added';
+
+  @override
+  String get authGdpr =>
+      'I agree to the processing of my personal data (GDPR).';
+
+  @override
+  String get authCreateAccount => 'Create account';
+
+  @override
+  String get authPendingTitle => 'Awaiting approval';
+
+  @override
+  String get authPendingBody =>
+      'Once Olda verifies you and hands over the key, you\'ll get a notification and see your membership.';
+
+  @override
+  String get authConfirmEmailTitle => 'Confirm your e-mail';
+
+  @override
+  String get authConfirmEmailBody =>
+      'We sent you a confirmation link. Confirm it, then come back and sign in.';
+
+  @override
+  String get authRefresh => 'Check again';
+
+  @override
+  String get authSignOut => 'Sign out';
+
+  @override
+  String get authErrInvalid => 'Wrong e-mail or password.';
+
+  @override
+  String get authErrGeneric => 'Something went wrong. Try again.';
+
+  @override
+  String get authErrFields => 'Please fill in all fields.';
+
+  @override
+  String get authErrEmail => 'Enter a valid e-mail.';
+
+  @override
+  String get authErrPassword => 'Password must be at least 6 characters.';
+
+  @override
+  String get authErrGdpr => 'You must accept the GDPR consent to register.';
+
+  @override
+  String get authErrStudentProof =>
+      'For the student plan, upload an ISIC or proof of study.';
+
+  @override
+  String get authRegisteredTitle => 'Account created';
+
+  @override
+  String get authBusy => 'Working…';
 }

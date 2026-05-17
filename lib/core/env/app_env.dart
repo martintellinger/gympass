@@ -19,11 +19,20 @@ library;
 class AppEnv {
   const AppEnv._();
 
+  /// Default project for the BýtFit Klub club app. The **publishable** key
+  /// (`sb_publishable_…`) is designed by Supabase to ship in public client
+  /// bundles — it grants no privileges by itself; Row-Level Security (see
+  /// `docs/backend/rls.sql`) is the real boundary. A separate prod project
+  /// can still be supplied per-build via `--dart-define`, which overrides
+  /// these defaults.
+  static const _defaultUrl = 'https://yktounljghdypfhbdxws.supabase.co';
+  static const _defaultAnonKey = 'sb_publishable_5b_9c8vsPbwXuLD9mu3-CA_WpD_mqMH';
+
   static const supabaseUrl =
-      String.fromEnvironment('SUPABASE_URL', defaultValue: '');
+      String.fromEnvironment('SUPABASE_URL', defaultValue: _defaultUrl);
 
   static const supabaseAnonKey =
-      String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: '');
+      String.fromEnvironment('SUPABASE_ANON_KEY', defaultValue: _defaultAnonKey);
 
   /// True once both Supabase values are present. When false the app must
   /// keep running on the in-memory mock (current behaviour) — wiring the

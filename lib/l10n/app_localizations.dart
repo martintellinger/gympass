@@ -2880,6 +2880,228 @@ abstract class L {
   /// In cs, this message translates to:
   /// **'Napiš {name}…'**
   String mthrComposerHint(String name);
+
+  /// No description provided for @authLoginTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Vítej zpět'**
+  String get authLoginTitle;
+
+  /// No description provided for @authLoginSubtitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Přihlas se do BýtFit Klubu.'**
+  String get authLoginSubtitle;
+
+  /// No description provided for @authEmail.
+  ///
+  /// In cs, this message translates to:
+  /// **'E-mail'**
+  String get authEmail;
+
+  /// No description provided for @authPassword.
+  ///
+  /// In cs, this message translates to:
+  /// **'Heslo'**
+  String get authPassword;
+
+  /// No description provided for @authSignIn.
+  ///
+  /// In cs, this message translates to:
+  /// **'Přihlásit se'**
+  String get authSignIn;
+
+  /// No description provided for @authNoAccount.
+  ///
+  /// In cs, this message translates to:
+  /// **'Nemáš účet?'**
+  String get authNoAccount;
+
+  /// No description provided for @authRegisterLink.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zaregistruj se'**
+  String get authRegisterLink;
+
+  /// No description provided for @authHaveAccount.
+  ///
+  /// In cs, this message translates to:
+  /// **'Už máš účet?'**
+  String get authHaveAccount;
+
+  /// No description provided for @authLoginLink.
+  ///
+  /// In cs, this message translates to:
+  /// **'Přihlas se'**
+  String get authLoginLink;
+
+  /// No description provided for @authRegisterTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Registrace'**
+  String get authRegisterTitle;
+
+  /// No description provided for @authRegisterSubtitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Vytvoř si účet. Než tě Olda schválí, počkáš na potvrzení.'**
+  String get authRegisterSubtitle;
+
+  /// No description provided for @authFirstName.
+  ///
+  /// In cs, this message translates to:
+  /// **'Jméno'**
+  String get authFirstName;
+
+  /// No description provided for @authLastName.
+  ///
+  /// In cs, this message translates to:
+  /// **'Příjmení'**
+  String get authLastName;
+
+  /// No description provided for @authPhone.
+  ///
+  /// In cs, this message translates to:
+  /// **'Telefon'**
+  String get authPhone;
+
+  /// No description provided for @authTariff.
+  ///
+  /// In cs, this message translates to:
+  /// **'Tarif'**
+  String get authTariff;
+
+  /// No description provided for @authTariffStandard.
+  ///
+  /// In cs, this message translates to:
+  /// **'Standard'**
+  String get authTariffStandard;
+
+  /// No description provided for @authTariffStudent.
+  ///
+  /// In cs, this message translates to:
+  /// **'Student'**
+  String get authTariffStudent;
+
+  /// No description provided for @authStudentProof.
+  ///
+  /// In cs, this message translates to:
+  /// **'ISIC / potvrzení o studiu'**
+  String get authStudentProof;
+
+  /// No description provided for @authStudentProofPick.
+  ///
+  /// In cs, this message translates to:
+  /// **'Nahrát fotku'**
+  String get authStudentProofPick;
+
+  /// No description provided for @authStudentProofPicked.
+  ///
+  /// In cs, this message translates to:
+  /// **'Příloha přidána'**
+  String get authStudentProofPicked;
+
+  /// No description provided for @authGdpr.
+  ///
+  /// In cs, this message translates to:
+  /// **'Souhlasím se zpracováním osobních údajů (GDPR).'**
+  String get authGdpr;
+
+  /// No description provided for @authCreateAccount.
+  ///
+  /// In cs, this message translates to:
+  /// **'Vytvořit účet'**
+  String get authCreateAccount;
+
+  /// No description provided for @authPendingTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Čeká na schválení'**
+  String get authPendingTitle;
+
+  /// No description provided for @authPendingBody.
+  ///
+  /// In cs, this message translates to:
+  /// **'Jakmile tě Olda ověří a předá ti klíč, dostaneš oznámení a uvidíš svoje členství.'**
+  String get authPendingBody;
+
+  /// No description provided for @authConfirmEmailTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Potvrď svůj e-mail'**
+  String get authConfirmEmailTitle;
+
+  /// No description provided for @authConfirmEmailBody.
+  ///
+  /// In cs, this message translates to:
+  /// **'Poslali jsme ti potvrzovací odkaz. Po potvrzení se vrať a přihlas se.'**
+  String get authConfirmEmailBody;
+
+  /// No description provided for @authRefresh.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zkontrolovat znovu'**
+  String get authRefresh;
+
+  /// No description provided for @authSignOut.
+  ///
+  /// In cs, this message translates to:
+  /// **'Odhlásit se'**
+  String get authSignOut;
+
+  /// No description provided for @authErrInvalid.
+  ///
+  /// In cs, this message translates to:
+  /// **'Nesprávný e-mail nebo heslo.'**
+  String get authErrInvalid;
+
+  /// No description provided for @authErrGeneric.
+  ///
+  /// In cs, this message translates to:
+  /// **'Něco se nepovedlo. Zkus to znovu.'**
+  String get authErrGeneric;
+
+  /// No description provided for @authErrFields.
+  ///
+  /// In cs, this message translates to:
+  /// **'Vyplň prosím všechna pole.'**
+  String get authErrFields;
+
+  /// No description provided for @authErrEmail.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zadej platný e-mail.'**
+  String get authErrEmail;
+
+  /// No description provided for @authErrPassword.
+  ///
+  /// In cs, this message translates to:
+  /// **'Heslo musí mít alespoň 6 znaků.'**
+  String get authErrPassword;
+
+  /// No description provided for @authErrGdpr.
+  ///
+  /// In cs, this message translates to:
+  /// **'Pro registraci musíš potvrdit souhlas s GDPR.'**
+  String get authErrGdpr;
+
+  /// No description provided for @authErrStudentProof.
+  ///
+  /// In cs, this message translates to:
+  /// **'Pro studentský tarif nahraj ISIC nebo potvrzení o studiu.'**
+  String get authErrStudentProof;
+
+  /// No description provided for @authRegisteredTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Účet vytvořen'**
+  String get authRegisteredTitle;
+
+  /// No description provided for @authBusy.
+  ///
+  /// In cs, this message translates to:
+  /// **'Pracuji…'**
+  String get authBusy;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

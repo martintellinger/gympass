@@ -21,9 +21,41 @@ import '../../features/member/member_messages.dart';
 import '../../features/member/member_thread.dart';
 import '../../features/member/profile_screen.dart';
 import '../../features/member/qr_payment.dart';
+import '../../features/auth/application/auth_notifier.dart';
+import '../../features/auth/presentation/login_screen.dart';
+import '../../features/auth/presentation/pending_screen.dart';
+import '../../features/auth/presentation/register_screen.dart';
+import '../../features/auth/presentation/splash_screen.dart';
 import '../../features/styleguide/styleguide_screen.dart';
 import '../../shared/widgets/app_shell.dart';
 import 'persona_picker.dart';
+
+/// Auth-driven routing. When the backend is disabled (no credentials in the
+/// build) routing is a no-op and the dev persona picker stays at `/` — the
+/// in-memory preview is unaffected. With Supabase on, this gates the app:
+/// signed-out → /login, pending/awaiting → /pending, active → the shell.
+String? _authRedirect(GoRouterState state) {
+  final n = authNotifier;
+  if (!n.backendEnabled) return null;
+
+  final snap = n.snapshot;
+  final loc = state.matchedLocation;
+  final atSplash = loc == '/';
+  final atAuth = loc == '/login' || loc == '/register';
+  final atPending = loc == '/pending';
+
+  if (snap.isLoading) return atSplash ? null : '/';
+
+  if (!snap.isSignedIn) return atAuth ? null : '/login';
+
+  final p = snap.profile;
+  final needsWait = snap.awaitingProfile || (p?.isPending ?? false);
+  if (needsWait) return atPending ? null : '/pending';
+
+  final home = (p?.isAdmin ?? false) ? '/admin' : '/member/dashboard';
+  if (atSplash || atAuth || atPending) return home;
+  return null;
+}
 
 final _memberKeys = List.generate(5, (_) => GlobalKey<NavigatorState>());
 final _adminKeys = List.generate(5, (_) => GlobalKey<NavigatorState>());
@@ -37,8 +69,17 @@ StatefulShellBranch _branch(GlobalKey<NavigatorState> key, String path,
 
 final appRouter = GoRouter(
   initialLocation: '/',
+  refreshListenable: authNotifier,
+  redirect: (c, s) => _authRedirect(s),
   routes: [
-    GoRoute(path: '/', builder: (c, s) => const PersonaPicker()),
+    GoRoute(
+        path: '/',
+        builder: (c, s) => authNotifier.backendEnabled
+            ? const SplashScreen()
+            : const PersonaPicker()),
+    GoRoute(path: '/login', builder: (c, s) => const LoginScreen()),
+    GoRoute(path: '/register', builder: (c, s) => const RegisterScreen()),
+    GoRoute(path: '/pending', builder: (c, s) => const PendingScreen()),
     GoRoute(
         path: '/styleguide', builder: (c, s) => const StyleguideScreen()),
 
