@@ -21,6 +21,7 @@ import '../../features/member/member_messages.dart';
 import '../../features/member/member_thread.dart';
 import '../../features/member/profile_screen.dart';
 import '../../features/member/qr_payment.dart';
+import '../../features/styleguide/styleguide_screen.dart';
 import '../../shared/widgets/app_shell.dart';
 import 'persona_picker.dart';
 
@@ -38,6 +39,8 @@ final appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(path: '/', builder: (c, s) => const PersonaPicker()),
+    GoRoute(
+        path: '/styleguide', builder: (c, s) => const StyleguideScreen()),
 
     // ── Member tab shell — persistent nav, state preserved per branch ──
     StatefulShellRoute.indexedStack(

@@ -45,6 +45,28 @@ class PersonaPicker extends StatelessWidget {
               icon: const AppIcon('shield', size: 20, color: T.text),
               onTap: () => context.go('/admin'),
             ),
+            const SizedBox(height: 24),
+            Center(
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => context.push('/styleguide'),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const AppIcon('sliders', size: 16, color: T.text2),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text('Design systém / styleguide',
+                            overflow: TextOverflow.ellipsis,
+                            style: AppType.ui(size: 13, color: T.text2)),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
