@@ -246,13 +246,16 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
   void _openCompose(GymStore store, NavCb nav) {
     showModalBottomSheet<void>(
       context: context,
+      // Above the shell — keep the floating bottom-nav bar from overlapping.
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       barrierColor: Colors.black.withValues(alpha: 0.5),
       isScrollControlled: true,
       builder: (_) => _ComposeSheet(
         members: store.members,
         onPick: (id) {
-          Navigator.of(context).pop();
+          // Sheet is on the root navigator (useRootNavigator) — pop that.
+          Navigator.of(context, rootNavigator: true).pop();
           nav('thread', arg: id);
         },
       ),
@@ -262,6 +265,8 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
   void _openBroadcast(GymStore store, NavCb nav) {
     showModalBottomSheet<void>(
       context: context,
+      // Above the shell — keep the floating bottom-nav bar from overlapping.
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       barrierColor: Colors.black.withValues(alpha: 0.5),
       isScrollControlled: true,
@@ -269,7 +274,8 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
         members: store.members,
         store: store,
         onSent: (count) {
-          Navigator.of(context).pop();
+          // Sheet is on the root navigator (useRootNavigator) — pop that.
+          Navigator.of(context, rootNavigator: true).pop();
           nav('messages', toast: L.of(context).amsgSentToMembers(count));
         },
       ),

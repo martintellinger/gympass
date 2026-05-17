@@ -775,6 +775,10 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
   }) {
     return showModalBottomSheet<R>(
       context: context,
+      // Render above the shell so the floating bottom-nav bar doesn't sit on
+      // top of the sheet (the branch navigator is *under* the nav bar) — this
+      // was hiding the sheet's action button behind the tab bar.
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       barrierColor: T.scrim,
       isScrollControlled: true,

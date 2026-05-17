@@ -62,6 +62,8 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
   void _openSortSheet() {
     showModalBottomSheet<void>(
       context: context,
+      // Above the shell — keep the floating bottom-nav bar from overlapping.
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       barrierColor: T.scrimSheet,
       isScrollControlled: true,

@@ -107,13 +107,18 @@ class MemberMessagesScreen extends ConsumerWidget {
       ..sort((a, b) => a.name.compareTo(b.name));
     showModalBottomSheet<void>(
       context: context,
+      // Render above the shell so the floating bottom-nav bar doesn't sit on
+      // top of the sheet (the branch navigator is *under* the nav bar).
+      useRootNavigator: true,
       backgroundColor: Colors.transparent,
       barrierColor: Colors.black.withValues(alpha: 0.5),
       isScrollControlled: true,
       builder: (_) => _ComposeSheet(
         members: others,
         onPick: (id) {
-          Navigator.of(context).pop();
+          // Sheet lives on the root navigator (useRootNavigator) — pop that
+          // one, not the branch navigator behind it.
+          Navigator.of(context, rootNavigator: true).pop();
           nav('mthread', arg: id);
         },
       ),
