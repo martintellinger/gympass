@@ -1165,6 +1165,12 @@ abstract class L {
   /// **'Nový člen'**
   String get addmTitle;
 
+  /// No description provided for @addmTitleEdit.
+  ///
+  /// In cs, this message translates to:
+  /// **'Upravit člena'**
+  String get addmTitleEdit;
+
   /// No description provided for @addmNoName.
   ///
   /// In cs, this message translates to:
@@ -1176,6 +1182,12 @@ abstract class L {
   /// In cs, this message translates to:
   /// **'{name} přidán/a · {months} měs.'**
   String addmMemberAddedToast(Object months, Object name);
+
+  /// No description provided for @addmMemberSavedToast.
+  ///
+  /// In cs, this message translates to:
+  /// **'{name} · změny uloženy'**
+  String addmMemberSavedToast(Object name);
 
   /// No description provided for @addmSectionBasic.
   ///
@@ -1320,6 +1332,12 @@ abstract class L {
   /// In cs, this message translates to:
   /// **'Přidat člena'**
   String get addmSubmit;
+
+  /// No description provided for @addmSubmitEdit.
+  ///
+  /// In cs, this message translates to:
+  /// **'Uložit změny'**
+  String get addmSubmitEdit;
 
   /// No description provided for @addmCancel.
   ///
@@ -2004,6 +2022,54 @@ abstract class L {
   /// In cs, this message translates to:
   /// **'Označit zaplaceno'**
   String get apayMarkPaid;
+
+  /// No description provided for @apayToastMarkedPaid.
+  ///
+  /// In cs, this message translates to:
+  /// **'Platba potvrzena'**
+  String get apayToastMarkedPaid;
+
+  /// No description provided for @apayToastPaymentAdded.
+  ///
+  /// In cs, this message translates to:
+  /// **'Platba přidána'**
+  String get apayToastPaymentAdded;
+
+  /// No description provided for @apayAddTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Přidat platbu'**
+  String get apayAddTitle;
+
+  /// No description provided for @apayAddMember.
+  ///
+  /// In cs, this message translates to:
+  /// **'Člen'**
+  String get apayAddMember;
+
+  /// No description provided for @apayAddPickMember.
+  ///
+  /// In cs, this message translates to:
+  /// **'Vyber člena'**
+  String get apayAddPickMember;
+
+  /// No description provided for @apayAddTariff.
+  ///
+  /// In cs, this message translates to:
+  /// **'Tarif a období'**
+  String get apayAddTariff;
+
+  /// No description provided for @apayAddSave.
+  ///
+  /// In cs, this message translates to:
+  /// **'Uložit platbu'**
+  String get apayAddSave;
+
+  /// No description provided for @apayAddTariffOption.
+  ///
+  /// In cs, this message translates to:
+  /// **'{tariff} · {months, plural, one{{months} měsíc} few{{months} měsíce} other{{months} měsíců}} · {amount} Kč'**
+  String apayAddTariffOption(Object tariff, int months, Object amount);
 
   /// No description provided for @apayRecordsHeader.
   ///

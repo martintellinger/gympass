@@ -271,8 +271,10 @@
     }
   },
   "addmTitle": "Nový člen",
+  "addmTitleEdit": "Upravit člena",
   "addmNoName": "Bez jména",
   "addmMemberAddedToast": "{name} přidán/a · {months} měs.",
+  "addmMemberSavedToast": "{name} · změny uloženy",
   "addmSectionBasic": "Základní",
   "addmFieldName": "Jméno a příjmení",
   "addmFieldNamePlaceholder": "např. Pavel Novák",
@@ -297,6 +299,7 @@
   "addmIssueKey": "Vydat klíč",
   "addmIssueKeySub": "Kauce 100 Kč v hotovosti",
   "addmSubmit": "Přidat člena",
+  "addmSubmitEdit": "Uložit změny",
   "addmCancel": "Zrušit",
   "addmSubtitleIsic": " · ISIC",
   "addmSubtitleCustomPrice": " · vlastní cena",
@@ -486,6 +489,21 @@
   "apayToastReminderSent": "Připomínka odeslána",
   "apayRemind": "Připomenout",
   "apayMarkPaid": "Označit zaplaceno",
+  "apayToastMarkedPaid": "Platba potvrzena",
+  "apayToastPaymentAdded": "Platba přidána",
+  "apayAddTitle": "Přidat platbu",
+  "apayAddMember": "Člen",
+  "apayAddPickMember": "Vyber člena",
+  "apayAddTariff": "Tarif a období",
+  "apayAddSave": "Uložit platbu",
+  "apayAddTariffOption": "{tariff} · {months, plural, one{{months} měsíc} few{{months} měsíce} other{{months} měsíců}} · {amount} Kč",
+  "@apayAddTariffOption": {
+    "placeholders": {
+      "tariff": {},
+      "months": { "type": "int" },
+      "amount": {}
+    }
+  },
   "apayRecordsHeader": "{count, plural, one{{count} záznam · datum ↓} few{{count} záznamy · datum ↓} other{{count} záznamů · datum ↓}}",
   "@apayRecordsHeader": {
     "placeholders": {

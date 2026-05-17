@@ -8,7 +8,9 @@ import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../l10n/app_localizations.dart';
+import '../../shared/widgets/app_button.dart';
 import '../../shared/widgets/app_icon.dart';
+import '../../shared/widgets/avatar.dart';
 import '../../shared/widgets/round_icon_button.dart';
 import '../../shared/widgets/screen_frame.dart';
 
@@ -93,25 +95,13 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                             letterSpacing: -0.8,
                           ),
                         ),
-                        Row(
-                          children: [
-                            RoundIconButton(
-                              icon: 'download',
-                              size: 40,
-                              onTap: () => nav('payments',
-                                  toast: L.of(context).apayToastExportReady),
-                            ),
-                            const SizedBox(width: 8),
-                            RoundIconButton(
-                              icon: 'plus',
-                              size: 40,
-                              background: T.accent,
-                              iconColor: Colors.white,
-                              bordered: false,
-                              onTap: () => nav('payments',
-                                  toast: L.of(context).apayToastAddPayment),
-                            ),
-                          ],
+                        RoundIconButton(
+                          icon: 'plus',
+                          size: 40,
+                          background: T.accent,
+                          iconColor: Colors.white,
+                          bordered: false,
+                          onTap: () => _showAddPayment(context, store, nav),
                         ),
                       ],
                     ),
@@ -349,6 +339,11 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                                 _memberName(store, p.memberId),
                             onTap: () => nav('detail',
                                 arg: p.memberId),
+                            onConfirm: () {
+                              store.confirmPayment(p.id);
+                              nav('payments',
+                                  toast: L.of(context).apayToastMarkedPaid);
+                            },
                             onRemind: () {
                               store.sendMessage(
                                 p.memberId,
@@ -455,11 +450,13 @@ class _PaymentRow extends StatelessWidget {
   final Payment payment;
   final String memberName;
   final VoidCallback onTap;
+  final VoidCallback onConfirm;
   final VoidCallback onRemind;
   const _PaymentRow({
     required this.payment,
     required this.memberName,
     required this.onTap,
+    required this.onConfirm,
     required this.onRemind,
   });
 
@@ -611,7 +608,9 @@ class _PaymentRow extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Container(
+                  GestureDetector(
+                    onTap: onConfirm,
+                    child: Container(
                     height: 30,
                     padding:
                         const EdgeInsets.symmetric(horizontal: 12),
@@ -637,10 +636,228 @@ class _PaymentRow extends StatelessWidget {
                       ],
                     ),
                   ),
+                  ),
                 ],
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+/// One configurable tariff/period combo (MVP set — CLAUDE.md §1). Olda can
+/// add more once the real `tariffs` table lands; the picker is data-driven
+/// so this list is the only thing to grow.
+class _TariffOption {
+  final String tariff;
+  final int months;
+  final int amount;
+  const _TariffOption(this.tariff, this.months, this.amount);
+}
+
+const _kTariffOptions = <_TariffOption>[
+  _TariffOption('Standard', 1, 850),
+  _TariffOption('Standard', 3, 2250),
+  _TariffOption('Student', 1, 750),
+  _TariffOption('Student', 3, 1950),
+];
+
+void _showAddPayment(BuildContext context, GymStore store, NavCb nav) {
+  showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    builder: (_) => _AddPaymentSheet(store: store, nav: nav),
+  );
+}
+
+class _AddPaymentSheet extends StatefulWidget {
+  final GymStore store;
+  final NavCb nav;
+  const _AddPaymentSheet({required this.store, required this.nav});
+
+  @override
+  State<_AddPaymentSheet> createState() => _AddPaymentSheetState();
+}
+
+class _AddPaymentSheetState extends State<_AddPaymentSheet> {
+  String? _memberId;
+  int _optIdx = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    final l = L.of(context);
+    final members = [...widget.store.members]
+      ..sort((a, b) => a.name.compareTo(b.name));
+    final canSave = _memberId != null;
+
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.86,
+      ),
+      decoration: const BoxDecoration(
+        color: T.surface,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(Radii.xl)),
+        border: Border(top: BorderSide(color: T.border)),
+      ),
+      padding: EdgeInsets.fromLTRB(
+          20, 12, 20, MediaQuery.of(context).viewInsets.bottom + 20),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Container(
+              width: 36,
+              height: 4,
+              decoration: BoxDecoration(
+                color: T.border,
+                borderRadius: BorderRadius.circular(Radii.pill),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(l.apayAddTitle,
+              style: AppType.ui(
+                  size: 20, weight: FontWeight.w700, letterSpacing: -0.4)),
+          const SizedBox(height: 16),
+          Text(l.apayAddMember.toUpperCase(),
+              style: AppType.ui(
+                  size: 11.5,
+                  weight: FontWeight.w600,
+                  color: T.text2,
+                  letterSpacing: 0.4)),
+          const SizedBox(height: 8),
+          Flexible(
+            child: Container(
+              decoration: BoxDecoration(
+                color: T.bg,
+                border: Border.all(color: T.border),
+                borderRadius: BorderRadius.circular(Radii.md),
+              ),
+              child: ListView.builder(
+                shrinkWrap: true,
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                itemCount: members.length,
+                itemBuilder: (_, i) {
+                  final m = members[i];
+                  final sel = m.id == _memberId;
+                  return GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => setState(() => _memberId = m.id),
+                    child: Container(
+                      color: sel ? T.accentSoft : Colors.transparent,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 9),
+                      child: Row(
+                        children: [
+                          Avatar(name: m.name, size: 30),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: Text(m.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: AppType.ui(
+                                    size: 14,
+                                    weight: FontWeight.w500,
+                                    color: sel ? T.accent : T.text)),
+                          ),
+                          if (sel)
+                            const AppIcon('check',
+                                size: 16, color: T.accent),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(l.apayAddTariff.toUpperCase(),
+              style: AppType.ui(
+                  size: 11.5,
+                  weight: FontWeight.w600,
+                  color: T.text2,
+                  letterSpacing: 0.4)),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (var i = 0; i < _kTariffOptions.length; i++)
+                _OptChip(
+                  label: l.apayAddTariffOption(
+                    _kTariffOptions[i].tariff,
+                    _kTariffOptions[i].months,
+                    groupThousands(_kTariffOptions[i].amount),
+                  ),
+                  active: i == _optIdx,
+                  onTap: () => setState(() => _optIdx = i),
+                ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          AppButton(
+            label: l.apayAddSave,
+            full: true,
+            icon: canSave
+                ? const AppIcon('check', size: 20, color: Colors.white)
+                : null,
+            onTap: canSave
+                ? () {
+                    final opt = _kTariffOptions[_optIdx];
+                    widget.store.addManualPayment(
+                      memberId: _memberId!,
+                      amount: opt.amount,
+                      tariff: opt.tariff,
+                      type: l.apayAddTariffOption(
+                        opt.tariff,
+                        opt.months,
+                        groupThousands(opt.amount),
+                      ),
+                    );
+                    Navigator.of(context).pop();
+                    widget.nav('payments',
+                        toast: l.apayToastPaymentAdded);
+                  }
+                : null,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _OptChip extends StatelessWidget {
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+  const _OptChip(
+      {required this.label, required this.active, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 36,
+        padding: const EdgeInsets.symmetric(horizontal: 14),
+        decoration: BoxDecoration(
+          color: active ? T.accent : T.bg,
+          border: Border.all(color: active ? T.accent : T.border),
+          borderRadius: BorderRadius.circular(Radii.pill),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: AppType.ui(
+            size: 13,
+            weight: FontWeight.w600,
+            color: active ? Colors.white : T.text,
+          ),
+        ),
       ),
     );
   }

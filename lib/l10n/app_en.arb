@@ -185,8 +185,10 @@
   "adashRevenueRange": "6 months",
   "adashRevenueMonth": "CZK · {month}",
   "addmTitle": "New member",
+  "addmTitleEdit": "Edit member",
   "addmNoName": "No name",
   "addmMemberAddedToast": "{name} added · {months} mo.",
+  "addmMemberSavedToast": "{name} · changes saved",
   "addmSectionBasic": "Basics",
   "addmFieldName": "Full name",
   "addmFieldNamePlaceholder": "e.g. Pavel Novák",
@@ -211,6 +213,7 @@
   "addmIssueKey": "Issue key",
   "addmIssueKeySub": "100 CZK deposit in cash",
   "addmSubmit": "Add member",
+  "addmSubmitEdit": "Save changes",
   "addmCancel": "Cancel",
   "addmSubtitleIsic": " · ISIC",
   "addmSubtitleCustomPrice": " · custom price",
@@ -358,6 +361,21 @@
   "apayToastReminderSent": "Reminder sent",
   "apayRemind": "Remind",
   "apayMarkPaid": "Mark as paid",
+  "apayToastMarkedPaid": "Payment confirmed",
+  "apayToastPaymentAdded": "Payment added",
+  "apayAddTitle": "Add payment",
+  "apayAddMember": "Member",
+  "apayAddPickMember": "Select member",
+  "apayAddTariff": "Tariff and period",
+  "apayAddSave": "Save payment",
+  "apayAddTariffOption": "{tariff} · {months, plural, one{{months} month} other{{months} months}} · {amount} CZK",
+  "@apayAddTariffOption": {
+    "placeholders": {
+      "tariff": {},
+      "months": { "type": "int" },
+      "amount": {}
+    }
+  },
   "apayRecordsHeader": "{count, plural, one{{count} record · date ↓} other{{count} records · date ↓}}",
   "@apayRecordsHeader": {
     "placeholders": {

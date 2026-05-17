@@ -45,7 +45,9 @@ String routeToPath(String route, {Object? arg}) {
     case 'approval':
       return '/admin/approval';
     case 'addMember':
-      return '/admin/add';
+      return arg == null || '$arg'.isEmpty
+          ? '/admin/add'
+          : '/admin/add?id=$arg';
     case 'broadcast':
       return '/admin/broadcast';
     case 'excelImport':
@@ -80,13 +82,15 @@ NavCb navCb(BuildContext context) {
         final loc = GoRouterState.of(context).uri.path;
         context.go(loc.startsWith('/admin') ? '/admin' : '/member/dashboard');
       }
-      return;
-    }
-    final path = routeToPath(route, arg: arg);
-    if (_tabRoutes.contains(route)) {
-      context.go(path);
+      // Note: no early return — a `back` can still carry a confirmation toast
+      // (e.g. "changes saved" when popping an edit form).
     } else {
-      context.push(path);
+      final path = routeToPath(route, arg: arg);
+      if (_tabRoutes.contains(route)) {
+        context.go(path);
+      } else {
+        context.push(path);
+      }
     }
     if (toast != null && toast.isNotEmpty) {
       // A surfaced toast almost always confirms a completed action — give it a

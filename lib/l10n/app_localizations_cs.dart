@@ -594,11 +594,19 @@ class LCs extends L {
   String get addmTitle => 'Nový člen';
 
   @override
+  String get addmTitleEdit => 'Upravit člena';
+
+  @override
   String get addmNoName => 'Bez jména';
 
   @override
   String addmMemberAddedToast(Object months, Object name) {
     return '$name přidán/a · $months měs.';
+  }
+
+  @override
+  String addmMemberSavedToast(Object name) {
+    return '$name · změny uloženy';
   }
 
   @override
@@ -678,6 +686,9 @@ class LCs extends L {
 
   @override
   String get addmSubmit => 'Přidat člena';
+
+  @override
+  String get addmSubmitEdit => 'Uložit změny';
 
   @override
   String get addmCancel => 'Zrušit';
@@ -1150,6 +1161,39 @@ class LCs extends L {
 
   @override
   String get apayMarkPaid => 'Označit zaplaceno';
+
+  @override
+  String get apayToastMarkedPaid => 'Platba potvrzena';
+
+  @override
+  String get apayToastPaymentAdded => 'Platba přidána';
+
+  @override
+  String get apayAddTitle => 'Přidat platbu';
+
+  @override
+  String get apayAddMember => 'Člen';
+
+  @override
+  String get apayAddPickMember => 'Vyber člena';
+
+  @override
+  String get apayAddTariff => 'Tarif a období';
+
+  @override
+  String get apayAddSave => 'Uložit platbu';
+
+  @override
+  String apayAddTariffOption(Object tariff, int months, Object amount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: '$months měsíců',
+      few: '$months měsíce',
+      one: '$months měsíc',
+    );
+    return '$tariff · $_temp0 · $amount Kč';
+  }
 
   @override
   String apayRecordsHeader(int count) {

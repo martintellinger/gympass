@@ -88,7 +88,10 @@ final appRouter = GoRouter(
     GoRoute(
         path: '/admin/approval',
         builder: (c, s) => const ApprovalQueueScreen()),
-    GoRoute(path: '/admin/add', builder: (c, s) => const AddMemberScreen()),
+    GoRoute(
+        path: '/admin/add',
+        builder: (c, s) =>
+            AddMemberScreen(editMemberId: s.uri.queryParameters['id'])),
     GoRoute(
         path: '/admin/import', builder: (c, s) => const ExcelImportWizard()),
     GoRoute(

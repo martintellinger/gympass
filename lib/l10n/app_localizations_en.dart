@@ -596,11 +596,19 @@ class LEn extends L {
   String get addmTitle => 'New member';
 
   @override
+  String get addmTitleEdit => 'Edit member';
+
+  @override
   String get addmNoName => 'No name';
 
   @override
   String addmMemberAddedToast(Object months, Object name) {
     return '$name added · $months mo.';
+  }
+
+  @override
+  String addmMemberSavedToast(Object name) {
+    return '$name · changes saved';
   }
 
   @override
@@ -680,6 +688,9 @@ class LEn extends L {
 
   @override
   String get addmSubmit => 'Add member';
+
+  @override
+  String get addmSubmitEdit => 'Save changes';
 
   @override
   String get addmCancel => 'Cancel';
@@ -1143,6 +1154,38 @@ class LEn extends L {
 
   @override
   String get apayMarkPaid => 'Mark as paid';
+
+  @override
+  String get apayToastMarkedPaid => 'Payment confirmed';
+
+  @override
+  String get apayToastPaymentAdded => 'Payment added';
+
+  @override
+  String get apayAddTitle => 'Add payment';
+
+  @override
+  String get apayAddMember => 'Member';
+
+  @override
+  String get apayAddPickMember => 'Select member';
+
+  @override
+  String get apayAddTariff => 'Tariff and period';
+
+  @override
+  String get apayAddSave => 'Save payment';
+
+  @override
+  String apayAddTariffOption(Object tariff, int months, Object amount) {
+    String _temp0 = intl.Intl.pluralLogic(
+      months,
+      locale: localeName,
+      other: '$months months',
+      one: '$months month',
+    );
+    return '$tariff · $_temp0 · $amount CZK';
+  }
 
   @override
   String apayRecordsHeader(int count) {

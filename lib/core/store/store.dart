@@ -115,6 +115,45 @@ class GymStore extends ChangeNotifier {
     return null;
   }
 
+  /// Admin manually confirms a pending/overdue payment (§6 — no bank
+  /// matching in MVP, the owner ticks it off by hand). Flips it to `ok`
+  /// and stamps today's date; idempotent if already paid.
+  void confirmPayment(String paymentId, {String type = 'Potvrzeno ručně'}) {
+    final i = payments.indexWhere((p) => p.id == paymentId);
+    if (i < 0 || payments[i].state == 'ok') return;
+    final p = payments[i];
+    payments[i] = Payment(
+      id: p.id,
+      memberId: p.memberId,
+      date: DateTime.now(),
+      amount: p.amount,
+      type: type,
+      tariff: p.tariff,
+      state: 'ok',
+    );
+    notifyListeners();
+  }
+
+  /// Admin records a manual payment (§6). Lands as a confirmed (`ok`)
+  /// record dated today.
+  void addManualPayment({
+    required String memberId,
+    required int amount,
+    required String tariff,
+    required String type,
+  }) {
+    payments.add(Payment(
+      id: 'p${DateTime.now().millisecondsSinceEpoch}',
+      memberId: memberId,
+      date: DateTime.now(),
+      amount: amount,
+      type: type,
+      tariff: tariff,
+      state: 'ok',
+    ));
+    notifyListeners();
+  }
+
   Member addMember(Member partial) {
     final base = partial.name.isEmpty ? 'novy' : partial.name.toLowerCase();
     final slug = base.split(RegExp(r'\s')).first.replaceAll(RegExp(r'[^a-z]'), '');

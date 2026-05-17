@@ -12,10 +12,12 @@ import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
 import '../../shared/widgets/screen_frame.dart';
 
-/// Add Member 18 — manual add member form for the owner.
-/// Port of AddMember.jsx (non-editing / "Nový člen" path).
+/// Add Member 18 — manual add/edit member form for the owner.
+/// Port of AddMember.jsx; when [editMemberId] is set the form prefills the
+/// existing member and saves changes instead of creating a new member.
 class AddMemberScreen extends ConsumerStatefulWidget {
-  const AddMemberScreen({super.key});
+  final String? editMemberId;
+  const AddMemberScreen({super.key, this.editMemberId});
 
   @override
   ConsumerState<AddMemberScreen> createState() => _AddMemberScreenState();
@@ -35,6 +37,9 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
   int _price = 750;
   bool _submitted = false;
 
+  bool get _isEdit =>
+      widget.editMemberId != null && widget.editMemberId!.isNotEmpty;
+
   int get _tariffDefault => _tariff == 'Student' ? 500 : 750;
   int get _monthly => _customOn ? _price : _tariffDefault;
   int get _total => _monthly * _length;
@@ -52,6 +57,21 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
   @override
   void initState() {
     super.initState();
+    if (_isEdit) {
+      final existing = ref.read(storeProvider).memberById(widget.editMemberId!);
+      if (existing != null) {
+        _nameCtrl.text = existing.name;
+        _emailCtrl.text = existing.email == '—' ? '' : existing.email;
+        _phoneCtrl.text = existing.phone == '—' ? '' : existing.phone;
+        _tariff = existing.tariff == 'Student' ? 'Student' : 'Standard';
+        _isic = existing.isic;
+        _hasKey = existing.hasKey;
+        final defaultPrice = _tariff == 'Student' ? 500 : 750;
+        final price = existing.monthlyPrice ?? defaultPrice;
+        _customOn = price != defaultPrice;
+        _price = price;
+      }
+    }
     _priceCtrl.text = _price.toString();
     _nameCtrl.addListener(() => setState(() {}));
     _emailCtrl.addListener(() => setState(() {}));
@@ -96,6 +116,23 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
     final email = _emailCtrl.text.trim();
     final phone = _phoneCtrl.text.trim();
 
+    if (_isEdit) {
+      store.updateMember(
+        widget.editMemberId!,
+        (mm) => mm.copyWith(
+          name: name,
+          email: email.isEmpty ? '—' : email,
+          phone: phone.isEmpty ? '—' : phone,
+          tariff: _tariff,
+          isic: _tariff == 'Student' && _isic,
+          hasKey: _hasKey,
+          monthlyPrice: _monthly,
+        ),
+      );
+      nav('back', toast: L.of(context).addmMemberSavedToast(name));
+      return;
+    }
+
     final created = store.addMember(Member(
       id: '',
       name: name,
@@ -114,7 +151,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
         toast: L.of(context).addmMemberAddedToast(created.name, _length));
   }
 
-  void _cancel() => navCb(context)('list');
+  void _cancel() => navCb(context)(_isEdit ? 'back' : 'list');
 
   String _csNum(int n) {
     final s = n.toString();
@@ -142,7 +179,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 GestureDetector(
-                  onTap: () => navCb(context)('list'),
+                  onTap: () => navCb(context)(_isEdit ? 'back' : 'list'),
                   child: Container(
                     width: 36,
                     height: 36,
@@ -158,7 +195,9 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                   ),
                 ),
                 Text(
-                  L.of(context).addmTitle,
+                  _isEdit
+                      ? L.of(context).addmTitleEdit
+                      : L.of(context).addmTitle,
                   style: AppType.ui(
                     size: 14,
                     weight: FontWeight.w600,
@@ -280,16 +319,17 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                           onChange: (v) => setState(() => _isic = v),
                           sub: L.of(context).addmHasIsicSub,
                         ),
-                      _RowSegment<int>(
-                        label: L.of(context).addmLength,
-                        value: _length,
-                        onChange: (v) => setState(() => _length = v),
-                        options: [
-                          _SegOpt(3, L.of(context).addmMonths(3), null),
-                          _SegOpt(6, L.of(context).addmMonths(6), null),
-                          _SegOpt(12, L.of(context).addmMonths(12), null),
-                        ],
-                      ),
+                      if (!_isEdit)
+                        _RowSegment<int>(
+                          label: L.of(context).addmLength,
+                          value: _length,
+                          onChange: (v) => setState(() => _length = v),
+                          options: [
+                            _SegOpt(3, L.of(context).addmMonths(3), null),
+                            _SegOpt(6, L.of(context).addmMonths(6), null),
+                            _SegOpt(12, L.of(context).addmMonths(12), null),
+                          ],
+                        ),
                     ],
                   ),
 
@@ -311,7 +351,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                                 .addmCustomPriceOffSub(_tariffDefault),
                       ),
                       if (_customOn) _priceField(),
-                      _kCalcRow(),
+                      if (!_isEdit) _kCalcRow(),
                     ],
                   ),
 
@@ -341,12 +381,14 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          AppIcon('user_plus',
+                          AppIcon(_isEdit ? 'check' : 'user_plus',
                               size: 18,
                               color: _ok ? Colors.white : T.text3),
                           const SizedBox(width: 8),
                           Text(
-                            L.of(context).addmSubmit,
+                            _isEdit
+                                ? L.of(context).addmSubmitEdit
+                                : L.of(context).addmSubmit,
                             style: AppType.ui(
                               size: 16,
                               weight: FontWeight.w600,
