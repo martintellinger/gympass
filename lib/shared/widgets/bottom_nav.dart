@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_theme.dart';
@@ -15,12 +13,13 @@ class NavItem {
   const NavItem({required this.icon, required this.label, this.badge});
 }
 
-/// BottomNav — persistent iOS 26 "liquid glass" tab bar.
+/// BottomNav — persistent floating tab pill.
 ///
 /// Lives in the app shell and is never rebuilt on tab switch; only [active]
-/// changes. Heavy backdrop blur + saturation, a soft capsule that slides
-/// between slots, and a spring scale on the active icon. The bottom inset is
-/// safe-area aware (passed by the shell), not a hardcoded value.
+/// changes. A clean solid dark pill (no faux glass — Flutter can't do the
+/// real native iOS 26 material, least of all on web), a neutral chip that
+/// slides between slots, and a spring scale on the active icon. The bottom
+/// inset is safe-area aware (passed by the shell), not a hardcoded value.
 class BottomNav extends StatelessWidget {
   final List<NavItem> items;
   final int active;
@@ -39,106 +38,70 @@ class BottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // iOS 26: a detached, fully-rounded glass pill floating above the home
-    // indicator — not an edge-to-edge bar. Side + bottom margins, stadium
-    // corners, blur clipped to the pill shape.
+    // A detached, fully-rounded pill floating above the home indicator —
+    // not an edge-to-edge bar. Side + bottom margins, stadium corners.
     final gap = (bottomInset > 0 ? bottomInset : 12).toDouble();
 
     return Padding(
       padding: EdgeInsets.only(left: 16, right: 16, bottom: gap, top: 6),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(Radii.pill),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
-          child: Container(
-            padding:
-                const EdgeInsets.symmetric(vertical: Space.sm, horizontal: 8),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(Radii.pill),
-              // iOS 26 "liquid glass": translucent enough that the 40px
-              // backdrop blur reads as frost, a bright sheen across the
-              // top edge, and a deep ambient drop shadow so it floats.
-              gradient: const LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color(0x2EFFFFFF), // top specular sheen
-                  Color(0x0FFFFFFF),
-                  Color(0x66141618), // translucent dark base
-                ],
-                stops: [0.0, 0.5, 1.0],
-              ),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.20),
-                width: 0.8,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.50),
-                  blurRadius: 32,
-                  spreadRadius: -4,
-                  offset: const Offset(0, 14),
-                ),
-                // Faint inner-top rim light (the "liquid" edge highlight).
-                BoxShadow(
-                  color: Colors.white.withValues(alpha: 0.05),
-                  blurRadius: 0,
-                  offset: const Offset(0, 0.6),
-                ),
-              ],
+        child: Container(
+          padding: const EdgeInsets.symmetric(
+            vertical: Space.sm,
+            horizontal: 8,
+          ),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(Radii.pill),
+            // Flutter can't render the real native iOS 26 "liquid glass"
+            // (and never on web); a faux backdrop blur over a near-black
+            // app only muddies. So: a clean, solid, intentional dark pill.
+            gradient: const LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xFF202023), Color(0xFF161618)],
             ),
-            child: LayoutBuilder(
-              builder: (context, c) {
-                final n = items.length;
-                final slotW = c.maxWidth / n;
-                const capsuleH = 44.0;
-                final capsuleW = slotW.clamp(46.0, 68.0);
+            border: Border.all(color: T.border),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.40),
+                blurRadius: 24,
+                spreadRadius: -6,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: LayoutBuilder(
+            builder: (context, c) {
+              final n = items.length;
+              final slotW = c.maxWidth / n;
+              const capsuleH = 44.0;
+              final capsuleW = slotW.clamp(46.0, 68.0);
 
-                return SizedBox(
-                  height: 46,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      // ── Sliding "liquid glass" capsule behind active tab ──
-                      AnimatedPositioned(
-                        duration: const Duration(milliseconds: 340),
-                        curve: Curves.easeOutCubic,
-                        left: active * slotW + (slotW - capsuleW) / 2,
-                        top: (46 - capsuleH) / 2,
-                        child: Container(
-                          width: capsuleW,
-                          height: capsuleH,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(capsuleH / 2),
-                            // Lit glass: white specular at the top, accent
-                            // tint through the body — reads as a glowing
-                            // liquid pill rather than a flat fill.
-                            gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                Colors.white.withValues(alpha: 0.28),
-                                T.accent.withValues(alpha: 0.32),
-                                T.accent.withValues(alpha: 0.16),
-                              ],
-                              stops: const [0.0, 0.4, 1.0],
-                            ),
-                            border: Border.all(
-                              color: T.accent.withValues(alpha: 0.50),
-                              width: 0.8,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: T.accent.withValues(alpha: 0.35),
-                                blurRadius: 18,
-                                spreadRadius: -3,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
+              return SizedBox(
+                height: 46,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    // ── Sliding selection chip behind the active tab ──
+                    AnimatedPositioned(
+                      duration: const Duration(milliseconds: 340),
+                      curve: Curves.easeOutCubic,
+                      left: active * slotW + (slotW - capsuleW) / 2,
+                      top: (46 - capsuleH) / 2,
+                      child: Container(
+                        width: capsuleW,
+                        height: capsuleH,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(capsuleH / 2),
+                          // Neutral raised chip — the accent reads through
+                          // the icon + label, not a coloured blob.
+                          color: T.surface2,
+                          border: Border.all(color: T.border),
                         ),
                       ),
-                      Row(
+                    ),
+                    Row(
                       children: List.generate(n, (i) {
                         final it = items[i];
                         final isActive = i == active;
@@ -173,17 +136,23 @@ class BottomNav extends StatelessWidget {
                                           right: -8,
                                           child: Container(
                                             constraints: const BoxConstraints(
-                                                minWidth: 16),
+                                              minWidth: 16,
+                                            ),
                                             height: 16,
                                             padding: const EdgeInsets.symmetric(
-                                                horizontal: 4),
+                                              horizontal: 4,
+                                            ),
                                             alignment: Alignment.center,
                                             decoration: BoxDecoration(
                                               color: T.error,
                                               borderRadius:
-                                                  BorderRadius.circular(Radii.sm),
+                                                  BorderRadius.circular(
+                                                    Radii.sm,
+                                                  ),
                                               border: Border.all(
-                                                  color: T.bg, width: 2),
+                                                color: T.bg,
+                                                width: 2,
+                                              ),
                                             ),
                                             child: Text(
                                               it.badge! > 9
@@ -226,7 +195,6 @@ class BottomNav extends StatelessWidget {
           ),
         ),
       ),
-    ),
     );
   }
 }

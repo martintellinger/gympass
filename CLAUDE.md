@@ -190,7 +190,7 @@ lib/
 > port `store.jsx`). Backend (Supabase), auth, l10n, notifikace, migrace a
 > data-ops zatím nejsou — vyžadují credentials / produktová rozhodnutí.
 
-- [~] **Fáze 0 — Setup**: ✅ Flutter projekt, theme (z `shared.jsx`), **go_router se `StatefulShellRoute` (perzistentní iOS 26 nav)**, Riverpod, sdílené primitivy, **design tokeny + spacing/radius škála**, **light/dark `ThemeMode` (živý přepínač)**, **l10n (cs/en, ~389 ARB klíčů, všech 18 obrazovek + nav/persona, živé přepínání jazyka i tématu)** · ⬜ Supabase · ℹ️ l10n: záměrně odloženo — řetězce s českým pluralem (jeden/dva/pět) a mock data (jména, částky, ukázkové posty) zůstávají; patří do datové/backend vrstvy nebo potřebují ICU plural
+- [~] **Fáze 0 — Setup**: ✅ Flutter projekt, theme (z `shared.jsx`), **go_router se `StatefulShellRoute` (perzistentní iOS 26 nav)**, Riverpod, sdílené primitivy, **design tokeny + spacing/radius škála**, **light/dark `ThemeMode` (živý přepínač)**, **l10n (cs/en, ~389 ARB klíčů, všech 18 obrazovek + nav/persona, živé přepínání jazyka i tématu)** · ⬜ Supabase · ✅ l10n: ICU český plural (one/few/other) dokončen (member_list/fault/payments/thread/Excel import); zbývají jen řetězce vázané na mock data (jména, částky, ukázkové posty) — inventář v `.context/handoff-l10n-followup.md` (sekce „Update 2026-05-17"), přeloží se s backend/datovou vrstvou
 - [~] **Fáze 1 — Auth**: ⬜ obrazovky 01–03 (nejsou v design bundlu) · ✅ persona switcher místo auth (dev)
 - [x] **Fáze 2 — Member core**: Dashboard (04), karta (09), historie (06), profil (08) — UI na mock datech
 - [x] **Fáze 3 — Payment**: QR Payment (05) flexibilní grid tarifů, „Zaplatil jsem" — UI
@@ -198,10 +198,10 @@ lib/
 - [x] **Fáze 5 — Admin core**: Dashboard (10), seznam (11), detail (12), schvalování (13) — UI
 - [x] **Fáze 6 — Admin advanced**: Platby (14), zprávy 1:1 (15, 16), Více (17), AddMember (18) — UI
 - [x] **Fáze 7 — Komunikace**: Broadcast composer (19), notification preferences v profilu — UI
-- [ ] **Fáze 8 — Migrace**: Excel import wizard + re-import s diff view
+- [~] **Fáze 8 — Migrace**: ✅ Excel import wizard UI (4 kroky) + re-import diff view + unit-tested `diffImport` + `GymStore.importMembers` (idempotentní) — na mock/syntetickém sheetu · ⬜ reálný `file_picker`/`excel` parser + napojení na Supabase (vyžaduje backend)
 - [ ] **Fáze 9 — Notifikace**: FCM/APNs setup, scheduled jobs pro -14/-3/0/+1/+7/+30
 - [ ] **Fáze 10 — Data ops**: CSV export plateb, záloha databáze, GDPR
-- [ ] **Fáze 11 — Polish**: Empty states, error handling, animace, haptic feedback
+- [~] **Fáze 11 — Polish**: ✅ haptika (`core/utils/haptics.dart`, centrálně v AppButton/BottomNav/toast), press+entrance animace, themed toast, empty states sjednoceny (history doplněn), Skeleton primitiv · ⬜ error/offline stavy a skutečný skeleton-loading vznikají s async/Supabase vrstvou
 - [ ] **Fáze 12 — Build & TestFlight/Internal track** (Android SDK + CocoaPods nejsou v tomto prostředí; `flutter build web` ✓, `flutter analyze` 0 issues, `flutter test` ✓)
 
 Claude Code: po dokončení fáze odškrtni checkbox a commitni `chore: complete phase X`.
