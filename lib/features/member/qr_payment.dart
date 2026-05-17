@@ -148,22 +148,29 @@ class _QrPaymentScreenState extends ConsumerState<QrPaymentScreen> {
                           (c.maxWidth - gap * (count - 1)) / count;
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 24),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            for (var i = 0; i < count; i++) ...[
-                              if (i > 0) const SizedBox(width: gap),
-                              SizedBox(
-                                width: tileW,
-                                child: _TariffPick(
-                                  tariff: _kTariffs[i],
-                                  active: i == _selected,
-                                  onTap: () =>
-                                      setState(() => _selected = i),
+                        // IntrinsicHeight bounds the Row's cross axis to the
+                        // tallest tile so CrossAxisAlignment.stretch can equalise
+                        // heights — without it, the surrounding scroll view
+                        // leaves the height unbounded and stretch throws
+                        // "BoxConstraints forces an infinite height".
+                        child: IntrinsicHeight(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              for (var i = 0; i < count; i++) ...[
+                                if (i > 0) const SizedBox(width: gap),
+                                SizedBox(
+                                  width: tileW,
+                                  child: _TariffPick(
+                                    tariff: _kTariffs[i],
+                                    active: i == _selected,
+                                    onTap: () =>
+                                        setState(() => _selected = i),
+                                  ),
                                 ),
-                              ),
+                              ],
                             ],
-                          ],
+                          ),
                         ),
                       );
                     },
