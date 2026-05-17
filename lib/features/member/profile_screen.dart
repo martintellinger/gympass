@@ -8,6 +8,7 @@ import '../../core/theme/tokens.dart';
 import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
+import '../../shared/widgets/round_icon_button.dart';
 import '../../shared/widgets/screen_frame.dart';
 import '../../shared/widgets/status_pill.dart';
 
@@ -41,10 +42,20 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
 
     return ScreenFrame(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(24, 4, 24, 110),
+        padding: const EdgeInsets.fromLTRB(24, 4, 24, 32),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Back to dashboard (profile is reached from the home header,
+                // no longer a bottom-nav tab).
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: RoundIconButton(
+                    icon: 'back',
+                    onTap: () => nav('back'),
+                  ),
+                ),
+                const SizedBox(height: 4),
                 // Hero
                 Padding(
                   padding: const EdgeInsets.only(top: 8),

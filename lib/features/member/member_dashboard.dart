@@ -9,6 +9,7 @@ import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_button.dart';
 import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/app_icon.dart';
+import '../../shared/widgets/round_icon_button.dart';
 import '../../shared/widgets/screen_frame.dart';
 import '../../shared/widgets/status_pill.dart';
 
@@ -44,7 +45,11 @@ class MemberDashboardScreen extends ConsumerWidget {
                           letterSpacing: 0.4,
                         ),
                       ),
-                      _BoardBell(onTap: () => nav('board')),
+                      RoundIconButton(
+                        icon: 'user',
+                        iconColor: T.text2,
+                        onTap: () => nav('profile'),
+                      ),
                     ],
                   ),
                 ),
@@ -370,50 +375,6 @@ class _MembershipTimeline extends StatelessWidget {
 }
 
 /// Board bell button with unread indicator (top-right of header).
-class _BoardBell extends StatelessWidget {
-  final VoidCallback onTap;
-  const _BoardBell({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: SizedBox(
-        width: 36,
-        height: 36,
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: T.surface,
-                shape: BoxShape.circle,
-                border: Border.all(color: T.border),
-              ),
-              alignment: Alignment.center,
-              child: const AppIcon('board', size: 18, color: T.text2),
-            ),
-            Positioned(
-              top: 6,
-              right: 6,
-              child: Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: T.accent,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: T.bg, width: 2),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 /// Member card preview — gradient card with dumbbell icon + status.
 class _MemberCardPreview extends StatelessWidget {

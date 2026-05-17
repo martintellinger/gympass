@@ -76,10 +76,13 @@ class BottomNav extends StatelessWidget {
               final n = items.length;
               final slotW = c.maxWidth / n;
               const capsuleH = 44.0;
+              // Row taller than the chip → visible breathing room above
+              // and below the active selection chip ((rowH-capsuleH)/2).
+              const rowH = 56.0;
               final capsuleW = slotW.clamp(46.0, 68.0);
 
               return SizedBox(
-                height: 46,
+                height: rowH,
                 child: Stack(
                   alignment: Alignment.center,
                   children: [
@@ -88,7 +91,7 @@ class BottomNav extends StatelessWidget {
                       duration: const Duration(milliseconds: 340),
                       curve: Curves.easeOutCubic,
                       left: active * slotW + (slotW - capsuleW) / 2,
-                      top: (46 - capsuleH) / 2,
+                      top: (rowH - capsuleH) / 2,
                       child: Container(
                         width: capsuleW,
                         height: capsuleH,
@@ -199,7 +202,7 @@ class BottomNav extends StatelessWidget {
   }
 }
 
-const memberNavRoutes = ['dashboard', 'card', 'history', 'board', 'profile'];
+const memberNavRoutes = ['dashboard', 'card', 'history', 'board'];
 
 class MemberBottomNav extends StatelessWidget {
   final int active;
@@ -224,7 +227,6 @@ class MemberBottomNav extends StatelessWidget {
         NavItem(icon: 'card', label: l.navCard),
         NavItem(icon: 'history', label: l.navHistory),
         NavItem(icon: 'board', label: l.navBoard),
-        NavItem(icon: 'user', label: l.navProfile),
       ],
     );
   }
