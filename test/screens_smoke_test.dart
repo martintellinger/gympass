@@ -28,13 +28,19 @@ const _routes = <String>[
   '/admin/import',
   '/admin/member/pavel',
   '/admin/thread/david',
+  '/member/messages',
+  '/member/thread/olda',
+  '/member/thread/eva',
 ];
 
 Future<void> _settle(WidgetTester tester) async {
-  // Fixed pumps, not pumpAndSettle: some screens host repeating
-  // animations (skeleton shimmer) that never settle by design.
+  // Settle fully so the previous route's StatefulShellRoute subtree is
+  // disposed before the next builds (avoids a transient duplicate of the
+  // shell's GlobalKey). No listed route hosts a perpetual animation —
+  // the skeleton shimmer only runs inside the wizard's parsing step,
+  // which a plain navigation never triggers — so this terminates.
   await tester.pump();
-  await tester.pump(const Duration(milliseconds: 280));
+  await tester.pumpAndSettle(const Duration(milliseconds: 16));
 }
 
 void main() {
@@ -59,6 +65,13 @@ void main() {
         await _settle(tester);
 
         for (final route in _routes) {
+          // Reset to the persona root (no StatefulShellRoute) between each
+          // destination so the previous shell fully tears down before the
+          // next builds — otherwise rapid go() between a push sub-page and a
+          // shell tab momentarily duplicates the shell's GlobalKey (a test
+          // artifact of driving one global router, not a product bug).
+          appRouter.go('/');
+          await _settle(tester);
           appRouter.go(route);
           await _settle(tester);
           expect(
