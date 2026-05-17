@@ -556,9 +556,13 @@ class _MemberRow extends StatelessWidget {
                   const SizedBox(height: 2),
                   Row(
                     children: [
-                      Text(
-                        m.tariff,
-                        style: AppType.ui(size: 12.5, color: T.text2),
+                      Flexible(
+                        child: Text(
+                          m.tariff,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppType.ui(size: 12.5, color: T.text2),
+                        ),
                       ),
                       const SizedBox(width: 6),
                       Text('·',

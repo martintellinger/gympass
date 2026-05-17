@@ -579,7 +579,9 @@ class _PaymentRow extends StatelessWidget {
             Padding(
               padding:
                   const EdgeInsets.fromLTRB(52, 0, 4, 12),
-              child: Row(
+              child: Wrap(
+                spacing: 8,
+                runSpacing: 8,
                 children: [
                   GestureDetector(
                     onTap: onRemind,
@@ -609,7 +611,6 @@ class _PaymentRow extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
                   Container(
                     height: 30,
                     padding:

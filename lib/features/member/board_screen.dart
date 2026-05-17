@@ -198,9 +198,10 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
                         textBaseline: TextBaseline.alphabetic,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
                               Text(
                                 L.of(context).boardTitle,
                                 style: AppType.ui(
@@ -219,6 +220,7 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
                                 ),
                               ),
                             ],
+                            ),
                           ),
                           Row(
                             mainAxisSize: MainAxisSize.min,
@@ -386,32 +388,39 @@ class _BoardPost extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: Space.sm, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: c.withAlpha(0x22),
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            AppIcon(meta.icon,
-                                size: 11, color: c, stroke: 2.2),
-                            const SizedBox(width: 6),
-                            Text(
-                              _postTypeLabel(context, post.type)
-                                  .toUpperCase(),
-                              style: AppType.ui(
-                                size: 10.5,
-                                weight: FontWeight.w700,
-                                color: c,
-                                letterSpacing: 0.5,
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: Space.sm, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: c.withAlpha(0x22),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              AppIcon(meta.icon,
+                                  size: 11, color: c, stroke: 2.2),
+                              const SizedBox(width: 6),
+                              Flexible(
+                                child: Text(
+                                  _postTypeLabel(context, post.type)
+                                      .toUpperCase(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppType.ui(
+                                    size: 10.5,
+                                    weight: FontWeight.w700,
+                                    color: c,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
+                      const SizedBox(width: 8),
                       Text(
                         post.date,
                         style: AppType.mono(size: 11.5, color: T.text3),

@@ -418,11 +418,12 @@ class _Bubble extends StatelessWidget {
         mainAxisAlignment:
             isOlda ? MainAxisAlignment.end : MainAxisAlignment.start,
         children: [
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.78,
-            ),
-            child: Column(
+          Flexible(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.78,
+              ),
+              child: Column(
               crossAxisAlignment: isOlda
                   ? CrossAxisAlignment.end
                   : CrossAxisAlignment.start,
@@ -466,6 +467,7 @@ class _Bubble extends StatelessWidget {
                     ),
                   ),
               ],
+              ),
             ),
           ),
         ],

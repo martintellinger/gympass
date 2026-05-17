@@ -76,7 +76,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                 // Top stats — 2x2
                 const SizedBox(height: 20),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: _Stat(
@@ -98,7 +98,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: _Stat(
@@ -158,7 +158,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                 _SectionLabel(L.of(context).adashQuickActions),
                 const SizedBox(height: 12),
                 Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: _QuickAction(
@@ -214,9 +214,13 @@ class AdminDashboardScreen extends ConsumerWidget {
                             ),
                           ),
                           const SizedBox(width: 8),
-                          Text(
-                            L.of(context).adashRevenueMonth('květen'),
-                            style: AppType.ui(size: 13, color: T.text2),
+                          Flexible(
+                            child: Text(
+                              L.of(context).adashRevenueMonth('květen'),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppType.ui(size: 13, color: T.text2),
+                            ),
                           ),
                           const Spacer(),
                           Text(
@@ -330,20 +334,31 @@ class _Stat extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              Text(
-                value,
-                style: AppType.mono(
-                  size: 28,
-                  weight: FontWeight.w700,
-                  color: color ?? T.text,
-                  letterSpacing: -1,
-                  height: 1,
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    value,
+                    maxLines: 1,
+                    style: AppType.mono(
+                      size: 28,
+                      weight: FontWeight.w700,
+                      color: color ?? T.text,
+                      letterSpacing: -1,
+                      height: 1,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 4),
-              Text(
-                sub,
-                style: AppType.ui(size: 12, color: T.text3),
+              Flexible(
+                child: Text(
+                  sub,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppType.ui(size: 12, color: T.text3),
+                ),
               ),
             ],
           ),

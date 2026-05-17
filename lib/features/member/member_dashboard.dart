@@ -443,12 +443,16 @@ class _MemberCardPreview extends StatelessWidget {
                               const SizedBox(width: 6),
                               const AppIcon('key', size: 12, color: T.text2),
                               const SizedBox(width: 4),
-                              Text(
-                                L.of(context).dashKeyWithYou,
-                                style: AppType.ui(
-                                  size: 12,
-                                  color: T.text2,
-                                  letterSpacing: -0.2,
+                              Flexible(
+                                child: Text(
+                                  L.of(context).dashKeyWithYou,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppType.ui(
+                                    size: 12,
+                                    color: T.text2,
+                                    letterSpacing: -0.2,
+                                  ),
                                 ),
                               ),
                             ],

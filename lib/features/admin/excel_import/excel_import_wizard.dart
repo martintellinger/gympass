@@ -258,13 +258,17 @@ class _Header extends StatelessWidget {
                 onPressed: () => navCb(context)('back'),
                 icon: const AppIcon('back', size: 20, color: T.text),
               ),
-              Text(
-                l.ximpTitle,
-                style: AppType.ui(
-                  size: 22,
-                  weight: FontWeight.w700,
-                  color: T.text,
-                  letterSpacing: -0.6,
+              Expanded(
+                child: Text(
+                  l.ximpTitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppType.ui(
+                    size: 22,
+                    weight: FontWeight.w700,
+                    color: T.text,
+                    letterSpacing: -0.6,
+                  ),
                 ),
               ),
             ],

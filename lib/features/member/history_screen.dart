@@ -420,12 +420,16 @@ class _HistoryRow extends StatelessWidget {
                 const SizedBox(height: 3),
                 Row(
                   children: [
-                    Text(
-                      item.date,
-                      style: AppType.mono(
-                        size: 12,
-                        weight: FontWeight.w400,
-                        color: T.text2,
+                    Flexible(
+                      child: Text(
+                        item.date,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppType.mono(
+                          size: 12,
+                          weight: FontWeight.w400,
+                          color: T.text2,
+                        ),
                       ),
                     ),
                     if (item.method.isNotEmpty) ...[
@@ -439,12 +443,16 @@ class _HistoryRow extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 6),
-                      Text(
-                        item.method,
-                        style: AppType.mono(
-                          size: 12,
-                          weight: FontWeight.w400,
-                          color: T.text2,
+                      Flexible(
+                        child: Text(
+                          item.method,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppType.mono(
+                            size: 12,
+                            weight: FontWeight.w400,
+                            color: T.text2,
+                          ),
                         ),
                       ),
                     ],
