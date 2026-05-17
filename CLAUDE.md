@@ -206,13 +206,20 @@ lib/
 
 ### Testy & doménová logika (2026-05-17)
 
-- **Member self-pauza členství (2026-05-17):** člen si v profilu (08) může
-  pozastavit členství (dovolená / dlouhodobá nemoc) — **jen na konci
-  předplatného** (`daysNum ≤ 0`); pauza v průběhu je na majiteli (locked
-  řádek odkáže člena „Napsat Oldovi"). Samoobsluha bez schválení, bez
-  limitů; Olda dostane zprávu do 1:1 vlákna. Expirace i 30denní lhůta kauce
-  (§5) zamrznou — `domain/membership.dart#expiryAfterPause` (otestováno).
-  Mock: `Member.pausedAt/pauseReason`, `GymStore.pause/resumeMembership`.
+- **Pauza členství (rozhodnuto 2026-05-17, majitel):**
+  - **Pauza:** člen si ji v profilu (08) zapne sám **jen na konci
+    předplatného** (`daysNum ≤ 0`); dřívější pauzu (uprostřed období)
+    nastaví **Olda** z detailu člena (12). Olda dostane zprávu do 1:1 vlákna.
+  - **Obnovení = výhradně Olda** (z detailu člena 12). Člen resume **nemá** —
+    v profilu vidí jen locked řádek „Pozastaveno · Obnovení řeší Olda", tap
+    ho pošle do vlákna s Oldou. `GymStore.resumeMembership` posílá zprávu
+    `from: 'olda'`.
+  - **Bez stropu** — pauza je časově neomezená (žádné auto-expire).
+  - **Klíč si člen během pauzy nechává** (vědomé riziko — viz handoff).
+  - Expirace i 30denní lhůta kauce (§5) zamrznou —
+    `domain/membership.dart#expiryAfterPause` (otestováno). Mock:
+    `Member.pausedAt/pauseReason`, `GymStore.pauseMembership`
+    (člen, `from:'member'`) / `resumeMembership` (Olda, `from:'olda'`).
 - **Test suite: 99 testů, zelená** (`flutter test`). Pokrytí:
   - `test/format_test.dart`, `test/store_test.dart` — formátování + mock store.
   - `test/import_diff_test.dart`, `test/wizard_flow_test.dart` — Excel migrace.

@@ -416,11 +416,14 @@ class LCs extends L {
   String get profResumeSub => 'Pokračovat tam, kde jsi přestal';
 
   @override
+  String get profResumeByOwnerSub => 'Obnovení řeší Olda — napiš mu';
+
+  @override
   String get pauseSheetTitle => 'Pozastavit členství';
 
   @override
   String get pauseSheetBody =>
-      'Členství se zmrazí — zbývající dny ti zůstanou a začnou nabíhat znovu, až ho obnovíš. Platby teď neřešíš a kauce za klíč běží taky až po obnovení. Obnovit můžeš kdykoliv tady v profilu.';
+      'Členství se zmrazí — zbývající dny ti zůstanou a začnou nabíhat znovu, až ho Olda obnoví. Platby teď neřešíš a kauce za klíč běží taky až po obnovení. Až se budeš chtít vrátit, napiš Oldovi — pustí tě zpátky.';
 
   @override
   String get pauseReasonHeading => 'Důvod (nepovinné)';
@@ -463,6 +466,15 @@ class LCs extends L {
 
   @override
   String get resumeOwnerNotice => 'Obnovil(a) jsem si členství.';
+
+  @override
+  String get resumeByOwnerNotice => 'Olda ti obnovil členství.';
+
+  @override
+  String get mdetResumeLabel => 'Obnovit členství';
+
+  @override
+  String get mdetResumeSub => 'Zruší pauzu, zbývající dny doběhnou dál';
 
   @override
   String get profSignOut => 'Odhlásit';

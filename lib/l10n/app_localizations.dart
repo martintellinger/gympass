@@ -847,6 +847,12 @@ abstract class L {
   /// **'Pokračovat tam, kde jsi přestal'**
   String get profResumeSub;
 
+  /// No description provided for @profResumeByOwnerSub.
+  ///
+  /// In cs, this message translates to:
+  /// **'Obnovení řeší Olda — napiš mu'**
+  String get profResumeByOwnerSub;
+
   /// No description provided for @pauseSheetTitle.
   ///
   /// In cs, this message translates to:
@@ -856,7 +862,7 @@ abstract class L {
   /// No description provided for @pauseSheetBody.
   ///
   /// In cs, this message translates to:
-  /// **'Členství se zmrazí — zbývající dny ti zůstanou a začnou nabíhat znovu, až ho obnovíš. Platby teď neřešíš a kauce za klíč běží taky až po obnovení. Obnovit můžeš kdykoliv tady v profilu.'**
+  /// **'Členství se zmrazí — zbývající dny ti zůstanou a začnou nabíhat znovu, až ho Olda obnoví. Platby teď neřešíš a kauce za klíč běží taky až po obnovení. Až se budeš chtít vrátit, napiš Oldovi — pustí tě zpátky.'**
   String get pauseSheetBody;
 
   /// No description provided for @pauseReasonHeading.
@@ -936,6 +942,24 @@ abstract class L {
   /// In cs, this message translates to:
   /// **'Obnovil(a) jsem si členství.'**
   String get resumeOwnerNotice;
+
+  /// No description provided for @resumeByOwnerNotice.
+  ///
+  /// In cs, this message translates to:
+  /// **'Olda ti obnovil členství.'**
+  String get resumeByOwnerNotice;
+
+  /// No description provided for @mdetResumeLabel.
+  ///
+  /// In cs, this message translates to:
+  /// **'Obnovit členství'**
+  String get mdetResumeLabel;
+
+  /// No description provided for @mdetResumeSub.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zruší pauzu, zbývající dny doběhnou dál'**
+  String get mdetResumeSub;
 
   /// No description provided for @profSignOut.
   ///

@@ -151,12 +151,14 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                   ),
                   _divider(),
                   if (paused)
+                    // Members pause, but only Olda resumes (product rule) —
+                    // surface that and route them to message him.
                     _actionRow(
-                      icon: 'refresh',
-                      label: L.of(context).profResumeLabel,
-                      sub: L.of(context).profResumeSub,
-                      accent: true,
-                      onTap: () => _openResumeSheet(),
+                      icon: 'pause',
+                      label: L.of(context).profPaused,
+                      sub: L.of(context).profResumeByOwnerSub,
+                      locked: true,
+                      onTap: () => navCb(context)('mthread', arg: 'olda'),
                     )
                   else if ((me?.daysNum ?? 1) <= 0)
                     // Self-pause is only allowed once the prepaid period has
@@ -724,26 +726,6 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
       ],
     );
     if (write == true && mounted) navCb(context)('mthread', arg: 'olda');
-  }
-
-  Future<void> _openResumeSheet() async {
-    final l = L.of(context);
-    final confirmed = await _sheet<bool>(
-      builder: (ctx, setSheet) => [
-        _sheetHeader(l.resumeSheetTitle, l.resumeSheetBody),
-        const SizedBox(height: 22),
-        AppButton(
-          label: l.resumeConfirm,
-          full: true,
-          onTap: () => Navigator.of(ctx).pop(true),
-        ),
-      ],
-    );
-    if (confirmed != true || !mounted) return;
-    ref
-        .read(storeProvider)
-        .resumeMembership(kCurrentMemberId, notice: l.resumeOwnerNotice);
-    if (mounted) navCb(context)('profile', toast: l.resumedToast);
   }
 
   Widget _sheetHeader(String title, String body) => Column(

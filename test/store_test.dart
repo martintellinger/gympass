@@ -146,4 +146,45 @@ void main() {
       expect(s.totalUnread(), sum);
     });
   });
+
+  group('membership pause/resume — members pause, only Olda resumes', () {
+    test('pauseMembership freezes the member and notes it from the member',
+        () {
+      final s = GymStore();
+      s.pauseMembership('pavel',
+          reason: 'holiday', notice: 'Pozastavil(a) jsem si členství.');
+      final m = s.memberById('pavel')!;
+      expect(m.isPaused, isTrue);
+      expect(m.suspended, isTrue);
+      expect(m.state, 'muted');
+      expect(s.threadFor('pavel').last.from, 'member');
+    });
+
+    test('pausing an already-paused member is a no-op', () {
+      final s = GymStore();
+      s.pauseMembership('pavel', notice: 'x');
+      final len = s.threadFor('pavel').length;
+      s.pauseMembership('pavel', notice: 'y');
+      expect(s.threadFor('pavel').length, len);
+    });
+
+    test('resumeMembership clears the pause and notes it FROM OLDA', () {
+      final s = GymStore();
+      s.pauseMembership('pavel', notice: 'pauza');
+      s.resumeMembership('pavel', notice: 'Olda ti obnovil členství.');
+      final m = s.memberById('pavel')!;
+      expect(m.isPaused, isFalse);
+      expect(m.suspended, isFalse);
+      // The resume note is owner-voiced (Olda did it), not from the member.
+      expect(s.threadFor('pavel').last.from, 'olda');
+    });
+
+    test('resume is a no-op when the member is not paused', () {
+      final s = GymStore();
+      final len = s.threadFor('pavel').length;
+      s.resumeMembership('pavel', notice: 'nope');
+      expect(s.memberById('pavel')!.isPaused, isFalse);
+      expect(s.threadFor('pavel').length, len);
+    });
+  });
 }

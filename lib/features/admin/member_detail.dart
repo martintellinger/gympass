@@ -392,20 +392,34 @@ class MemberDetailScreen extends ConsumerWidget {
                   // Danger zone
                   _SectionLabel(l.mdetSectionActions),
                   const SizedBox(height: 12),
-                  _ActionRow(
-                    icon: 'pause',
-                    label: l.mdetSuspendLabel,
-                    sub: l.mdetSuspendSub,
-                    onTap: () {
-                      store.updateMember(
+                  if (m.isPaused)
+                    _ActionRow(
+                      icon: 'refresh',
+                      label: l.mdetResumeLabel,
+                      sub: l.mdetResumeSub,
+                      onTap: () => store.resumeMembership(
                         m.id,
-                        (mm) => mm.copyWith(
-                          state: 'muted',
-                          suspended: true,
-                        ),
-                      );
-                    },
-                  ),
+                        notice: l.resumeByOwnerNotice,
+                      ),
+                    )
+                  else
+                    _ActionRow(
+                      icon: 'pause',
+                      label: l.mdetSuspendLabel,
+                      sub: l.mdetSuspendSub,
+                      onTap: () {
+                        // Owner pause mid-term: stamp pausedAt so the frozen
+                        // expiry (domain expiryAfterPause) can be computed.
+                        store.updateMember(
+                          m.id,
+                          (mm) => mm.copyWith(
+                            state: 'muted',
+                            suspended: true,
+                            pausedAt: kNow,
+                          ),
+                        );
+                      },
+                    ),
                   const SizedBox(height: 8),
                   _ActionRow(
                     icon: 'trash',

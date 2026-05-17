@@ -418,11 +418,14 @@ class LEn extends L {
   String get profResumeSub => 'Pick up where you left off';
 
   @override
+  String get profResumeByOwnerSub => 'Olda handles resuming — message him';
+
+  @override
   String get pauseSheetTitle => 'Pause membership';
 
   @override
   String get pauseSheetBody =>
-      'Your membership freezes — the days you have left are kept and start counting again only when you resume. No payments meanwhile, and the key deposit clock pauses too. You can resume any time here in your profile.';
+      'Your membership freezes — the days you have left are kept and start counting again only once Olda resumes it. No payments meanwhile, and the key deposit clock pauses too. When you want to come back, message Olda — he\'ll bring you back.';
 
   @override
   String get pauseReasonHeading => 'Reason (optional)';
@@ -465,6 +468,15 @@ class LEn extends L {
 
   @override
   String get resumeOwnerNotice => 'I\'ve resumed my membership.';
+
+  @override
+  String get resumeByOwnerNotice => 'Olda resumed your membership.';
+
+  @override
+  String get mdetResumeLabel => 'Resume membership';
+
+  @override
+  String get mdetResumeSub => 'Ends the pause, remaining days carry on';
 
   @override
   String get profSignOut => 'Sign out';

@@ -228,8 +228,10 @@ class GymStore extends ChangeNotifier {
     sendMessage(id, notice, from: 'member');
   }
 
-  /// Member resumes a paused membership. Clears the pause and recomputes the
-  /// status pill from the (frozen) remaining days. Olda is notified.
+  /// **Owner-only** resume of a paused membership (product decision: members
+  /// pause but only Olda brings them back). Clears the pause and recomputes
+  /// the status pill from the (frozen) remaining days; the note lands in the
+  /// member's owner thread as coming from Olda. No-op if not paused.
   void resumeMembership(String id, {required String notice}) {
     final m = memberById(id);
     if (m == null || !m.isPaused) return;
@@ -242,7 +244,7 @@ class GymStore extends ChangeNotifier {
       id,
       (x) => x.copyWith(suspended: false, state: state, clearPause: true),
     );
-    sendMessage(id, notice, from: 'member');
+    sendMessage(id, notice, from: 'olda');
   }
 
   void sendMessage(String memberId, String text, {String from = 'olda'}) {
