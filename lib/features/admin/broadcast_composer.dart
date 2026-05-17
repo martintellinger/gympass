@@ -9,6 +9,7 @@ import '../../core/theme/tokens.dart';
 import '../../shared/widgets/app_button.dart';
 import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/app_icon.dart';
+import '../../shared/widgets/round_icon_button.dart';
 import '../../shared/widgets/screen_frame.dart';
 
 /// Screen 19 — Broadcast Composer.
@@ -69,7 +70,7 @@ class _BroadcastComposerScreenState
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
             child: Row(
               children: [
-                _RoundBtn(icon: 'back', onTap: () => nav('back')),
+                RoundIconButton(icon: 'back', onTap: () => nav('back')),
                 const Spacer(),
                 Text(l.bcastHeader,
                     style: AppType.ui(
@@ -276,28 +277,4 @@ class _BroadcastComposerScreenState
         contentPadding:
             const EdgeInsets.symmetric(horizontal: Space.md, vertical: 12),
       );
-}
-
-class _RoundBtn extends StatelessWidget {
-  final String icon;
-  final VoidCallback onTap;
-  const _RoundBtn({required this.icon, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 36,
-        height: 36,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: T.surface,
-          shape: BoxShape.circle,
-          border: Border.all(color: T.border),
-        ),
-        child: AppIcon(icon, size: 18, color: T.text),
-      ),
-    );
-  }
 }

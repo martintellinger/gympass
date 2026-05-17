@@ -9,6 +9,7 @@ import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_icon.dart';
+import '../../shared/widgets/round_icon_button.dart';
 import '../../shared/widgets/screen_frame.dart';
 
 /// Admin Payments 14 — monthly summary, status filters, search, payment list.
@@ -94,15 +95,19 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                         ),
                         Row(
                           children: [
-                            _RoundBtn(
+                            RoundIconButton(
                               icon: 'download',
+                              size: 40,
                               onTap: () => nav('payments',
                                   toast: L.of(context).apayToastExportReady),
                             ),
                             const SizedBox(width: 8),
-                            _RoundBtn(
+                            RoundIconButton(
                               icon: 'plus',
-                              primary: true,
+                              size: 40,
+                              background: T.accent,
+                              iconColor: Colors.white,
+                              bordered: false,
                               onTap: () => nav('payments',
                                   toast: L.of(context).apayToastAddPayment),
                             ),
@@ -440,40 +445,6 @@ class _PChip extends StatelessWidget {
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class _RoundBtn extends StatelessWidget {
-  final String icon;
-  final bool primary;
-  final VoidCallback onTap;
-  const _RoundBtn({
-    required this.icon,
-    required this.onTap,
-    this.primary = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 40,
-        height: 40,
-        decoration: BoxDecoration(
-          color: primary ? T.accent : T.surface,
-          shape: BoxShape.circle,
-          border: primary ? null : Border.all(color: T.border),
-        ),
-        child: Center(
-          child: AppIcon(
-            icon,
-            size: 18,
-            color: primary ? Colors.white : T.text,
-          ),
         ),
       ),
     );
