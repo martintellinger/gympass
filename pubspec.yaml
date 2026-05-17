@@ -41,6 +41,13 @@ dependencies:
   go_router: ^17.2.3
   google_fonts: ^8.1.0
   flutter_svg: ^2.3.0
+  # Backend / data layer — wired feature-by-feature (see docs/backend/).
+  # Application code does not import these yet, so the build stays green
+  # until the Supabase implementation is filled in.
+  supabase_flutter: ^2.8.0
+  flutter_secure_storage: ^9.2.2
+  file_picker: ^8.1.6
+  excel: ^4.0.6
 
 dev_dependencies:
   flutter_test:
