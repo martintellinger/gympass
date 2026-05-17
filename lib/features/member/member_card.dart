@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/routing/nav.dart';
 import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
@@ -31,34 +32,58 @@ class MemberCardScreen extends ConsumerWidget {
 
     return ScreenFrame(
       // Scrollable body. JSX page background is pure black (#000).
-      child: Container(
-              color: Colors.black,
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.only(bottom: 110),
-                child: Padding(
-                  // JSX: padding 8px 20px 40px.
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 40),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // The card. marginTop 12.
-                      const SizedBox(height: 12),
-                      _MembershipCard(
-                        name: name,
-                        joinedLabel: joinedLabel,
-                        expiresAt: expiresAt,
-                        tariff: tariff,
-                        hasKey: hasKey,
-                        statusState: state,
-                      ),
-                      // Brightness tip. marginTop 20.
-                      const SizedBox(height: 20),
-                      _BrightnessTip(),
-                    ],
-                  ),
+      child: ColoredBox(
+        color: Colors.black,
+        child: Stack(
+          children: [
+            SingleChildScrollView(
+              padding: const EdgeInsets.only(bottom: 110),
+              child: Padding(
+                // JSX: padding 8px 20px 40px — leave room for the close btn.
+                padding: const EdgeInsets.fromLTRB(20, 56, 20, 40),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _MembershipCard(
+                      name: name,
+                      joinedLabel: joinedLabel,
+                      expiresAt: expiresAt,
+                      tariff: tariff,
+                      hasKey: hasKey,
+                      statusState: state,
+                    ),
+                    // Brightness tip. marginTop 20.
+                    const SizedBox(height: 20),
+                    _BrightnessTip(),
+                  ],
                 ),
               ),
             ),
+            // Close — returns to wherever the card was opened from (the
+            // profile edit pencil or the dashboard card preview). JSX places
+            // this at top:60/right:20; SafeArea already handles the notch so
+            // we anchor it near the top edge.
+            Positioned(
+              top: 8,
+              right: 20,
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => navCb(context)('back'),
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withAlpha(0x1F),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const AppIcon('x', size: 16, color: T.text),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
