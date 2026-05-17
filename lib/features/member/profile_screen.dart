@@ -98,6 +98,11 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                       const SizedBox(width: 14),
                       GestureDetector(
                         behavior: HitTestBehavior.opaque,
+                        // Shortcut to the digital membership card (09). It is
+                        // NOT a profile editor — members don't edit their own
+                        // data in MVP (the owner manages it from Member
+                        // Detail), so this shows a card icon, not a pencil,
+                        // to stop reading as "edit profile".
                         onTap: () => nav('card'),
                         child: Container(
                           width: 36,
@@ -108,7 +113,7 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                             shape: BoxShape.circle,
                             border: Border.all(color: T.border),
                           ),
-                          child: const AppIcon('edit', size: 14, color: T.text2),
+                          child: const AppIcon('card', size: 15, color: T.text2),
                         ),
                       ),
                     ],
