@@ -16,6 +16,15 @@ class Member {
   final String expiresAt;
   final int? monthlyPrice;
 
+  /// Member-initiated pause (holiday / long-term illness). When set the
+  /// membership is frozen: expiry & deposit clock don't advance (§ self-pause).
+  /// `suspended` is true and `state` is `muted` while paused.
+  final DateTime? pausedAt;
+
+  /// Optional reason the member picked when pausing (l10n key suffix:
+  /// `holiday` | `illness` | `other`), shown to the owner. Null = unspecified.
+  final String? pauseReason;
+
   const Member({
     required this.id,
     required this.name,
@@ -31,7 +40,11 @@ class Member {
     required this.joined,
     required this.expiresAt,
     this.monthlyPrice,
+    this.pausedAt,
+    this.pauseReason,
   });
+
+  bool get isPaused => pausedAt != null;
 
   Member copyWith({
     String? name,
@@ -47,6 +60,9 @@ class Member {
     String? joined,
     String? expiresAt,
     int? monthlyPrice,
+    DateTime? pausedAt,
+    String? pauseReason,
+    bool clearPause = false,
   }) =>
       Member(
         id: id,
@@ -63,6 +79,8 @@ class Member {
         joined: joined ?? this.joined,
         expiresAt: expiresAt ?? this.expiresAt,
         monthlyPrice: monthlyPrice ?? this.monthlyPrice,
+        pausedAt: clearPause ? null : (pausedAt ?? this.pausedAt),
+        pauseReason: clearPause ? null : (pauseReason ?? this.pauseReason),
       );
 }
 

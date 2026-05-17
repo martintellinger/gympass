@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/routing/nav.dart';
+import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/theme/tokens.dart';
+import '../../core/utils/haptics.dart';
+import '../../shared/widgets/app_button.dart';
 import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
@@ -38,6 +41,8 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
   @override
   Widget build(BuildContext context) {
     final nav = navCb(context);
+    final me = ref.watch(storeProvider).memberById(kCurrentMemberId);
+    final paused = me?.isPaused ?? false;
 
     return ScreenFrame(
       child: SingleChildScrollView(
@@ -77,10 +82,15 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                             const SizedBox(height: 8),
                             Align(
                               alignment: Alignment.centerLeft,
-                              child: StatusPill(
-                                state: StatusState.ok,
-                                label: L.of(context).profActiveDays,
-                              ),
+                              child: paused
+                                  ? StatusPill(
+                                      state: StatusState.muted,
+                                      label: L.of(context).profPaused,
+                                    )
+                                  : StatusPill(
+                                      state: StatusState.ok,
+                                      label: L.of(context).profActiveDays,
+                                    ),
                             ),
                           ],
                         ),
@@ -134,6 +144,32 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                     value: L.of(context).profKeyValue,
                     pill: const StatusPill(state: StatusState.ok, label: '100 Kč'),
                   ),
+                  _divider(),
+                  if (paused)
+                    _actionRow(
+                      icon: 'refresh',
+                      label: L.of(context).profResumeLabel,
+                      sub: L.of(context).profResumeSub,
+                      accent: true,
+                      onTap: () => _openResumeSheet(),
+                    )
+                  else if ((me?.daysNum ?? 1) <= 0)
+                    // Self-pause is only allowed once the prepaid period has
+                    // run out; pausing mid-term is the owner's call.
+                    _actionRow(
+                      icon: 'pause',
+                      label: L.of(context).profPauseLabel,
+                      sub: L.of(context).profPauseSub,
+                      onTap: () => _openPauseSheet(),
+                    )
+                  else
+                    _actionRow(
+                      icon: 'pause',
+                      label: L.of(context).profPauseLabel,
+                      sub: L.of(context).profPauseSubLocked,
+                      locked: true,
+                      onTap: () => _openPauseLockedSheet(),
+                    ),
                 ]),
 
                 // Notifikace
@@ -520,6 +556,257 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
             const SizedBox(width: 12),
             const AppIcon('chevron', size: 16, color: T.text3),
           ],
+        ),
+      ),
+    );
+  }
+
+  /// A tappable row for the pause / resume membership action. [accent] tints
+  /// it with the brand colour (used for "Resume").
+  Widget _actionRow({
+    required String icon,
+    required String label,
+    required String sub,
+    required VoidCallback onTap,
+    bool accent = false,
+    bool locked = false,
+  }) {
+    final tint = locked
+        ? T.text2
+        : accent
+            ? T.accent
+            : T.text;
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        Haptics.tap();
+        onTap();
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: Space.s14, vertical: 12),
+        child: Row(
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: accent ? T.accentSoft : T.surface2,
+                borderRadius: BorderRadius.circular(Radii.sm),
+              ),
+              child: AppIcon(icon,
+                  size: 15, color: accent ? T.accent : T.text2),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: AppType.ui(
+                      size: 14,
+                      weight: FontWeight.w600,
+                      color: tint,
+                      letterSpacing: -0.1,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    sub,
+                    style: AppType.ui(
+                      size: 11.5,
+                      weight: FontWeight.w400,
+                      color: T.text2,
+                      height: 1.3,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
+            const AppIcon('chevron', size: 16, color: T.text3),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _openPauseSheet() async {
+    final l = L.of(context);
+    final reasons = <String, String>{
+      'holiday': l.pauseReasonHoliday,
+      'illness': l.pauseReasonIllness,
+      'other': l.pauseReasonOther,
+    };
+    String? selected;
+    final confirmed = await _sheet<bool>(
+      builder: (ctx, setSheet) => [
+        _sheetHeader(l.pauseSheetTitle, l.pauseSheetBody),
+        const SizedBox(height: 18),
+        Text(
+          l.pauseReasonHeading.toUpperCase(),
+          style: AppType.ui(
+            size: 11.5,
+            weight: FontWeight.w600,
+            color: T.text2,
+            letterSpacing: 0.4,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: reasons.entries.map((e) {
+            final on = selected == e.key;
+            return GestureDetector(
+              onTap: () {
+                Haptics.selection();
+                setSheet(() => selected = on ? null : e.key);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: Space.s14, vertical: 9),
+                decoration: BoxDecoration(
+                  color: on ? T.accentSoft : T.bg,
+                  borderRadius: BorderRadius.circular(Radii.pill),
+                  border: Border.all(color: on ? T.accent : T.border),
+                ),
+                child: Text(
+                  e.value,
+                  style: AppType.ui(
+                    size: 13,
+                    weight: FontWeight.w500,
+                    color: on ? T.accent : T.text2,
+                  ),
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+        const SizedBox(height: 22),
+        AppButton(
+          label: l.pauseConfirm,
+          full: true,
+          onTap: () => Navigator.of(ctx).pop(true),
+        ),
+      ],
+    );
+    if (confirmed != true || !mounted) return;
+    final reasonLabel = selected != null ? reasons[selected] : null;
+    ref.read(storeProvider).pauseMembership(
+          kCurrentMemberId,
+          reason: selected,
+          notice: reasonLabel != null
+              ? l.pauseOwnerNotice(reasonLabel)
+              : l.pauseOwnerNoticeNoReason,
+        );
+    if (mounted) navCb(context)('profile', toast: l.pausedToast);
+  }
+
+  Future<void> _openPauseLockedSheet() async {
+    final l = L.of(context);
+    final write = await _sheet<bool>(
+      builder: (ctx, setSheet) => [
+        _sheetHeader(l.pauseLockedTitle, l.pauseLockedBody),
+        const SizedBox(height: 22),
+        AppButton(
+          label: l.profWriteToOlda,
+          full: true,
+          icon: const AppIcon('message', size: 16),
+          onTap: () => Navigator.of(ctx).pop(true),
+        ),
+      ],
+    );
+    if (write == true && mounted) navCb(context)('mthread', arg: 'olda');
+  }
+
+  Future<void> _openResumeSheet() async {
+    final l = L.of(context);
+    final confirmed = await _sheet<bool>(
+      builder: (ctx, setSheet) => [
+        _sheetHeader(l.resumeSheetTitle, l.resumeSheetBody),
+        const SizedBox(height: 22),
+        AppButton(
+          label: l.resumeConfirm,
+          full: true,
+          onTap: () => Navigator.of(ctx).pop(true),
+        ),
+      ],
+    );
+    if (confirmed != true || !mounted) return;
+    ref
+        .read(storeProvider)
+        .resumeMembership(kCurrentMemberId, notice: l.resumeOwnerNotice);
+    if (mounted) navCb(context)('profile', toast: l.resumedToast);
+  }
+
+  Widget _sheetHeader(String title, String body) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: AppType.ui(
+              size: 20,
+              weight: FontWeight.w700,
+              color: T.text,
+              letterSpacing: -0.5,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            body,
+            style: AppType.ui(size: 13, color: T.text2, height: 1.5),
+          ),
+        ],
+      );
+
+  /// Themed bottom sheet matching the FaultReport sheet styling. The
+  /// [builder] receives the sheet context and a setState for local sheet UI.
+  Future<R?> _sheet<R>({
+    required List<Widget> Function(
+            BuildContext ctx, void Function(void Function()) setSheet)
+        builder,
+  }) {
+    return showModalBottomSheet<R>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      barrierColor: T.scrim,
+      isScrollControlled: true,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setSheet) => Container(
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            color: T.surface,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(24),
+              topRight: Radius.circular(24),
+            ),
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 10, 20, 28),
+          child: SafeArea(
+            top: false,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Container(
+                      width: 36,
+                      height: 4,
+                      margin: const EdgeInsets.only(top: 4, bottom: 18),
+                      decoration: BoxDecoration(
+                        color: T.surface2,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  ...builder(ctx, setSheet),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );

@@ -46,6 +46,29 @@ DateTime nextExpiration({
   return billingDayOf(base.year, base.month + months, billingDay);
 }
 
+/// New expiry after a member-initiated pause that ran from [pausedAt] to
+/// [resumedAt] (member self-pause: holiday / long-term illness).
+///
+/// The membership is **frozen** while paused — the remaining time is not
+/// consumed — so the expiry slides forward by the whole-day pause duration.
+/// The key-deposit forfeit clock (§5) is anchored to the membership end, so
+/// shifting the expiry through this function automatically defers the
+/// forfeit deadline by the same amount (no separate deposit handling needed).
+///
+/// A zero/negative span (resumed the same day or clock skew) is a no-op.
+DateTime expiryAfterPause({
+  required DateTime expiry,
+  required DateTime pausedAt,
+  required DateTime resumedAt,
+}) {
+  final from = DateTime(pausedAt.year, pausedAt.month, pausedAt.day);
+  final to = DateTime(resumedAt.year, resumedAt.month, resumedAt.day);
+  final pausedDays = to.difference(from).inDays;
+  if (pausedDays <= 0) return expiry;
+  return DateTime(expiry.year, expiry.month, expiry.day + pausedDays,
+      expiry.hour, expiry.minute, expiry.second);
+}
+
 /// Whole days of membership left at [now] (negative if already lapsed).
 /// Counts calendar days, ignoring the time component.
 int daysLeft(DateTime expiry, DateTime now) {

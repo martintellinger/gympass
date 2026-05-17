@@ -392,6 +392,81 @@ class LEn extends L {
   String get profWriteToOldaSub => 'Usually replies within an hour';
 
   @override
+  String get profPaused => 'Paused';
+
+  @override
+  String get profPauseLabel => 'Pause membership';
+
+  @override
+  String get profPauseSub => 'Holiday or long-term illness';
+
+  @override
+  String get profPauseSubLocked =>
+      'Available at the end of your prepaid period';
+
+  @override
+  String get pauseLockedTitle => 'Not yet';
+
+  @override
+  String get pauseLockedBody =>
+      'You can pause your membership yourself only at the end of your prepaid period. Need a pause sooner (holiday, illness)? Message Olda and he\'ll set it up.';
+
+  @override
+  String get profResumeLabel => 'Resume membership';
+
+  @override
+  String get profResumeSub => 'Pick up where you left off';
+
+  @override
+  String get pauseSheetTitle => 'Pause membership';
+
+  @override
+  String get pauseSheetBody =>
+      'Your membership freezes — the days you have left are kept and start counting again only when you resume. No payments meanwhile, and the key deposit clock pauses too. You can resume any time here in your profile.';
+
+  @override
+  String get pauseReasonHeading => 'Reason (optional)';
+
+  @override
+  String get pauseReasonHoliday => 'Holiday';
+
+  @override
+  String get pauseReasonIllness => 'Illness';
+
+  @override
+  String get pauseReasonOther => 'Other';
+
+  @override
+  String get pauseConfirm => 'Pause membership';
+
+  @override
+  String get pausedToast => 'Membership paused. Olda has been notified.';
+
+  @override
+  String get resumeSheetTitle => 'Resume membership';
+
+  @override
+  String get resumeSheetBody =>
+      'Your membership starts again right where you paused it. The days you had left are still there.';
+
+  @override
+  String get resumeConfirm => 'Resume membership';
+
+  @override
+  String get resumedToast => 'Membership resumed.';
+
+  @override
+  String pauseOwnerNotice(Object reason) {
+    return 'I\'ve paused my membership. Reason: $reason';
+  }
+
+  @override
+  String get pauseOwnerNoticeNoReason => 'I\'ve paused my membership.';
+
+  @override
+  String get resumeOwnerNotice => 'I\'ve resumed my membership.';
+
+  @override
   String get profSignOut => 'Sign out';
 
   @override

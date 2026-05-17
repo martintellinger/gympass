@@ -391,6 +391,80 @@ class LCs extends L {
   String get profWriteToOldaSub => 'Odpovídá obvykle do hodiny';
 
   @override
+  String get profPaused => 'Pozastaveno';
+
+  @override
+  String get profPauseLabel => 'Pozastavit členství';
+
+  @override
+  String get profPauseSub => 'Dovolená nebo dlouhodobá nemoc';
+
+  @override
+  String get profPauseSubLocked => 'Půjde až na konci předplatného';
+
+  @override
+  String get pauseLockedTitle => 'Teď to nejde';
+
+  @override
+  String get pauseLockedBody =>
+      'Sám si členství můžeš pozastavit až na konci předplatného. Potřebuješ pauzu dřív (dovolená, nemoc)? Napiš Oldovi, nastaví ti ji.';
+
+  @override
+  String get profResumeLabel => 'Obnovit členství';
+
+  @override
+  String get profResumeSub => 'Pokračovat tam, kde jsi přestal';
+
+  @override
+  String get pauseSheetTitle => 'Pozastavit členství';
+
+  @override
+  String get pauseSheetBody =>
+      'Členství se zmrazí — zbývající dny ti zůstanou a začnou nabíhat znovu, až ho obnovíš. Platby teď neřešíš a kauce za klíč běží taky až po obnovení. Obnovit můžeš kdykoliv tady v profilu.';
+
+  @override
+  String get pauseReasonHeading => 'Důvod (nepovinné)';
+
+  @override
+  String get pauseReasonHoliday => 'Dovolená';
+
+  @override
+  String get pauseReasonIllness => 'Nemoc';
+
+  @override
+  String get pauseReasonOther => 'Jiné';
+
+  @override
+  String get pauseConfirm => 'Pozastavit členství';
+
+  @override
+  String get pausedToast => 'Členství pozastaveno. Olda dostal zprávu.';
+
+  @override
+  String get resumeSheetTitle => 'Obnovit členství';
+
+  @override
+  String get resumeSheetBody =>
+      'Členství se zase rozběhne tam, kde jsi ho pozastavil. Zbývající dny ti zůstaly.';
+
+  @override
+  String get resumeConfirm => 'Obnovit členství';
+
+  @override
+  String get resumedToast => 'Členství obnoveno.';
+
+  @override
+  String pauseOwnerNotice(Object reason) {
+    return 'Pozastavil(a) jsem si členství. Důvod: $reason';
+  }
+
+  @override
+  String get pauseOwnerNoticeNoReason => 'Pozastavil(a) jsem si členství.';
+
+  @override
+  String get resumeOwnerNotice => 'Obnovil(a) jsem si členství.';
+
+  @override
   String get profSignOut => 'Odhlásit';
 
   @override

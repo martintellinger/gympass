@@ -108,4 +108,65 @@ void main() {
       );
     });
   });
+
+  group('expiryAfterPause — frozen membership shifts expiry forward', () {
+    test('a 10-day pause pushes expiry out by 10 days', () {
+      expect(
+        expiryAfterPause(
+          expiry: DateTime(2026, 6, 23),
+          pausedAt: DateTime(2026, 5, 16),
+          resumedAt: DateTime(2026, 5, 26),
+        ),
+        DateTime(2026, 7, 3),
+      );
+    });
+
+    test('the deposit forfeit deadline (§5) shifts by the same span', () {
+      // Forfeit = membershipEnd + 30 days; freezing the end defers it too.
+      final originalEnd = DateTime(2026, 6, 23);
+      final shiftedEnd = expiryAfterPause(
+        expiry: originalEnd,
+        pausedAt: DateTime(2026, 5, 16),
+        resumedAt: DateTime(2026, 6, 15), // 30-day pause
+      );
+      expect(
+        shiftedEnd
+            .add(const Duration(days: 30))
+            .difference(originalEnd.add(const Duration(days: 30)))
+            .inDays,
+        30,
+      );
+    });
+
+    test('time component of the expiry is preserved across the shift', () {
+      final r = expiryAfterPause(
+        expiry: DateTime(2026, 6, 23, 9, 41),
+        pausedAt: DateTime(2026, 5, 16),
+        resumedAt: DateTime(2026, 5, 19),
+      );
+      expect(r, DateTime(2026, 6, 26, 9, 41));
+    });
+
+    test('same-day resume is a no-op', () {
+      expect(
+        expiryAfterPause(
+          expiry: DateTime(2026, 6, 23),
+          pausedAt: DateTime(2026, 5, 16, 8),
+          resumedAt: DateTime(2026, 5, 16, 20),
+        ),
+        DateTime(2026, 6, 23),
+      );
+    });
+
+    test('clock skew (resume before pause) never shortens the membership', () {
+      expect(
+        expiryAfterPause(
+          expiry: DateTime(2026, 6, 23),
+          pausedAt: DateTime(2026, 5, 16),
+          resumedAt: DateTime(2026, 5, 10),
+        ),
+        DateTime(2026, 6, 23),
+      );
+    });
+  });
 }

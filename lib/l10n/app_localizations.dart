@@ -799,6 +799,144 @@ abstract class L {
   /// **'Odpovídá obvykle do hodiny'**
   String get profWriteToOldaSub;
 
+  /// No description provided for @profPaused.
+  ///
+  /// In cs, this message translates to:
+  /// **'Pozastaveno'**
+  String get profPaused;
+
+  /// No description provided for @profPauseLabel.
+  ///
+  /// In cs, this message translates to:
+  /// **'Pozastavit členství'**
+  String get profPauseLabel;
+
+  /// No description provided for @profPauseSub.
+  ///
+  /// In cs, this message translates to:
+  /// **'Dovolená nebo dlouhodobá nemoc'**
+  String get profPauseSub;
+
+  /// No description provided for @profPauseSubLocked.
+  ///
+  /// In cs, this message translates to:
+  /// **'Půjde až na konci předplatného'**
+  String get profPauseSubLocked;
+
+  /// No description provided for @pauseLockedTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Teď to nejde'**
+  String get pauseLockedTitle;
+
+  /// No description provided for @pauseLockedBody.
+  ///
+  /// In cs, this message translates to:
+  /// **'Sám si členství můžeš pozastavit až na konci předplatného. Potřebuješ pauzu dřív (dovolená, nemoc)? Napiš Oldovi, nastaví ti ji.'**
+  String get pauseLockedBody;
+
+  /// No description provided for @profResumeLabel.
+  ///
+  /// In cs, this message translates to:
+  /// **'Obnovit členství'**
+  String get profResumeLabel;
+
+  /// No description provided for @profResumeSub.
+  ///
+  /// In cs, this message translates to:
+  /// **'Pokračovat tam, kde jsi přestal'**
+  String get profResumeSub;
+
+  /// No description provided for @pauseSheetTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Pozastavit členství'**
+  String get pauseSheetTitle;
+
+  /// No description provided for @pauseSheetBody.
+  ///
+  /// In cs, this message translates to:
+  /// **'Členství se zmrazí — zbývající dny ti zůstanou a začnou nabíhat znovu, až ho obnovíš. Platby teď neřešíš a kauce za klíč běží taky až po obnovení. Obnovit můžeš kdykoliv tady v profilu.'**
+  String get pauseSheetBody;
+
+  /// No description provided for @pauseReasonHeading.
+  ///
+  /// In cs, this message translates to:
+  /// **'Důvod (nepovinné)'**
+  String get pauseReasonHeading;
+
+  /// No description provided for @pauseReasonHoliday.
+  ///
+  /// In cs, this message translates to:
+  /// **'Dovolená'**
+  String get pauseReasonHoliday;
+
+  /// No description provided for @pauseReasonIllness.
+  ///
+  /// In cs, this message translates to:
+  /// **'Nemoc'**
+  String get pauseReasonIllness;
+
+  /// No description provided for @pauseReasonOther.
+  ///
+  /// In cs, this message translates to:
+  /// **'Jiné'**
+  String get pauseReasonOther;
+
+  /// No description provided for @pauseConfirm.
+  ///
+  /// In cs, this message translates to:
+  /// **'Pozastavit členství'**
+  String get pauseConfirm;
+
+  /// No description provided for @pausedToast.
+  ///
+  /// In cs, this message translates to:
+  /// **'Členství pozastaveno. Olda dostal zprávu.'**
+  String get pausedToast;
+
+  /// No description provided for @resumeSheetTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Obnovit členství'**
+  String get resumeSheetTitle;
+
+  /// No description provided for @resumeSheetBody.
+  ///
+  /// In cs, this message translates to:
+  /// **'Členství se zase rozběhne tam, kde jsi ho pozastavil. Zbývající dny ti zůstaly.'**
+  String get resumeSheetBody;
+
+  /// No description provided for @resumeConfirm.
+  ///
+  /// In cs, this message translates to:
+  /// **'Obnovit členství'**
+  String get resumeConfirm;
+
+  /// No description provided for @resumedToast.
+  ///
+  /// In cs, this message translates to:
+  /// **'Členství obnoveno.'**
+  String get resumedToast;
+
+  /// No description provided for @pauseOwnerNotice.
+  ///
+  /// In cs, this message translates to:
+  /// **'Pozastavil(a) jsem si členství. Důvod: {reason}'**
+  String pauseOwnerNotice(Object reason);
+
+  /// No description provided for @pauseOwnerNoticeNoReason.
+  ///
+  /// In cs, this message translates to:
+  /// **'Pozastavil(a) jsem si členství.'**
+  String get pauseOwnerNoticeNoReason;
+
+  /// No description provided for @resumeOwnerNotice.
+  ///
+  /// In cs, this message translates to:
+  /// **'Obnovil(a) jsem si členství.'**
+  String get resumeOwnerNotice;
+
   /// No description provided for @profSignOut.
   ///
   /// In cs, this message translates to:

@@ -168,6 +168,44 @@ class GymStore extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Member self-pauses their membership (holiday / long-term illness).
+  /// Self-service — no owner approval — but Olda is notified via the owner
+  /// thread. Membership freezes: `suspended`/`muted` until resumed; the real
+  /// expiry shift lives in `domain/membership.dart#expiryAfterPause`.
+  /// [reason] is a key suffix (`holiday`|`illness`|`other`) or null.
+  /// [notice] is the localised line posted to the owner thread.
+  void pauseMembership(String id, {String? reason, required String notice}) {
+    final m = memberById(id);
+    if (m == null || m.isPaused) return;
+    updateMember(
+      id,
+      (x) => x.copyWith(
+        suspended: true,
+        state: 'muted',
+        pausedAt: kNow,
+        pauseReason: reason,
+      ),
+    );
+    sendMessage(id, notice, from: 'member');
+  }
+
+  /// Member resumes a paused membership. Clears the pause and recomputes the
+  /// status pill from the (frozen) remaining days. Olda is notified.
+  void resumeMembership(String id, {required String notice}) {
+    final m = memberById(id);
+    if (m == null || !m.isPaused) return;
+    final state = m.daysNum < 0
+        ? 'error'
+        : m.daysNum <= 7
+            ? 'warn'
+            : 'ok';
+    updateMember(
+      id,
+      (x) => x.copyWith(suspended: false, state: state, clearPause: true),
+    );
+    sendMessage(id, notice, from: 'member');
+  }
+
   void sendMessage(String memberId, String text, {String from = 'olda'}) {
     threads.putIfAbsent(memberId, () => []);
     threads[memberId]!.add(Message(
