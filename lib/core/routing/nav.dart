@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../theme/app_theme.dart';
-import '../theme/tokens.dart';
-import '../utils/haptics.dart';
+import '../utils/app_toast.dart';
 
 /// Navigation callback contract used by every screen — mirrors the prototype's
 /// `onNav('routeKey')` / `onNav('routeKey', { toast })` convention.
@@ -93,36 +91,10 @@ NavCb navCb(BuildContext context) {
       }
     }
     if (toast != null && toast.isNotEmpty) {
-      // A surfaced toast almost always confirms a completed action — give it a
-      // success haptic so the feedback is felt, not just seen.
-      Haptics.success();
       final message = toast;
-      // Defer so the new route is mounted before showing the toast.
+      // Defer so the new route is mounted before the toast slides in from top.
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        final messenger = ScaffoldMessenger.maybeOf(context);
-        messenger
-          ?..hideCurrentSnackBar()
-          ..showSnackBar(
-            SnackBar(
-              content: Text(
-                message,
-                style: AppType.ui(
-                  size: 14,
-                  weight: FontWeight.w500,
-                  color: T.text,
-                ),
-              ),
-              backgroundColor: T.surface2,
-              behavior: SnackBarBehavior.floating,
-              elevation: 8,
-              duration: const Duration(milliseconds: 2600),
-              margin: const EdgeInsets.fromLTRB(16, 0, 16, 96),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(Radii.lg),
-                side: BorderSide(color: T.border),
-              ),
-            ),
-          );
+        showAppToast(context, message);
       });
     }
   };

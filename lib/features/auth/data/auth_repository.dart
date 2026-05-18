@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../domain/app_profile.dart';
@@ -29,33 +27,35 @@ class AuthRepository {
     await _auth.signInWithPassword(email: email.trim(), password: password);
   }
 
-  /// Creates the auth user. The `members` row + notification prefs are created
-  /// by the DB trigger from the metadata below.
+  /// Registration gate (/goal): true iff an unclaimed roster row matches the
+  /// name (case/diacritics/order-insensitive — server-side `roster_find_match`
+  /// RPC). Returns only a boolean; no roster PII reaches the client.
+  Future<bool> rosterMatch({
+    required String firstName,
+    required String lastName,
+  }) async {
+    final res = await _client.rpc('roster_find_match', params: {
+      'p_first': firstName.trim(),
+      'p_last': lastName.trim(),
+    });
+    return res == true;
+  }
+
+  /// Creates the auth user with the name + contact as metadata. The DB
+  /// trigger `handle_new_user` then CLAIMS the matching roster row (links
+  /// auth user, fills e-mail/phone, sets status `pending` for Olda to
+  /// confirm). Tariff / student verification / deposit are handled by the
+  /// owner at approval (brief §4.1), not collected here.
   ///
   /// Returns true when a session was issued immediately; false when Supabase
-  /// requires e-mail confirmation first (project setting) — the UI then shows
-  /// the "check your inbox" state.
+  /// requires e-mail confirmation first (project setting).
   Future<bool> signUp({
     required String email,
     required String password,
     required String firstName,
     required String lastName,
     required String phone,
-    required String tariffType, // 'standard' | 'student'
-    Uint8List? studentProofBytes,
-    String? studentProofName,
   }) async {
-    String? proofUrl;
-    if (tariffType == 'student' &&
-        studentProofBytes != null &&
-        studentProofName != null) {
-      proofUrl = await _uploadStudentProof(
-        email: email,
-        bytes: studentProofBytes,
-        fileName: studentProofName,
-      );
-    }
-
     final res = await _auth.signUp(
       email: email.trim(),
       password: password,
@@ -63,39 +63,9 @@ class AuthRepository {
         'first_name': firstName.trim(),
         'last_name': lastName.trim(),
         'phone': phone.trim(),
-        'tariff_type': tariffType,
-        'student_proof_url': ?proofUrl,
       },
     );
     return res.session != null;
-  }
-
-  /// Best-effort upload to the public `student-proofs` bucket. A failed
-  /// upload (e.g. bucket/policies not yet created) must not block
-  /// registration — the owner can request the proof again at approval time
-  /// (brief §4.1 / §-studentské ověření). Returns the public URL or null.
-  Future<String?> _uploadStudentProof({
-    required String email,
-    required Uint8List bytes,
-    required String fileName,
-  }) async {
-    try {
-      final ext = fileName.contains('.') ? fileName.split('.').last : 'jpg';
-      final safe = email.trim().toLowerCase().replaceAll(
-            RegExp(r'[^a-z0-9]+'),
-            '_',
-          );
-      final path =
-          '$safe/${DateTime.now().millisecondsSinceEpoch}.$ext';
-      await _client.storage.from('student-proofs').uploadBinary(
-            path,
-            bytes,
-            fileOptions: const FileOptions(upsert: true),
-          );
-      return _client.storage.from('student-proofs').getPublicUrl(path);
-    } catch (_) {
-      return null;
-    }
   }
 
   Future<void> signOut() => _auth.signOut();

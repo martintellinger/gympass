@@ -1,6 +1,3 @@
-import 'dart:typed_data';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -14,8 +11,11 @@ import '../../../shared/widgets/app_icon.dart';
 import '../application/auth_notifier.dart';
 import 'widgets.dart';
 
-/// 02 — Registration form (brief §4.1 / §screens 2). Creates the auth user;
-/// a DB trigger turns the metadata into a `pending` member row.
+/// 02 — Roster-gated registration (brief §4.1 + /goal):
+/// Step 1: name → must match an unclaimed club roster row.
+/// Step 2: contact + password → claims the row, status `pending` until Olda
+/// confirms (key / deposit). Tariff & student verification are the owner's
+/// at approval, not collected here.
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
@@ -30,14 +30,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   final _phone = TextEditingController();
   final _password = TextEditingController();
 
-  String _tariff = 'standard';
+  int _step = 1;
   bool _gdpr = false;
   bool _busy = false;
   String? _error;
   bool _confirmEmailSent = false;
-
-  Uint8List? _proofBytes;
-  String? _proofName;
 
   @override
   void dispose() {
@@ -47,36 +44,46 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     super.dispose();
   }
 
-  Future<void> _pickProof() async {
-    final res = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-      withData: true,
-    );
-    final f = res?.files.firstOrNull;
-    if (f != null && f.bytes != null) {
-      setState(() {
-        _proofBytes = f.bytes;
-        _proofName = f.name;
-      });
-    }
-  }
-
   bool _validEmail(String s) =>
       RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(s);
 
-  Future<void> _submit() async {
+  Future<void> _checkRoster() async {
     final l = L.of(context);
     final first = _first.text.trim();
     final last = _last.text.trim();
+    if (first.isEmpty || last.isEmpty) {
+      setState(() => _error = l.authErrFields);
+      return;
+    }
+    setState(() {
+      _busy = true;
+      _error = null;
+    });
+    try {
+      final ok =
+          await ref.read(authNotifierProvider).rosterMatch(first, last);
+      if (!mounted) return;
+      setState(() {
+        if (ok) {
+          _step = 2;
+        } else {
+          _error = l.authErrNotInRoster;
+        }
+      });
+    } catch (_) {
+      if (mounted) setState(() => _error = l.authErrGeneric);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _submit() async {
+    final l = L.of(context);
     final email = _email.text.trim();
     final phone = _phone.text.trim();
     final pass = _password.text;
 
-    if (first.isEmpty ||
-        last.isEmpty ||
-        email.isEmpty ||
-        phone.isEmpty ||
-        pass.isEmpty) {
+    if (email.isEmpty || pass.isEmpty) {
       setState(() => _error = l.authErrFields);
       return;
     }
@@ -86,10 +93,6 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     }
     if (pass.length < 6) {
       setState(() => _error = l.authErrPassword);
-      return;
-    }
-    if (_tariff == 'student' && _proofBytes == null) {
-      setState(() => _error = l.authErrStudentProof);
       return;
     }
     if (!_gdpr) {
@@ -105,15 +108,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       final hasSession = await ref.read(authNotifierProvider).signUp(
             email: email,
             password: pass,
-            firstName: first,
-            lastName: last,
+            firstName: _first.text.trim(),
+            lastName: _last.text.trim(),
             phone: phone,
-            tariffType: _tariff,
-            studentProofBytes: _proofBytes,
-            studentProofName: _proofName,
           );
       if (!hasSession && mounted) {
-        // Project requires e-mail confirmation — no session yet.
         setState(() => _confirmEmailSent = true);
       }
       // With a session, the router redirect moves to the waiting screen.
@@ -145,104 +144,62 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       );
     }
 
+    if (_step == 1) {
+      return AuthScaffold(
+        title: l.authRegisterTitle,
+        subtitle: l.authNameStepSubtitle,
+        children: [
+          AuthError(_error),
+          AuthField(
+            label: l.authFirstName,
+            controller: _first,
+            capitalization: TextCapitalization.words,
+            autofillHint: AutofillHints.givenName,
+            enabled: !_busy,
+          ),
+          AuthField(
+            label: l.authLastName,
+            controller: _last,
+            capitalization: TextCapitalization.words,
+            autofillHint: AutofillHints.familyName,
+            enabled: !_busy,
+          ),
+          const SizedBox(height: 8),
+          AppButton(
+            label: _busy ? l.authBusy : l.authContinue,
+            full: true,
+            onTap: _busy ? null : _checkRoster,
+          ),
+          const SizedBox(height: 4),
+          AuthLinkRow(
+            lead: l.authHaveAccount,
+            linkLabel: l.authLoginLink,
+            onTap: _busy ? () {} : () => context.go('/login'),
+          ),
+        ],
+      );
+    }
+
+    // Step 2 — contact + password.
     return AuthScaffold(
       title: l.authRegisterTitle,
-      subtitle: l.authRegisterSubtitle,
+      subtitle: l.authContactStepSubtitle,
       children: [
         AuthError(_error),
-        Row(
-          children: [
-            Expanded(
-              child: AuthField(
-                label: l.authFirstName,
-                controller: _first,
-                capitalization: TextCapitalization.words,
-                autofillHint: AutofillHints.givenName,
-                enabled: !_busy,
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: AuthField(
-                label: l.authLastName,
-                controller: _last,
-                capitalization: TextCapitalization.words,
-                autofillHint: AutofillHints.familyName,
-                enabled: !_busy,
-              ),
-            ),
-          ],
-        ),
         AuthField(
-          label: l.authEmail,
+          label: l.authEmailLogin,
           controller: _email,
           keyboardType: TextInputType.emailAddress,
           autofillHint: AutofillHints.email,
           enabled: !_busy,
         ),
         AuthField(
-          label: l.authPhone,
+          label: l.authPhoneOptional,
           controller: _phone,
           keyboardType: TextInputType.phone,
           autofillHint: AutofillHints.telephoneNumber,
           enabled: !_busy,
         ),
-        Text(l.authTariff,
-            style: AppType.ui(
-                size: 13, weight: FontWeight.w500, color: T.text2)),
-        const SizedBox(height: 6),
-        Row(
-          children: [
-            _TariffChip(
-              label: l.authTariffStandard,
-              selected: _tariff == 'standard',
-              onTap: _busy ? null : () => setState(() => _tariff = 'standard'),
-            ),
-            const SizedBox(width: 10),
-            _TariffChip(
-              label: l.authTariffStudent,
-              selected: _tariff == 'student',
-              onTap: _busy ? null : () => setState(() => _tariff = 'student'),
-            ),
-          ],
-        ),
-        if (_tariff == 'student') ...[
-          const SizedBox(height: 14),
-          GestureDetector(
-            onTap: _busy ? null : _pickProof,
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                  horizontal: Space.md, vertical: 14),
-              decoration: BoxDecoration(
-                color: T.surface,
-                borderRadius: BorderRadius.circular(Radii.md),
-                border: Border.all(
-                    color: _proofBytes != null ? T.ok : T.border),
-              ),
-              child: Row(
-                children: [
-                  AppIcon(_proofBytes != null ? 'check' : 'plus',
-                      size: 18,
-                      color: _proofBytes != null ? T.ok : T.text2),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      _proofBytes != null
-                          ? l.authStudentProofPicked
-                          : '${l.authStudentProof} · ${l.authStudentProofPick}',
-                      style: AppType.ui(
-                          size: 14,
-                          color: _proofBytes != null ? T.text : T.text2),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-        const SizedBox(height: 16),
         AuthField(
           label: l.authPassword,
           controller: _password,
@@ -289,45 +246,16 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
         ),
         const SizedBox(height: 4),
         AuthLinkRow(
-          lead: l.authHaveAccount,
-          linkLabel: l.authLoginLink,
-          onTap: _busy ? () {} : () => context.go('/login'),
+          lead: l.actionBack,
+          linkLabel: l.authRegisterTitle,
+          onTap: _busy
+              ? () {}
+              : () => setState(() {
+                    _step = 1;
+                    _error = null;
+                  }),
         ),
       ],
-    );
-  }
-}
-
-class _TariffChip extends StatelessWidget {
-  final String label;
-  final bool selected;
-  final VoidCallback? onTap;
-  const _TariffChip(
-      {required this.label, required this.selected, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected ? T.accentSoft : T.surface,
-            borderRadius: BorderRadius.circular(Radii.md),
-            border: Border.all(color: selected ? T.accent : T.border),
-          ),
-          child: Text(
-            label,
-            style: AppType.ui(
-              size: 14,
-              weight: FontWeight.w600,
-              color: selected ? T.accent : T.text,
-            ),
-          ),
-        ),
-      ),
     );
   }
 }

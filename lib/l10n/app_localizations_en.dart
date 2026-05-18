@@ -539,13 +539,13 @@ class LEn extends L {
   String get adashStatEndingSoon => 'ENDING ≤ 7 DAYS';
 
   @override
-  String get adashStatEndingSoonSub => 'win anniversary';
+  String get adashStatEndingSoonSub => 'memberships';
 
   @override
-  String get adashStatOverdue => 'OVERDUE';
+  String get adashStatOverdue => 'OVERDUE PAYMENTS';
 
   @override
-  String get adashStatOverdueSub => 'urgent';
+  String get adashStatOverdueSub => 'unpaid';
 
   @override
   String adashStatRevenue(Object period) {
@@ -1816,4 +1816,25 @@ class LEn extends L {
 
   @override
   String get authBusy => 'Working…';
+
+  @override
+  String get authNameStepSubtitle =>
+      'Enter your name exactly as the club has it on record.';
+
+  @override
+  String get authContinue => 'Continue';
+
+  @override
+  String get authErrNotInRoster =>
+      'We don\'t have this name on the club roster. Ask Olda to add you.';
+
+  @override
+  String get authContactStepSubtitle =>
+      'That matches. Add a contact and password — Olda then confirms access.';
+
+  @override
+  String get authEmailLogin => 'E-mail (for sign-in)';
+
+  @override
+  String get authPhoneOptional => 'Phone (optional)';
 }

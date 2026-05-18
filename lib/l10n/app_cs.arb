@@ -226,9 +226,9 @@
     }
   },
   "adashStatEndingSoon": "KONČÍ ≤ 7 DNÍ",
-  "adashStatEndingSoonSub": "vyhraj výročí",
-  "adashStatOverdue": "PO LHŮTĚ",
-  "adashStatOverdueSub": "urgent",
+  "adashStatEndingSoonSub": "členství",
+  "adashStatOverdue": "PLATBY PO LHŮTĚ",
+  "adashStatOverdueSub": "neuhrazené",
   "adashStatRevenue": "PŘÍJEM {period}",
   "@adashStatRevenue": {
     "placeholders": {
@@ -725,5 +725,11 @@
   "authErrGdpr": "Pro registraci musíš potvrdit souhlas s GDPR.",
   "authErrStudentProof": "Pro studentský tarif nahraj ISIC nebo potvrzení o studiu.",
   "authRegisteredTitle": "Účet vytvořen",
-  "authBusy": "Pracuji…"
+  "authBusy": "Pracuji…",
+  "authNameStepSubtitle": "Zadej jméno a příjmení tak, jak tě má klub v evidenci.",
+  "authContinue": "Pokračovat",
+  "authErrNotInRoster": "Tohle jméno nemáme v evidenci klubu. Ozvi se Oldovi, ať tě přidá.",
+  "authContactStepSubtitle": "Sedí to. Doplň kontakt a heslo — Olda pak potvrdí přístup.",
+  "authEmailLogin": "E-mail (pro přihlášení)",
+  "authPhoneOptional": "Telefon (nepovinné)"
 }

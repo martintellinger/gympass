@@ -91,15 +91,16 @@ class AuthNotifier extends ChangeNotifier {
   Future<void> signIn(String email, String password) =>
       _repository.signIn(email: email, password: password);
 
+  /// Registration step 1 gate: is this name in the club roster?
+  Future<bool> rosterMatch(String firstName, String lastName) =>
+      _repository.rosterMatch(firstName: firstName, lastName: lastName);
+
   Future<bool> signUp({
     required String email,
     required String password,
     required String firstName,
     required String lastName,
     required String phone,
-    required String tariffType,
-    Uint8List? studentProofBytes,
-    String? studentProofName,
   }) =>
       _repository.signUp(
         email: email,
@@ -107,9 +108,6 @@ class AuthNotifier extends ChangeNotifier {
         firstName: firstName,
         lastName: lastName,
         phone: phone,
-        tariffType: tariffType,
-        studentProofBytes: studentProofBytes,
-        studentProofName: studentProofName,
       );
 
   Future<void> signOut() => _repository.signOut();

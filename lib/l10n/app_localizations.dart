@@ -1078,19 +1078,19 @@ abstract class L {
   /// No description provided for @adashStatEndingSoonSub.
   ///
   /// In cs, this message translates to:
-  /// **'vyhraj výročí'**
+  /// **'členství'**
   String get adashStatEndingSoonSub;
 
   /// No description provided for @adashStatOverdue.
   ///
   /// In cs, this message translates to:
-  /// **'PO LHŮTĚ'**
+  /// **'PLATBY PO LHŮTĚ'**
   String get adashStatOverdue;
 
   /// No description provided for @adashStatOverdueSub.
   ///
   /// In cs, this message translates to:
-  /// **'urgent'**
+  /// **'neuhrazené'**
   String get adashStatOverdueSub;
 
   /// No description provided for @adashStatRevenue.
@@ -3102,6 +3102,42 @@ abstract class L {
   /// In cs, this message translates to:
   /// **'Pracuji…'**
   String get authBusy;
+
+  /// No description provided for @authNameStepSubtitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zadej jméno a příjmení tak, jak tě má klub v evidenci.'**
+  String get authNameStepSubtitle;
+
+  /// No description provided for @authContinue.
+  ///
+  /// In cs, this message translates to:
+  /// **'Pokračovat'**
+  String get authContinue;
+
+  /// No description provided for @authErrNotInRoster.
+  ///
+  /// In cs, this message translates to:
+  /// **'Tohle jméno nemáme v evidenci klubu. Ozvi se Oldovi, ať tě přidá.'**
+  String get authErrNotInRoster;
+
+  /// No description provided for @authContactStepSubtitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Sedí to. Doplň kontakt a heslo — Olda pak potvrdí přístup.'**
+  String get authContactStepSubtitle;
+
+  /// No description provided for @authEmailLogin.
+  ///
+  /// In cs, this message translates to:
+  /// **'E-mail (pro přihlášení)'**
+  String get authEmailLogin;
+
+  /// No description provided for @authPhoneOptional.
+  ///
+  /// In cs, this message translates to:
+  /// **'Telefon (nepovinné)'**
+  String get authPhoneOptional;
 }
 
 class _LDelegate extends LocalizationsDelegate<L> {

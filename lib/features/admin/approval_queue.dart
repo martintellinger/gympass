@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/routing/nav.dart';
+import '../../core/utils/app_toast.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../l10n/app_localizations.dart';
@@ -101,30 +102,9 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
       _queue.removeAt(_index);
       // _index stays — now points at the next applicant.
     });
-    // Surface the decision toast on the way to the next applicant via nav,
-    // matching the JSX onNav('admin', { toast }) behaviour but keeping the
-    // queue alive while applicants remain.
-    final messenger = ScaffoldMessenger.of(context);
-    messenger.clearSnackBars();
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(
-          toast,
-          style: AppType.ui(
-            size: 14,
-            weight: FontWeight.w500,
-            color: T.text,
-          ),
-        ),
-        backgroundColor: T.surface2,
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(Radii.md),
-          side: const BorderSide(color: T.border),
-        ),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    // Surface the decision toast (top-anchored) while the queue stays alive
+    // for the remaining applicants — mirrors the JSX onNav('admin',{toast}).
+    showAppToast(context, toast);
   }
 
   @override

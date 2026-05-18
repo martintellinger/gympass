@@ -537,13 +537,13 @@ class LCs extends L {
   String get adashStatEndingSoon => 'KONČÍ ≤ 7 DNÍ';
 
   @override
-  String get adashStatEndingSoonSub => 'vyhraj výročí';
+  String get adashStatEndingSoonSub => 'členství';
 
   @override
-  String get adashStatOverdue => 'PO LHŮTĚ';
+  String get adashStatOverdue => 'PLATBY PO LHŮTĚ';
 
   @override
-  String get adashStatOverdueSub => 'urgent';
+  String get adashStatOverdueSub => 'neuhrazené';
 
   @override
   String adashStatRevenue(Object period) {
@@ -1830,4 +1830,25 @@ class LCs extends L {
 
   @override
   String get authBusy => 'Pracuji…';
+
+  @override
+  String get authNameStepSubtitle =>
+      'Zadej jméno a příjmení tak, jak tě má klub v evidenci.';
+
+  @override
+  String get authContinue => 'Pokračovat';
+
+  @override
+  String get authErrNotInRoster =>
+      'Tohle jméno nemáme v evidenci klubu. Ozvi se Oldovi, ať tě přidá.';
+
+  @override
+  String get authContactStepSubtitle =>
+      'Sedí to. Doplň kontakt a heslo — Olda pak potvrdí přístup.';
+
+  @override
+  String get authEmailLogin => 'E-mail (pro přihlášení)';
+
+  @override
+  String get authPhoneOptional => 'Telefon (nepovinné)';
 }

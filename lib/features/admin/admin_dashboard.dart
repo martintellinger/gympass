@@ -142,39 +142,6 @@ class AdminDashboardScreen extends ConsumerWidget {
                   ),
                 ),
 
-                // Quick actions
-                const SizedBox(height: 24),
-                _SectionLabel(L.of(context).adashQuickActions),
-                const SizedBox(height: 12),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(
-                      child: _QuickAction(
-                        icon: 'message',
-                        label: L.of(context).adashActionSendMessage,
-                        onTap: () => nav('messages'),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _QuickAction(
-                        icon: 'cash',
-                        label: L.of(context).adashActionPayments,
-                        onTap: () => nav('payments'),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _QuickAction(
-                        icon: 'user_plus',
-                        label: L.of(context).adashActionAddMember,
-                        onTap: () => nav('addMember'),
-                      ),
-                    ),
-                  ],
-                ),
-
                 // Revenue chart
                 const SizedBox(height: 24),
                 _SectionLabel(
@@ -418,63 +385,6 @@ class _AttentionRow extends StatelessWidget {
               ),
               const SizedBox(width: 12),
               AppIcon('chevron', size: 16, color: T.text3),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _QuickAction extends StatelessWidget {
-  final String icon;
-  final String label;
-  final VoidCallback? onTap;
-  const _QuickAction({
-    required this.icon,
-    required this.label,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(Radii.lg),
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: Space.lg, horizontal: 8),
-          decoration: BoxDecoration(
-            color: T.surface,
-            border: Border.all(color: T.border),
-            borderRadius: BorderRadius.circular(Radii.lg),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: T.accentSoft,
-                  borderRadius: BorderRadius.circular(Radii.s10),
-                ),
-                alignment: Alignment.center,
-                child: AppIcon(icon, size: 18, color: T.accent),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                label,
-                textAlign: TextAlign.center,
-                style: AppType.ui(
-                  size: 11.5,
-                  weight: FontWeight.w500,
-                  color: T.text,
-                  letterSpacing: -0.1,
-                  height: 1.2,
-                ),
-              ),
             ],
           ),
         ),

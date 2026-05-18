@@ -7,7 +7,8 @@
 -- It is idempotent enough to re-run during setup (drops/creates the trigger,
 -- `on conflict do nothing` on seed). It bundles, in order:
 --   1. schema   (= docs/backend/schema.sql)
---   2. handle_new_user trigger  — registration → pending member row
+--   2. roster-gated registration — norm_txt + roster_find_match RPC +
+--      handle_new_user (claims an imported roster row by name)
 --   3. RLS      (= docs/backend/rls.sql)
 --   4. storage bucket for student proofs (ISIC)
 --   5. seed: tariffs + 7 opening-hours rows
@@ -191,10 +192,37 @@ create table if not exists audit_log (
   created_at  timestamptz not null default now()
 );
 
--- ── 2. REGISTRATION TRIGGER ─────────────────────────────────────────────────
--- The client never inserts into `members` (RLS only lets admins write it).
--- Supabase Auth `signUp` carries the form fields as user metadata; this
--- trigger turns a new auth.users row into a `pending` member + prefs row.
+-- ── 2. ROSTER-GATED REGISTRATION (/goal) ────────────────────────────────────
+-- Members are pre-imported as a roster (status 'inactive', no auth_user_id,
+-- only name + expiry — contacts are collected at registration). A new signup
+-- may only proceed if the name matches an unclaimed roster row. The trigger
+-- then CLAIMS that row (links the auth user, fills e-mail/phone, sets
+-- status='pending' for Olda to confirm key/deposit, brief §4.1). Matching is
+-- case-, diacritics- and order-insensitive.
+
+create extension if not exists unaccent;
+
+create or replace function public.norm_txt(p text)
+returns text language sql immutable as $$
+  select regexp_replace(lower(unaccent(coalesce(p,''))), '\s+', ' ', 'g')
+$$;
+
+-- Anon-callable yes/no gate for registration step 1 (no PII leaves the DB).
+create or replace function public.roster_find_match(p_first text, p_last text)
+returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (
+    select 1 from members m
+    where m.auth_user_id is null
+      and (
+        (norm_txt(m.first_name) = norm_txt(p_first) and norm_txt(m.last_name) = norm_txt(p_last))
+        or
+        (norm_txt(m.first_name) = norm_txt(p_last)  and norm_txt(m.last_name) = norm_txt(p_first))
+      )
+  )
+$$;
+revoke all on function public.roster_find_match(text,text) from public;
+grant execute on function public.roster_find_match(text,text) to anon, authenticated;
 
 create or replace function public.handle_new_user()
 returns trigger
@@ -203,27 +231,44 @@ security definer
 set search_path = public
 as $$
 declare
-  v_tariff text := coalesce(new.raw_user_meta_data->>'tariff_type','standard');
-  v_member_id uuid;
+  v_first text := coalesce(new.raw_user_meta_data->>'first_name','');
+  v_last  text := coalesce(new.raw_user_meta_data->>'last_name','');
+  v_phone text := nullif(new.raw_user_meta_data->>'phone','');
+  v_id uuid;
 begin
-  insert into public.members
-    (auth_user_id, first_name, last_name, email, phone,
-     tariff_type, student_proof_url, role, status)
-  values
-    (new.id,
-     coalesce(new.raw_user_meta_data->>'first_name',''),
-     coalesce(new.raw_user_meta_data->>'last_name',''),
-     new.email,
-     new.raw_user_meta_data->>'phone',
-     case when v_tariff in ('standard','student') then v_tariff else 'standard' end,
-     new.raw_user_meta_data->>'student_proof_url',
-     'member', 'pending')
-  returning id into v_member_id;
+  -- Claim an unclaimed roster row (either name order).
+  with cand as (
+    select id from members m
+    where m.auth_user_id is null
+      and (
+        (norm_txt(m.first_name) = norm_txt(v_first) and norm_txt(m.last_name) = norm_txt(v_last))
+        or
+        (norm_txt(m.first_name) = norm_txt(v_last)  and norm_txt(m.last_name) = norm_txt(v_first))
+      )
+    order by m.created_at
+    limit 1
+  )
+  update members m
+     set auth_user_id = new.id,
+         email        = new.email,
+         phone        = coalesce(v_phone, m.phone),
+         status       = 'pending'
+    from cand
+   where m.id = cand.id
+  returning m.id into v_id;
+
+  -- No roster match → fresh pending member (defence-in-depth: a direct API
+  -- signup still lands in Olda's approval queue, never auto-active).
+  if v_id is null then
+    insert into public.members
+      (auth_user_id, first_name, last_name, email, phone, role, status)
+    values
+      (new.id, v_first, v_last, new.email, v_phone, 'member', 'pending')
+    returning id into v_id;
+  end if;
 
   insert into public.notification_preferences (member_id)
-  values (v_member_id)
-  on conflict (member_id) do nothing;
-
+  values (v_id) on conflict (member_id) do nothing;
   return new;
 end;
 $$;
@@ -280,7 +325,10 @@ create policy members_admin_write on members for all
 create or replace function public.guard_member_self_update()
 returns trigger language plpgsql security definer set search_path = public as $$
 begin
-  if is_admin() then return new; end if;
+  -- Skip for trusted server context (no auth.uid()) — e.g. the roster-claim
+  -- trigger — and for admins. Anon/system updates only reach members via
+  -- SECURITY DEFINER funcs; real member PostgREST updates carry auth.uid().
+  if auth.uid() is null or is_admin() then return new; end if;
   new.role                  := old.role;
   new.status                := old.status;
   new.tariff_type           := old.tariff_type;

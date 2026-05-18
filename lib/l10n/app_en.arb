@@ -170,9 +170,9 @@
   "adashStatActive": "ACTIVE",
   "adashStatActiveSub": "of {total}",
   "adashStatEndingSoon": "ENDING ≤ 7 DAYS",
-  "adashStatEndingSoonSub": "win anniversary",
-  "adashStatOverdue": "OVERDUE",
-  "adashStatOverdueSub": "urgent",
+  "adashStatEndingSoonSub": "memberships",
+  "adashStatOverdue": "OVERDUE PAYMENTS",
+  "adashStatOverdueSub": "unpaid",
   "adashStatRevenue": "REVENUE {period}",
   "adashCurrencyCzk": "CZK",
   "adashNeedsAttention": "Needs attention",
@@ -597,5 +597,11 @@
   "authErrGdpr": "You must accept the GDPR consent to register.",
   "authErrStudentProof": "For the student plan, upload an ISIC or proof of study.",
   "authRegisteredTitle": "Account created",
-  "authBusy": "Working…"
+  "authBusy": "Working…",
+  "authNameStepSubtitle": "Enter your name exactly as the club has it on record.",
+  "authContinue": "Continue",
+  "authErrNotInRoster": "We don't have this name on the club roster. Ask Olda to add you.",
+  "authContactStepSubtitle": "That matches. Add a contact and password — Olda then confirms access.",
+  "authEmailLogin": "E-mail (for sign-in)",
+  "authPhoneOptional": "Phone (optional)"
 }
