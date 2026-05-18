@@ -13,7 +13,6 @@ import '../../l10n/app_localizations.dart';
 /// Nahlásit závadu — bottom-sheet-style formulář (text + fotky).
 /// Ported 1:1 from FaultReport.jsx (rendered as a full screen here).
 class FaultReportScreen extends ConsumerStatefulWidget {
-
   const FaultReportScreen({super.key});
 
   @override
@@ -51,8 +50,9 @@ class _FaultReportScreenState extends ConsumerState<FaultReportScreen> {
   void _submit() {
     if (!_canSubmit) return;
     final text = _ctrl.text.trim();
-    final photoSuffix =
-        _photoCount > 0 ? '  (${_photoLabel(context, _photoCount)})' : '';
+    final photoSuffix = _photoCount > 0
+        ? '  (${_photoLabel(context, _photoCount)})'
+        : '';
     ref
         .read(storeProvider)
         .sendMessage(
@@ -77,212 +77,206 @@ class _FaultReportScreenState extends ConsumerState<FaultReportScreen> {
               child: const ColoredBox(color: T.scrim),
             ),
           ),
-          // Sheet pinned to the bottom of the screen.
+          // Sheet pinned to the bottom, spanning the full width (matches the
+          // app's other bottom sheets — no fixed phone-width cap, so it stays
+          // responsive on wide / web viewports instead of a thin column).
           Align(
             alignment: Alignment.bottomCenter,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 376),
-              child: Container(
-                width: double.infinity,
-                decoration: const BoxDecoration(
-                  color: T.surface,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(24),
-                    topRight: Radius.circular(24),
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: T.scrimLight,
-                      blurRadius: 40,
-                      offset: Offset(0, -20),
-                    ),
-                  ],
+            child: Container(
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                color: T.surface,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 28),
-                child: SafeArea(
-                  top: false,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Drag handle.
-                        Center(
-                          child: Container(
-                            width: 36,
-                            height: 4,
-                            margin: const EdgeInsets.only(top: 4, bottom: 14),
-                            decoration: BoxDecoration(
-                              color: T.surface2,
-                              borderRadius: BorderRadius.circular(2),
+                boxShadow: [
+                  BoxShadow(
+                    color: T.scrimLight,
+                    blurRadius: 40,
+                    offset: Offset(0, -20),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 28),
+              child: SafeArea(
+                top: false,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Drag handle.
+                      Center(
+                        child: Container(
+                          width: 36,
+                          height: 4,
+                          margin: const EdgeInsets.only(top: 4, bottom: 14),
+                          decoration: BoxDecoration(
+                            color: T.surface2,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      ),
+
+                      // Header.
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  L.of(context).faultTitle,
+                                  style: AppType.ui(
+                                    size: 20,
+                                    weight: FontWeight.w700,
+                                    color: T.text,
+                                    letterSpacing: -0.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  L.of(context).faultSubtitle,
+                                  style: AppType.ui(
+                                    size: 13,
+                                    color: T.text2,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          GestureDetector(
+                            onTap: () => nav('back'),
+                            child: Container(
+                              width: 30,
+                              height: 30,
+                              decoration: const BoxDecoration(
+                                color: T.surface2,
+                                shape: BoxShape.circle,
+                              ),
+                              alignment: Alignment.center,
+                              child: AppIcon('x', size: 14, color: T.text2),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      // Textarea.
+                      const SizedBox(height: 16),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: T.bg,
+                          border: Border.all(
+                            color: _focused ? T.accent : T.border,
+                          ),
+                          borderRadius: BorderRadius.circular(Radii.md),
+                        ),
+                        padding: const EdgeInsets.all(Space.s14),
+                        child: TextField(
+                          controller: _ctrl,
+                          focusNode: _focus,
+                          maxLines: 4,
+                          minLines: 4,
+                          cursorColor: T.accent,
+                          style: AppType.ui(
+                            size: 14,
+                            color: T.text,
+                            height: 1.5,
+                            letterSpacing: -0.1,
+                          ),
+                          decoration: InputDecoration(
+                            isCollapsed: true,
+                            border: InputBorder.none,
+                            hintText: L.of(context).faultHint,
+                            hintStyle: AppType.ui(
+                              size: 14,
+                              color: T.text3,
+                              height: 1.5,
+                              letterSpacing: -0.1,
                             ),
                           ),
                         ),
+                      ),
 
-                        // Header.
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      // Photos.
+                      const SizedBox(height: 14),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(
+                            Text(
+                              L.of(context).faultPhotosLabel,
+                              style: AppType.ui(
+                                size: 11.5,
+                                weight: FontWeight.w600,
+                                color: T.text2,
+                                letterSpacing: 0.4,
+                              ),
+                            ),
+                            Text(
+                              _photoLabel(context, _photoCount),
+                              style: AppType.ui(size: 11.5, color: T.text3),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          for (int i = 0; i < _photoCount; i++)
+                            _PhotoTile(
+                              onRemove: () => setState(() => _photoCount -= 1),
+                            ),
+                          // Add-photo tile.
+                          GestureDetector(
+                            onTap: () => setState(() => _photoCount += 1),
+                            child: Container(
+                              width: 64,
+                              height: 64,
+                              decoration: BoxDecoration(
+                                color: T.bg,
+                                borderRadius: BorderRadius.circular(Radii.s10),
+                                border: Border.all(color: T.border),
+                              ),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    L.of(context).faultTitle,
-                                    style: AppType.ui(
-                                      size: 20,
-                                      weight: FontWeight.w700,
-                                      color: T.text,
-                                      letterSpacing: -0.5,
-                                    ),
-                                  ),
+                                  AppIcon('plus', size: 18, color: T.text2),
                                   const SizedBox(height: 4),
                                   Text(
-                                    L.of(context).faultSubtitle,
+                                    L.of(context).faultAddPhoto,
                                     style: AppType.ui(
-                                      size: 13,
+                                      size: 10,
                                       color: T.text2,
-                                      height: 1.4,
+                                      letterSpacing: -0.1,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            GestureDetector(
-                              onTap: () => nav('back'),
-                              child: Container(
-                                width: 30,
-                                height: 30,
-                                decoration: const BoxDecoration(
-                                  color: T.surface2,
-                                  shape: BoxShape.circle,
-                                ),
-                                alignment: Alignment.center,
-                                child: AppIcon('x', size: 14, color: T.text2),
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
+                      ),
 
-                        // Textarea.
-                        const SizedBox(height: 16),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: T.bg,
-                            border: Border.all(
-                              color: _focused ? T.accent : T.border,
-                            ),
-                            borderRadius: BorderRadius.circular(Radii.md),
-                          ),
-                          padding: const EdgeInsets.all(Space.s14),
-                          child: TextField(
-                            controller: _ctrl,
-                            focusNode: _focus,
-                            maxLines: 4,
-                            minLines: 4,
-                            cursorColor: T.accent,
-                            style: AppType.ui(
-                              size: 14,
-                              color: T.text,
-                              height: 1.5,
-                              letterSpacing: -0.1,
-                            ),
-                            decoration: InputDecoration(
-                              isCollapsed: true,
-                              border: InputBorder.none,
-                              hintText: L.of(context).faultHint,
-                              hintStyle: AppType.ui(
-                                size: 14,
-                                color: T.text3,
-                                height: 1.5,
-                                letterSpacing: -0.1,
-                              ),
-                            ),
-                          ),
+                      // Submit.
+                      const SizedBox(height: 20),
+                      Opacity(
+                        opacity: _canSubmit ? 1 : 0.4,
+                        child: AppButton(
+                          label: L.of(context).faultSubmit,
+                          full: true,
+                          onTap: _canSubmit ? _submit : null,
                         ),
-
-                        // Photos.
-                        const SizedBox(height: 14),
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 8),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                L.of(context).faultPhotosLabel,
-                                style: AppType.ui(
-                                  size: 11.5,
-                                  weight: FontWeight.w600,
-                                  color: T.text2,
-                                  letterSpacing: 0.4,
-                                ),
-                              ),
-                              Text(
-                                _photoLabel(context, _photoCount),
-                                style: AppType.ui(
-                                  size: 11.5,
-                                  color: T.text3,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: [
-                            for (int i = 0; i < _photoCount; i++)
-                              _PhotoTile(
-                                onRemove: () =>
-                                    setState(() => _photoCount -= 1),
-                              ),
-                            // Add-photo tile.
-                            GestureDetector(
-                              onTap: () =>
-                                  setState(() => _photoCount += 1),
-                              child: Container(
-                                width: 64,
-                                height: 64,
-                                decoration: BoxDecoration(
-                                  color: T.bg,
-                                  borderRadius: BorderRadius.circular(Radii.s10),
-                                  border: Border.all(color: T.border),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    AppIcon('plus', size: 18, color: T.text2),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      L.of(context).faultAddPhoto,
-                                      style: AppType.ui(
-                                        size: 10,
-                                        color: T.text2,
-                                        letterSpacing: -0.1,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        // Submit.
-                        const SizedBox(height: 20),
-                        Opacity(
-                          opacity: _canSubmit ? 1 : 0.4,
-                          child: AppButton(
-                            label: L.of(context).faultSubmit,
-                            full: true,
-                            onTap: _canSubmit ? _submit : null,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
