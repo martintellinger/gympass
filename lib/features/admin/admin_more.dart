@@ -95,7 +95,7 @@ class AdminMoreScreen extends ConsumerWidget {
                     icon: 'board',
                     label: l.amoreBoardLabel,
                     sub: l.amoreBoardSub,
-                    onTap: () => nav('board'),
+                    onTap: () => nav('adminBoard'),
                   ),
                   const _MoreDivider(),
                   _MoreRow(

@@ -24,6 +24,7 @@ const _routes = <String>[
   '/admin/messages',
   '/admin/more',
   '/admin/approval',
+  '/admin/board',
   '/admin/add',
   '/admin/broadcast',
   '/admin/import',

@@ -7,6 +7,7 @@ import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_button.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/screen_frame.dart';
+import 'dev_persona.dart';
 
 /// Dev persona switcher — stands in for auth until Supabase is wired.
 /// Mirrors the prototype's Člen / Majitel switcher.
@@ -35,7 +36,10 @@ class PersonaPicker extends StatelessWidget {
               label: l.personaOpenAsMember,
               full: true,
               icon: const AppIcon('user', size: 20, color: Colors.white),
-              onTap: () => context.go('/member/dashboard'),
+              onTap: () {
+                devPersona.value = 'member';
+                context.go('/member/dashboard');
+              },
             ),
             const SizedBox(height: 12),
             AppButton(
@@ -43,7 +47,10 @@ class PersonaPicker extends StatelessWidget {
               variant: BtnVariant.ghost,
               full: true,
               icon: const AppIcon('shield', size: 20, color: T.text),
-              onTap: () => context.go('/admin'),
+              onTap: () {
+                devPersona.value = 'owner';
+                context.go('/admin');
+              },
             ),
             const SizedBox(height: 24),
             Center(

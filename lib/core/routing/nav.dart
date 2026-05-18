@@ -42,6 +42,8 @@ String routeToPath(String route, {Object? arg}) {
       return '/admin/more';
     case 'approval':
       return '/admin/approval';
+    case 'adminBoard':
+      return '/admin/board';
     case 'addMember':
       return arg == null || '$arg'.isEmpty
           ? '/admin/add'

@@ -28,32 +28,76 @@ import '../../features/auth/presentation/register_screen.dart';
 import '../../features/auth/presentation/splash_screen.dart';
 import '../../features/styleguide/styleguide_screen.dart';
 import '../../shared/widgets/app_shell.dart';
+import 'dev_persona.dart';
 import 'persona_picker.dart';
 
 /// Auth-driven routing. When the backend is disabled (no credentials in the
 /// build) routing is a no-op and the dev persona picker stays at `/` — the
 /// in-memory preview is unaffected. With Supabase on, this gates the app:
 /// signed-out → /login, pending/awaiting → /pending, active → the shell.
+/// Member tab destinations — the `StatefulShellRoute` branches. Landing on
+/// one of these *replaces* the active shell, so an owner who reaches one is
+/// dropped into the whole member app (the "suddenly logged in as a regular
+/// user" bug). Owner *tools* that merely push a member sub-page over the
+/// admin shell (`/member/qr`, `/member/card`, `/member/thread/...`) are fine
+/// and intentionally not listed here.
+const _memberShellTabs = {
+  '/member/dashboard',
+  '/member/messages',
+  '/member/history',
+  '/member/board',
+  '/member/profile',
+};
+
+const _routeGuardExempt = {
+  '/',
+  '/login',
+  '/register',
+  '/pending',
+  '/styleguide',
+};
+
+bool _inAdminArea(String loc) => loc == '/admin' || loc.startsWith('/admin/');
+
 String? _authRedirect(GoRouterState state) {
   final n = authNotifier;
-  if (!n.backendEnabled) return null;
-
-  final snap = n.snapshot;
   final loc = state.matchedLocation;
-  final atSplash = loc == '/';
-  final atAuth = loc == '/login' || loc == '/register';
-  final atPending = loc == '/pending';
 
-  if (snap.isLoading) return atSplash ? null : '/';
+  // Role of the current actor. null = unknown (don't guard — e.g. at the
+  // picker before a persona is chosen, or profile still loading).
+  bool? isAdmin;
 
-  if (!snap.isSignedIn) return atAuth ? null : '/login';
+  if (n.backendEnabled) {
+    final snap = n.snapshot;
+    final atSplash = loc == '/';
+    final atAuth = loc == '/login' || loc == '/register';
+    final atPending = loc == '/pending';
 
-  final p = snap.profile;
-  final needsWait = snap.awaitingProfile || (p?.isPending ?? false);
-  if (needsWait) return atPending ? null : '/pending';
+    if (snap.isLoading) return atSplash ? null : '/';
+    if (!snap.isSignedIn) return atAuth ? null : '/login';
 
-  final home = (p?.isAdmin ?? false) ? '/admin' : '/member/dashboard';
-  if (atSplash || atAuth || atPending) return home;
+    final p = snap.profile;
+    final needsWait = snap.awaitingProfile || (p?.isPending ?? false);
+    if (needsWait) return atPending ? null : '/pending';
+
+    final admin = p?.isAdmin ?? false;
+    if (atSplash || atAuth || atPending) {
+      return admin ? '/admin' : '/member/dashboard';
+    }
+    isAdmin = admin;
+  } else {
+    // Preview: the dev persona picker stands in for auth.
+    final persona = devPersona.value;
+    if (persona == null) return null;
+    isAdmin = persona == 'owner';
+  }
+
+  // ── Role separation (defense in depth) ──
+  // A member must never render admin UI; an owner must never be swapped into
+  // the member shell. Both bounce back to their own home.
+  if (_routeGuardExempt.contains(loc)) return null;
+  if (isAdmin == false && _inAdminArea(loc)) return '/member/dashboard';
+  if (isAdmin == true && _memberShellTabs.contains(loc)) return '/admin';
   return null;
 }
 
@@ -129,6 +173,10 @@ final appRouter = GoRouter(
     GoRoute(
         path: '/admin/approval',
         builder: (c, s) => const ApprovalQueueScreen()),
+    // Owner's view of the noticeboard — pushed *above the admin shell* so the
+    // owner keeps the admin context (not the member tab shell).
+    GoRoute(
+        path: '/admin/board', builder: (c, s) => const BoardScreenView()),
     GoRoute(
         path: '/admin/add',
         builder: (c, s) =>
