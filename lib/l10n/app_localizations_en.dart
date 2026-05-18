@@ -93,6 +93,15 @@ class LEn extends L {
   String get actionClose => 'Close';
 
   @override
+  String get errLoadTitle => 'Couldn\'t load data';
+
+  @override
+  String get errLoadBody => 'Check your connection and try again.';
+
+  @override
+  String get errRetry => 'Try again';
+
+  @override
   String get boardTitle => 'Board';
 
   @override

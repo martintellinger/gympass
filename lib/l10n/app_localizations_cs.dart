@@ -93,6 +93,15 @@ class LCs extends L {
   String get actionClose => 'Zavřít';
 
   @override
+  String get errLoadTitle => 'Nepodařilo se načíst data';
+
+  @override
+  String get errLoadBody => 'Zkontroluj připojení a zkus to znovu.';
+
+  @override
+  String get errRetry => 'Zkusit znovu';
+
+  @override
   String get boardTitle => 'Nástěnka';
 
   @override

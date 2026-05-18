@@ -265,6 +265,24 @@ abstract class L {
   /// **'Zavřít'**
   String get actionClose;
 
+  /// No description provided for @errLoadTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Nepodařilo se načíst data'**
+  String get errLoadTitle;
+
+  /// No description provided for @errLoadBody.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zkontroluj připojení a zkus to znovu.'**
+  String get errLoadBody;
+
+  /// No description provided for @errRetry.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zkusit znovu'**
+  String get errRetry;
+
   /// No description provided for @boardTitle.
   ///
   /// In cs, this message translates to:

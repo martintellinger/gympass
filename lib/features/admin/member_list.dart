@@ -3,13 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/routing/nav.dart';
 import '../../l10n/app_localizations.dart';
+import '../../core/data/data_providers.dart';
 import '../../core/store/models.dart';
-import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
+import '../../shared/widgets/load_error.dart';
 import '../../shared/widgets/screen_frame.dart';
+import '../../shared/widgets/skeleton.dart';
 import '../../shared/widgets/status_pill.dart';
 
 String _sortLabel(BuildContext context, String key) {
@@ -89,10 +91,24 @@ class _MemberListScreenState extends ConsumerState<MemberListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final store = ref.watch(storeProvider);
+    final membersAsync = ref.watch(membersProvider);
     final nav = navCb(context);
 
-    final all = store.members;
+    if (membersAsync.isLoading && !membersAsync.hasValue) {
+      return const ScreenFrame(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(20, 24, 20, 0),
+          child: SkeletonList(rows: 8),
+        ),
+      );
+    }
+    if (membersAsync.hasError && !membersAsync.hasValue) {
+      return ScreenFrame(
+        child: LoadError(onRetry: () => ref.invalidate(membersProvider)),
+      );
+    }
+
+    final all = membersAsync.value ?? const <Member>[];
     final counts = <String, int>{
       'all': all.length,
       'ok': all.where((m) => m.state == 'ok').length,

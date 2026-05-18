@@ -10,14 +10,19 @@ library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../env/app_env.dart';
+import '../../features/auth/application/auth_notifier.dart';
 import '../store/store.dart';
 import 'gym_repository.dart';
 import 'mock_gym_repository.dart';
 import 'supabase_gym_repository.dart';
 
+/// Real Supabase only when the backend is actually active. This mirrors the
+/// auth seam (`authNotifier.backendEnabled`, which honours both
+/// `AppEnv.hasSupabase` and the `debugUseMock` test/preview override) so
+/// tests and the no-credentials preview keep running on the in-memory mock
+/// instead of hitting an uninitialised Supabase client.
 final gymRepositoryProvider = Provider<GymRepository>((ref) {
-  if (AppEnv.hasSupabase) {
+  if (authNotifier.backendEnabled) {
     return const SupabaseGymRepository();
   }
   return MockGymRepository(ref.watch(storeProvider));
