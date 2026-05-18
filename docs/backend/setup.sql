@@ -273,6 +273,32 @@ drop policy if exists members_admin_write on members;
 create policy members_admin_write on members for all
   using (is_admin()) with check (is_admin());
 
+-- Column guard: `members_self_update` is row-scoped only, so without this a
+-- member could PATCH their own row to role='admin' and bypass approval.
+-- Non-admins keep name/phone/email/pause edits; everything owner-managed
+-- (role, status, tariff, expiry, key, deposit, approval) is reverted to OLD.
+create or replace function public.guard_member_self_update()
+returns trigger language plpgsql security definer set search_path = public as $$
+begin
+  if is_admin() then return new; end if;
+  new.role                  := old.role;
+  new.status                := old.status;
+  new.tariff_type           := old.tariff_type;
+  new.membership_expires_at := old.membership_expires_at;
+  new.billing_day_of_month  := old.billing_day_of_month;
+  new.key_issued            := old.key_issued;
+  new.key_number            := old.key_number;
+  new.deposit_paid          := old.deposit_paid;
+  new.deposit_status        := old.deposit_status;
+  new.variable_symbol       := old.variable_symbol;
+  new.approved_at           := old.approved_at;
+  new.approved_by           := old.approved_by;
+  return new;
+end $$;
+drop trigger if exists members_guard_self_update on public.members;
+create trigger members_guard_self_update before update on public.members
+  for each row execute function public.guard_member_self_update();
+
 drop policy if exists tariffs_read on tariffs;
 create policy tariffs_read on tariffs for select using (true);
 drop policy if exists tariffs_admin_write on tariffs;
