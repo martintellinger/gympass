@@ -185,12 +185,19 @@ lib/
 
 ## Aktuální stav (Claude Code aktualizuje při práci)
 
-> **Pozn.:** Hotová je **UI vrstva celého prototypu** (18 obrazovek, pixel-faithful
-> port JSX → Flutter) běžící na **mock datech** (`lib/core/store/store.dart`,
-> port `store.jsx`). Backend (Supabase), auth, l10n, notifikace, migrace a
-> data-ops zatím nejsou — vyžadují credentials / produktová rozhodnutí.
+> **Pozn. (2026-05-18):** Aplikace **běží na reálných datech ze Supabase**.
+> Všech 18 obrazovek je převedeno z mock `storeProvider` na async
+> `GymRepository` (providery v `lib/core/data/data_providers.dart`,
+> skeleton/LoadError stavy). `gymRepositoryProvider` přepíná Supabase
+> (produkce, `authNotifier.backendEnabled`) ↔ `MockGymRepository`
+> (testy/preview bez credentials). Mock `GymStore` (`lib/core/store/store.dart`)
+> už **žádná obrazovka nepoužívá** — zůstává jen jako fixture pro
+> `MockGymRepository`/testy. Ostrá DB nasypána z reálného Excelu (33 členů,
+> registrace podle jména přes `roster_find_match` funguje). Reálný
+> `file_picker`/`excel` parser pro in-app import je poslední otevřená věc
+> (wizard zatím píše přes repo ze syntetického sheetu).
 
-- [~] **Fáze 0 — Setup**: ✅ Flutter projekt, theme (z `shared.jsx`), **go_router se `StatefulShellRoute` (perzistentní iOS 26 nav)**, Riverpod, sdílené primitivy, **design tokeny + spacing/radius škála**, **light/dark `ThemeMode` (živý přepínač)**, **l10n (cs/en, ~389 ARB klíčů, všech 18 obrazovek + nav/persona, živé přepínání jazyka i tématu)** · ⬜ Supabase · ✅ l10n: ICU český plural (one/few/other) dokončen (member_list/fault/payments/thread/Excel import); zbývají jen řetězce vázané na mock data (jména, částky, ukázkové posty) — inventář v `.context/handoff-l10n-followup.md` (sekce „Update 2026-05-17"), přeloží se s backend/datovou vrstvou · ✅ **Supabase napojen** (`Supabase.initialize`, default creds v `AppEnv`, šev `gymRepositoryProvider`); data-vrstva 18 obrazovek zůstává na mocku (architektura B = další dávka)
+- [~] **Fáze 0 — Setup**: ✅ Flutter projekt, theme (z `shared.jsx`), **go_router se `StatefulShellRoute` (perzistentní iOS 26 nav)**, Riverpod, sdílené primitivy, **design tokeny + spacing/radius škála**, **light/dark `ThemeMode` (živý přepínač)**, **l10n (cs/en, ~389 ARB klíčů, všech 18 obrazovek + nav/persona, živé přepínání jazyka i tématu)** · ⬜ Supabase · ✅ l10n: ICU český plural (one/few/other) dokončen (member_list/fault/payments/thread/Excel import); zbývají jen řetězce vázané na mock data (jména, částky, ukázkové posty) — inventář v `.context/handoff-l10n-followup.md` (sekce „Update 2026-05-17"), přeloží se s backend/datovou vrstvou · ✅ **Supabase plně napojen** — všech 18 obrazovek na async `GymRepository` (architektura B **hotová**), `SupabaseGymRepository` implementován proti živému schématu, ostrá DB nasypána z reálného Excelu; mock zůstává jen pro testy/preview
 - [~] **Fáze 1 — Auth**: ✅ obrazovky 01–03 (Login / Registrace / Čekání na schválení, `lib/features/auth/`), `go_router` redirect guard řízený Supabase auth stavem, registrace → DB trigger `handle_new_user` → `pending` člen, ISIC upload do storage, ověřeno proti reálnému projektu (signUp 200) · ⚠️ zbývá nasadit `docs/backend/setup.sql` v Supabase SQL editoru + povýšit Oldu na admina (viz `docs/backend/README.md`) · ✅ persona switcher zůstává jako dev fallback když `!AppEnv.hasSupabase`
 - [x] **Fáze 2 — Member core**: Dashboard (04), karta (09), historie (06), profil (08) — UI na mock datech
 - [x] **Fáze 3 — Payment**: QR Payment (05) flexibilní grid tarifů, „Zaplatil jsem" — UI
