@@ -7,6 +7,7 @@ import '../../core/routing/nav.dart';
 import '../../core/data/data_providers.dart';
 import '../../core/data/gym_repository_provider.dart';
 import '../../core/store/models.dart';
+import 'admin_payments.dart' show showAddPaymentSheet;
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../shared/widgets/app_button.dart';
@@ -162,7 +163,10 @@ class MemberDetailScreen extends ConsumerWidget {
                         child: _DetailQuick(
                           icon: 'cash',
                           label: l.mdetQuickPayment,
-                          onTap: () => nav('payments'),
+                          onTap: () => showAddPaymentSheet(
+                            context, repo, [m], nav,
+                            preselectMemberId: m.id,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -170,7 +174,10 @@ class MemberDetailScreen extends ConsumerWidget {
                         child: _DetailQuick(
                           icon: 'refresh',
                           label: l.mdetQuickExtend,
-                          onTap: () => nav('qr'),
+                          onTap: () => showAddPaymentSheet(
+                            context, repo, [m], nav,
+                            preselectMemberId: m.id,
+                          ),
                         ),
                       ),
                     ],

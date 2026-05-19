@@ -666,10 +666,16 @@ class _FilterSortSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Local mirror of the parent's filter/sort state. These persist across
+    // setSheetState rebuilds (captured in this closure), so the sheet's
+    // selected states update on tap — while the callbacks still propagate to
+    // the parent so the list behind filters live.
+    var sSortBy = sortBy;
+    var sSortDir = sortDir;
+    var sKeyFilter = keyFilter;
+    var sTariffFilter = tariffFilter;
     return StatefulBuilder(
       builder: (context, setSheetState) {
-        // Local mirror so the sheet re-renders immediately while also
-        // propagating to the parent screen state.
         return Align(
           alignment: Alignment.bottomCenter,
           child: Container(
@@ -707,8 +713,13 @@ class _FilterSortSheet extends StatelessWidget {
                           GestureDetector(
                             behavior: HitTestBehavior.opaque,
                             onTap: () {
-                              onReset();
-                              setSheetState(() {});
+                              setSheetState(() {
+                                sSortBy = 'expiration';
+                                sSortDir = 'asc';
+                                sKeyFilter = 'any';
+                                sTariffFilter = 'any';
+                                onReset();
+                              });
                             },
                             child: Text(
                               L.of(context).mlistSheetReset,
@@ -746,12 +757,14 @@ class _FilterSortSheet extends StatelessWidget {
                       L.of(context).mlistSortOptTariffDesc
                     ),
                   ].map((o) {
-                    final active = o.$1 == sortBy;
+                    final active = o.$1 == sSortBy;
                     return GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () {
-                        onPickSort(o.$1);
-                        setSheetState(() {});
+                        setSheetState(() {
+                          sSortBy = o.$1;
+                          onPickSort(o.$1);
+                        });
                       },
                       child: Container(
                         padding: const EdgeInsets.all(Space.s10),
@@ -799,8 +812,10 @@ class _FilterSortSheet extends StatelessWidget {
                   GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () {
-                      onToggleDir();
-                      setSheetState(() {});
+                      setSheetState(() {
+                        sSortDir = sSortDir == 'asc' ? 'desc' : 'asc';
+                        onToggleDir();
+                      });
                     },
                     child: Container(
                       padding: const EdgeInsets.all(Space.s10),
@@ -813,7 +828,7 @@ class _FilterSortSheet extends StatelessWidget {
                           SizedBox(
                             width: 18,
                             child: Text(
-                              sortDir == 'asc' ? '↑' : '↓',
+                              sSortDir == 'asc' ? '↑' : '↓',
                               textAlign: TextAlign.center,
                               style: AppType.mono(
                                 size: 18,
@@ -828,7 +843,7 @@ class _FilterSortSheet extends StatelessWidget {
                                   CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  sortDir == 'asc'
+                                  sSortDir == 'asc'
                                       ? L.of(context).mlistSheetAscending
                                       : L.of(context).mlistSheetDescending,
                                   style: AppType.ui(
@@ -854,10 +869,12 @@ class _FilterSortSheet extends StatelessWidget {
 
                   _SheetLabel(L.of(context).mlistSheetTariff),
                   _Seg(
-                    value: tariffFilter,
+                    value: sTariffFilter,
                     onChange: (v) {
-                      onPickTariff(v);
-                      setSheetState(() {});
+                      setSheetState(() {
+                        sTariffFilter = v;
+                        onPickTariff(v);
+                      });
                     },
                     options: [
                       ('any', L.of(context).mlistTariffOptBoth),
@@ -868,10 +885,12 @@ class _FilterSortSheet extends StatelessWidget {
 
                   _SheetLabel(L.of(context).mlistSheetKey),
                   _Seg(
-                    value: keyFilter,
+                    value: sKeyFilter,
                     onChange: (v) {
-                      onPickKey(v);
-                      setSheetState(() {});
+                      setSheetState(() {
+                        sKeyFilter = v;
+                        onPickKey(v);
+                      });
                     },
                     options: [
                       ('any', L.of(context).mlistKeyOptAll),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/data/data_providers.dart';
+import '../auth/application/auth_notifier.dart';
 import '../../core/data/gym_repository_provider.dart';
 import '../../core/routing/nav.dart';
 import '../../core/theme/app_theme.dart';
@@ -256,26 +258,30 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                 // Sign out
                 Padding(
                   padding: const EdgeInsets.only(top: 16),
-                  child: Container(
-                    padding: const EdgeInsets.all(Space.s14),
-                    decoration: BoxDecoration(
-                      color: T.surface,
-                      border: Border.all(color: T.border),
-                      borderRadius: BorderRadius.circular(Radii.md),
-                    ),
-                    child: Row(
-                      children: [
-                        const AppIcon('logout', size: 16, color: T.error),
-                        const SizedBox(width: 12),
-                        Text(
-                          L.of(context).profSignOut,
-                          style: AppType.ui(
-                            size: 14.5,
-                            weight: FontWeight.w500,
-                            color: T.error,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: _signOut,
+                    child: Container(
+                      padding: const EdgeInsets.all(Space.s14),
+                      decoration: BoxDecoration(
+                        color: T.surface,
+                        border: Border.all(color: T.border),
+                        borderRadius: BorderRadius.circular(Radii.md),
+                      ),
+                      child: Row(
+                        children: [
+                          const AppIcon('logout', size: 16, color: T.error),
+                          const SizedBox(width: 12),
+                          Text(
+                            L.of(context).profSignOut,
+                            style: AppType.ui(
+                              size: 14.5,
+                              weight: FontWeight.w500,
+                              color: T.error,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -638,6 +644,18 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
         ),
       ),
     );
+  }
+
+  Future<void> _signOut() async {
+    Haptics.warning();
+    if (authNotifier.backendEnabled) {
+      // Real auth: signing out flips the auth state; the router's
+      // refreshListenable then redirects to /login automatically.
+      await authNotifier.signOut();
+    } else if (mounted) {
+      // In-memory preview: drop back to the dev persona picker.
+      context.go('/');
+    }
   }
 
   Future<void> _openPauseSheet() async {

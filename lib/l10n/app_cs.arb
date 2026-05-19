@@ -528,6 +528,8 @@
   "apprIsicCard": "ISIC PRŮKAZ",
   "apprTapToEnlarge": "tap pro zvětšení",
   "apprCheckPrefix": "Zkontroluj: ",
+  "apprEmptyTitle": "Žádné čekající registrace",
+  "apprEmptyBody": "Až se někdo zaregistruje svým jménem, objeví se tu ke schválení.",
   "apprApplicantNote": "POZNÁMKA OD ŽADATELE",
   "apprReject": "Zamítnout",
   "apprApprove": "Schválit",

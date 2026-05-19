@@ -41,6 +41,16 @@ class MockGymRepository implements GymRepository {
   @override
   Future<int> totalUnread() async => _store.totalUnread();
 
+  // No real auth in the mock — the approval queue is empty in preview.
+  @override
+  Future<List<Member>> pendingMembers() async => const [];
+
+  @override
+  Future<void> approveMember(String id) async {}
+
+  @override
+  Future<void> rejectMember(String id) async {}
+
   @override
   Future<List<BoardPost>> boardPosts() async {
     final now = DateTime.now();

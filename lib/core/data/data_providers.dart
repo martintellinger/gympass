@@ -51,6 +51,11 @@ final boardPostsProvider = FutureProvider.autoDispose<List<BoardPost>>(
   (ref) => ref.watch(gymRepositoryProvider).boardPosts(),
 );
 
+/// Registrations awaiting the owner's approval.
+final pendingMembersProvider = FutureProvider.autoDispose<List<Member>>(
+  (ref) => ref.watch(gymRepositoryProvider).pendingMembers(),
+);
+
 /// Owner inbox — every member↔owner thread, newest first (admin messages).
 final adminThreadsProvider =
     FutureProvider.autoDispose<List<ThreadSummary>>(

@@ -38,6 +38,12 @@ abstract interface class GymRepository {
   /// screen pins separately).
   Future<List<BoardPost>> boardPosts();
 
+  /// Members who registered (claimed a roster row) and await the owner's
+  /// approval — `status = 'pending'`.
+  Future<List<Member>> pendingMembers();
+  Future<void> approveMember(String id);
+  Future<void> rejectMember(String id);
+
   /// Normalised bubble list for [meId]'s view of a conversation with
   /// [peerId] ([kOwnerId] for the owner thread).
   Future<List<({bool mine, String text, DateTime at})>> conversation(

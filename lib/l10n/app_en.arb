@@ -400,6 +400,8 @@
   "apprIsicCard": "ISIC CARD",
   "apprTapToEnlarge": "tap to enlarge",
   "apprCheckPrefix": "Check: ",
+  "apprEmptyTitle": "No registrations waiting",
+  "apprEmptyBody": "When someone registers with their name, they'll show up here for approval.",
   "apprApplicantNote": "NOTE FROM APPLICANT",
   "apprReject": "Reject",
   "apprApprove": "Approve",

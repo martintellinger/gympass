@@ -123,7 +123,8 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                           background: T.accent,
                           iconColor: Colors.white,
                           bordered: false,
-                          onTap: () => _showAddPayment(context, repo, members, nav),
+                          onTap: () =>
+                              showAddPaymentSheet(context, repo, members, nav),
                         ),
                       ],
                     ),
@@ -687,13 +688,26 @@ const _kTariffOptions = <_TariffOption>[
   _TariffOption('Student', 3, 1950),
 ];
 
-void _showAddPayment(BuildContext context, GymRepository repo,
-    List<Member> members, NavCb nav) {
+/// Owner add-payment sheet. Reused from the payments screen and from a
+/// member's detail ("Platba" / "Prodloužit"), where [preselectMemberId]
+/// locks it to that member.
+void showAddPaymentSheet(
+  BuildContext context,
+  GymRepository repo,
+  List<Member> members,
+  NavCb nav, {
+  String? preselectMemberId,
+}) {
   showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (_) => _AddPaymentSheet(repo: repo, members: members, nav: nav),
+    builder: (_) => _AddPaymentSheet(
+      repo: repo,
+      members: members,
+      nav: nav,
+      preselectMemberId: preselectMemberId,
+    ),
   );
 }
 
@@ -701,8 +715,13 @@ class _AddPaymentSheet extends StatefulWidget {
   final GymRepository repo;
   final List<Member> members;
   final NavCb nav;
-  const _AddPaymentSheet(
-      {required this.repo, required this.members, required this.nav});
+  final String? preselectMemberId;
+  const _AddPaymentSheet({
+    required this.repo,
+    required this.members,
+    required this.nav,
+    this.preselectMemberId,
+  });
 
   @override
   State<_AddPaymentSheet> createState() => _AddPaymentSheetState();
@@ -711,6 +730,12 @@ class _AddPaymentSheet extends StatefulWidget {
 class _AddPaymentSheetState extends State<_AddPaymentSheet> {
   String? _memberId;
   int _optIdx = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _memberId = widget.preselectMemberId;
+  }
 
   @override
   Widget build(BuildContext context) {

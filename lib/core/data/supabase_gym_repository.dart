@@ -256,6 +256,33 @@ class SupabaseGymRepository implements GymRepository {
     });
   }
 
+  @override
+  Future<List<Member>> pendingMembers() async {
+    final rows = await _c
+        .from('members')
+        .select()
+        .eq('status', 'pending')
+        .order('created_at');
+    final now = _now;
+    return rows
+        .map((j) => memberFromRow(MemberRow.fromMap(j), now: now))
+        .toList();
+  }
+
+  @override
+  Future<void> approveMember(String id) async {
+    await _c.from('members').update({
+      'status': 'active',
+      'approved_at': _now.toUtc().toIso8601String(),
+    }).eq('id', id);
+  }
+
+  @override
+  Future<void> rejectMember(String id) async {
+    // Keep the roster row (they're a real club member) but deny app access.
+    await _c.from('members').update({'status': 'inactive'}).eq('id', id);
+  }
+
   static int _trailingUnread(
       List<Message> msgs, bool Function(Message) fromOther) {
     var c = 0;
