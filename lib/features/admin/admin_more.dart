@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/theme/tokens.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/data/data_providers.dart';
 import '../../core/routing/nav.dart';
+import '../../core/utils/haptics.dart';
+import '../auth/application/auth_notifier.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
 import '../../shared/widgets/screen_frame.dart';
@@ -171,6 +174,17 @@ class AdminMoreScreen extends ConsumerWidget {
                     icon: 'logout',
                     label: l.amoreLogoutLabel,
                     danger: true,
+                    onTap: () async {
+                      Haptics.warning();
+                      if (authNotifier.backendEnabled) {
+                        // Real auth: sign-out flips the auth state; the
+                        // router's refreshListenable redirects to /login.
+                        await authNotifier.signOut();
+                      } else if (context.mounted) {
+                        // In-memory preview: back to the dev persona picker.
+                        context.go('/');
+                      }
+                    },
                   ),
                 ]),
 
