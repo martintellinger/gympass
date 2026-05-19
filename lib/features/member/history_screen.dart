@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/data/data_providers.dart';
+import '../../core/format.dart';
+import '../../core/store/models.dart';
 import '../../core/theme/tokens.dart';
 import '../../core/theme/app_theme.dart';
 import '../../l10n/app_localizations.dart';
@@ -26,48 +29,6 @@ class _HistoryItem {
   });
 }
 
-const List<_HistoryItem> _kHistoryItems = [
-  _HistoryItem(
-      type: 'pay',
-      date: '23. 3. 2026',
-      month: '2026 · březen',
-      title: 'Prodloužení (3 měsíce)',
-      amount: '2 250 Kč',
-      sub: '+90 dní',
-      method: 'QR · bank'),
-  _HistoryItem(
-      type: 'pay',
-      date: '22. 12. 2025',
-      month: '2025 · prosinec',
-      title: 'Prodloužení (3 měsíce)',
-      amount: '2 250 Kč',
-      sub: '+90 dní',
-      method: 'QR · bank'),
-  _HistoryItem(
-      type: 'pay',
-      date: '14. 9. 2025',
-      month: '2025 · září',
-      title: 'Vstupní platba',
-      amount: '850 Kč',
-      sub: '+30 dní',
-      method: 'QR · bank'),
-  _HistoryItem(
-      type: 'key',
-      date: '14. 9. 2025',
-      month: '2025 · září',
-      title: 'Vydán klíč',
-      amount: '100 Kč',
-      sub: 'kauce',
-      method: 'cash · Olda'),
-  _HistoryItem(
-      type: 'signup',
-      date: '12. 9. 2025',
-      month: '2025 · září',
-      title: 'Schválena registrace',
-      amount: '',
-      sub: '',
-      method: ''),
-];
 
 class _TypeMeta {
   final String icon;
@@ -92,9 +53,32 @@ class HistoryScreenView extends ConsumerStatefulWidget {
 class _HistoryScreenViewState extends ConsumerState<HistoryScreenView> {
   String _filter = 'all';
 
+  static const _czMonths = [
+    'LEDEN', 'ÚNOR', 'BŘEZEN', 'DUBEN', 'KVĚTEN', 'ČERVEN', 'ČERVENEC',
+    'SRPEN', 'ZÁŘÍ', 'ŘÍJEN', 'LISTOPAD', 'PROSINEC'
+  ];
+
   @override
   Widget build(BuildContext context) {
-    final items = _kHistoryItems
+    final meId = ref.watch(currentMemberIdProvider);
+    final myPayments =
+        (ref.watch(paymentsProvider).value ?? const <Payment>[])
+            .where((p) => p.memberId == meId)
+            .toList()
+          ..sort((a, b) => b.date.compareTo(a.date));
+    final allItems = [
+      for (final p in myPayments)
+        _HistoryItem(
+          type: 'pay',
+          date: '${p.date.day}. ${p.date.month}. ${p.date.year}',
+          month: '${_czMonths[p.date.month - 1]} ${p.date.year}',
+          title: p.type,
+          amount: '+${groupThousands(p.amount)} Kč',
+          sub: '',
+          method: '',
+        ),
+    ];
+    final items = allItems
         .where((i) => _filter == 'all' || i.type == _filter)
         .toList();
 
@@ -104,7 +88,7 @@ class _HistoryScreenViewState extends ConsumerState<HistoryScreenView> {
       byMonth.putIfAbsent(it.month, () => []).add(it);
     }
 
-    final totalPaid = _kHistoryItems
+    final totalPaid = allItems
         .where((i) => i.type == 'pay')
         .fold<int>(0, (s, i) {
       final digits = i.amount.replaceAll(RegExp(r'\D'), '');
@@ -173,7 +157,7 @@ class _HistoryScreenViewState extends ConsumerState<HistoryScreenView> {
                           children: [
                             _FChip(
                               label: L.of(context).histFilterAll(
-                                  _kHistoryItems.length),
+                                  allItems.length),
                               active: _filter == 'all',
                               onTap: () => setState(() => _filter = 'all'),
                             ),

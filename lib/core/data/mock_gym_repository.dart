@@ -42,6 +42,22 @@ class MockGymRepository implements GymRepository {
   Future<int> totalUnread() async => _store.totalUnread();
 
   @override
+  Future<List<BoardPost>> boardPosts() async {
+    final now = DateTime.now();
+    return [
+      BoardPost(
+        id: 'b1',
+        type: 'pinned',
+        pinned: true,
+        title: 'Vítej v BýtFit Klubu',
+        body: 'Tady se objeví oznámení od Oldy — výpadky, akce, události.',
+        at: now,
+        author: 'Olda',
+      ),
+    ];
+  }
+
+  @override
   Future<List<({bool mine, String text, DateTime at})>> conversation(
           String meId, String peerId) async =>
       _store.memberThread(meId, peerId);

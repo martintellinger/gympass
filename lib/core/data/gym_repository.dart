@@ -34,6 +34,10 @@ abstract interface class GymRepository {
   /// Total unread across the owner inbox (nav badge).
   Future<int> totalUnread();
 
+  /// Noticeboard posts, newest first (pinned still sort by date here; the
+  /// screen pins separately).
+  Future<List<BoardPost>> boardPosts();
+
   /// Normalised bubble list for [meId]'s view of a conversation with
   /// [peerId] ([kOwnerId] for the owner thread).
   Future<List<({bool mine, String text, DateTime at})>> conversation(

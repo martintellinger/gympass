@@ -46,6 +46,11 @@ final conversationProvider = FutureProvider.autoDispose
   },
 );
 
+/// Noticeboard posts (member + admin board).
+final boardPostsProvider = FutureProvider.autoDispose<List<BoardPost>>(
+  (ref) => ref.watch(gymRepositoryProvider).boardPosts(),
+);
+
 /// Owner inbox — every member↔owner thread, newest first (admin messages).
 final adminThreadsProvider =
     FutureProvider.autoDispose<List<ThreadSummary>>(

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/data/data_providers.dart';
+import '../../core/store/models.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_icon.dart';
+import '../../shared/widgets/load_error.dart';
 import '../../shared/widgets/screen_frame.dart';
+import '../../shared/widgets/skeleton.dart';
 
 const Color _eventColor = T.event;
 
@@ -66,7 +70,7 @@ String _filterLabel(BuildContext context, String key) {
 }
 
 class _Post {
-  final int id;
+  final String id;
   final String type;
   final bool pinned;
   final String title;
@@ -86,63 +90,6 @@ class _Post {
   });
 }
 
-const List<_Post> _posts = [
-  _Post(
-    id: 1,
-    type: 'pinned',
-    pinned: true,
-    title: 'Zítra zavřeno do 14:00',
-    body:
-        'Revize elektroinstalace. Otevíráme po obědě, omlouvám se za komplikace. Pokud potřebuješ vyzvednout věci ze skříňky dřív, napiš mi.',
-    date: '15. 5. · 16:30',
-    author: 'Olda',
-  ),
-  _Post(
-    id: 2,
-    type: 'outage',
-    title: 'Bench press č. 2 — mimo provoz',
-    body:
-        'Prasklo lano. Náhradní díl objednaný, dorazí příští týden. Bench č. 1 a multipress fungují normálně.',
-    date: '14. 5. · 09:12',
-    author: 'Olda',
-  ),
-  _Post(
-    id: 3,
-    type: 'promo',
-    title: 'Doporuč kamaráda, dostaneš měsíc zdarma',
-    body:
-        'Pošli někomu, kdo by sem zapadl. Když si zaplatí první 3 měsíce, automaticky se ti přidá +30 dní ke členství. Stačí, aby v žádosti napsal tvoje jméno.',
-    date: '12. 5. · 11:00',
-    author: 'Olda',
-    cta: 'Sdílet pozvánku',
-  ),
-  _Post(
-    id: 4,
-    type: 'event',
-    title: 'Společné běhání · pondělky 18:00',
-    body:
-        'Od příštího týdne zkoušíme pravidelný okruh kolem Stromovky. Tempo lehké, 5–8 km. Sraz vždy v 18:00 u vchodu. Bez přihlášky, kdo přijde, ten běží.',
-    date: '10. 5. · 19:45',
-    author: 'Pavel N.',
-  ),
-  _Post(
-    id: 5,
-    type: 'fixed',
-    title: 'Sprcha č. 3 opravena',
-    body: 'Sifon vyčištěn, voda zase teče. Díky všem, kdo nahlásili.',
-    date: '8. 5. · 14:20',
-    author: 'Olda',
-  ),
-  _Post(
-    id: 6,
-    type: 'warning',
-    title: 'Klíče — neházejte je za dveře',
-    body:
-        'Pár lidí mi nechalo klíč zaklepaný za vstupními dveřmi. Prosím nedělejte to — zámek se zasekává a kdokoli to vidí. Buď klíč nechte u sebe, nebo mi ho předejte osobně.',
-    date: '5. 5. · 08:00',
-    author: 'Olda',
-  ),
-];
 
 class _Filter {
   final String key;
@@ -172,7 +119,35 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
 
   @override
   Widget build(BuildContext context) {
-    final filtered = _posts.where((p) {
+    final boardAsync = ref.watch(boardPostsProvider);
+    if (boardAsync.isLoading && !boardAsync.hasValue) {
+      return const ScreenFrame(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(20, 24, 20, 0),
+          child: SkeletonList(rows: 5),
+        ),
+      );
+    }
+    if (boardAsync.hasError && !boardAsync.hasValue) {
+      return ScreenFrame(
+        child:
+            LoadError(onRetry: () => ref.invalidate(boardPostsProvider)),
+      );
+    }
+    final posts = [
+      for (final b in boardAsync.value ?? const <BoardPost>[])
+        _Post(
+          id: b.id,
+          type: b.type,
+          pinned: b.pinned,
+          title: b.title,
+          body: b.body,
+          date: '${b.at.day}. ${b.at.month}. ${b.at.year}',
+          author: b.author,
+          cta: b.cta,
+        ),
+    ];
+    final filtered = posts.where((p) {
       if (_filter == 'all') return true;
       if (_filter == 'pinned') return p.pinned;
       return p.type == _filter;

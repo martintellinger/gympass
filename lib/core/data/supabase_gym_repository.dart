@@ -215,6 +215,33 @@ class SupabaseGymRepository implements GymRepository {
   }
 
   @override
+  Future<List<BoardPost>> boardPosts() async {
+    final rows = await _c
+        .from('board_posts')
+        .select('id, type, title, body, is_pinned, cta_label, '
+            'published_at, created_at, members:author_id(first_name, '
+            'last_name)')
+        .order('created_at', ascending: false);
+    return rows.map((r) {
+      final a = r['members'] as Map<String, dynamic>?;
+      final author = a == null
+          ? '—'
+          : '${a['first_name'] ?? ''} ${a['last_name'] ?? ''}'.trim();
+      final ts = (r['published_at'] ?? r['created_at']) as String;
+      return BoardPost(
+        id: r['id'] as String,
+        type: (r['type'] ?? 'info') as String,
+        pinned: (r['is_pinned'] ?? false) as bool,
+        title: (r['title'] ?? '') as String,
+        body: (r['body'] ?? '') as String,
+        at: DateTime.parse(ts).toLocal(),
+        author: author.isEmpty ? '—' : author,
+        cta: r['cta_label'] as String?,
+      );
+    }).toList();
+  }
+
+  @override
   Future<void> addManualPayment({
     required String memberId,
     required int amount,

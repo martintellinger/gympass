@@ -148,3 +148,26 @@ class MemberConvo {
     required this.unread,
   });
 }
+
+/// A noticeboard post (the `board_posts` table). Display-shaped: [at] is the
+/// publish/created instant, [author] is a resolved display name.
+class BoardPost {
+  final String id;
+  final String type; // pinned|outage|warning|promo|event|fixed|info
+  final bool pinned;
+  final String title;
+  final String body;
+  final DateTime at;
+  final String author;
+  final String? cta;
+  const BoardPost({
+    required this.id,
+    required this.type,
+    required this.pinned,
+    required this.title,
+    required this.body,
+    required this.at,
+    required this.author,
+    this.cta,
+  });
+}
