@@ -1,13 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/data/data_providers.dart';
+import '../../core/domain/revenue.dart';
+import '../../core/format.dart';
 import '../../core/routing/nav.dart';
+import '../../core/store/models.dart';
 import '../../core/theme/app_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/theme/tokens.dart';
 import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/screen_frame.dart';
+
+/// "Jana Kovářová" → "Jana K." for the attention sublines.
+String _shortName(String name) {
+  final parts = name.trim().split(RegExp(r'\s+'));
+  if (parts.length < 2 || parts[1].isEmpty) return parts.first;
+  return '${parts.first} ${parts[1][0]}.';
+}
+
+String _joinNames(Iterable<String> names, {int max = 3}) {
+  final list = names.toList();
+  if (list.length <= max) return list.join(', ');
+  return '${list.take(max).join(', ')} +${list.length - max}';
+}
 
 /// Admin Dashboard 10 — denní pohled majitele.
 class AdminDashboardScreen extends ConsumerWidget {
@@ -16,6 +33,52 @@ class AdminDashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final nav = navCb(context);
+
+    final members =
+        ref.watch(membersProvider).value ?? const <Member>[];
+    final pending =
+        ref.watch(pendingMembersProvider).value ?? const <Member>[];
+    final payments =
+        ref.watch(paymentsProvider).value ?? const <Payment>[];
+
+    final total = members.length;
+    final activeCount = members.where((m) => m.state == 'ok').length;
+    final endingSoon = members.where((m) => m.state == 'warn').toList();
+    final overdue = members.where((m) => m.state == 'error').toList();
+
+    final now = DateTime.now();
+    final monthRevenue =
+        revenueSum(payments, year: now.year, month: now.month);
+
+    // Attention rows are built dynamically — a zero count means the row is
+    // simply absent, not shown as "0" (that was the stale hardcoded bug).
+    final attention = <Widget>[
+      if (pending.isNotEmpty)
+        _AttentionRow(
+          icon: 'user_check',
+          title: L.of(context).adashAttnPending('${pending.length}'),
+          sub: _joinNames(pending.map((m) => _shortName(m.name))),
+          accent: true,
+          onTap: () => nav('approval'),
+        ),
+      if (overdue.isNotEmpty)
+        _AttentionRow(
+          icon: 'alert',
+          title: L.of(context).adashAttnOverdue('${overdue.length}'),
+          sub: L.of(context).adashAttnOverdueSub(
+              _joinNames(overdue.map((m) => m.name.split(' ').first))),
+          warn: true,
+          onTap: () => nav('list', arg: {'filterPreset': 'error'}),
+        ),
+      if (endingSoon.isNotEmpty)
+        _AttentionRow(
+          icon: 'calendar',
+          title:
+              L.of(context).adashAttnEndingSoon('${endingSoon.length}'),
+          sub: L.of(context).adashAttnEndingSoonSub,
+          onTap: () => nav('list', arg: {'filterPreset': 'warn'}),
+        ),
+    ];
 
     return ScreenFrame(
       child: SingleChildScrollView(
@@ -70,15 +133,15 @@ class AdminDashboardScreen extends ConsumerWidget {
                     Expanded(
                       child: _Stat(
                         label: L.of(context).adashStatActive,
-                        value: '34',
-                        sub: L.of(context).adashStatActiveSub('34'),
+                        value: '$activeCount',
+                        sub: L.of(context).adashStatActiveSub('$total'),
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
                       child: _Stat(
                         label: L.of(context).adashStatEndingSoon,
-                        value: '5',
+                        value: '${endingSoon.length}',
                         sub: L.of(context).adashStatEndingSoonSub,
                         color: T.warn,
                       ),
@@ -92,7 +155,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                     Expanded(
                       child: _Stat(
                         label: L.of(context).adashStatOverdue,
-                        value: '2',
+                        value: '${overdue.length}',
                         sub: L.of(context).adashStatOverdueSub,
                         color: T.error,
                       ),
@@ -100,8 +163,9 @@ class AdminDashboardScreen extends ConsumerWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: _Stat(
-                        label: L.of(context).adashStatRevenue('5/26'),
-                        value: '28 950',
+                        label: L.of(context).adashStatRevenue(
+                            '${now.month}/${now.year % 100}'),
+                        value: groupThousands(monthRevenue),
                         sub: L.of(context).adashCurrencyCzk,
                       ),
                     ),
@@ -113,33 +177,33 @@ class AdminDashboardScreen extends ConsumerWidget {
                 _SectionLabel(L.of(context).adashNeedsAttention),
                 const SizedBox(height: 12),
                 AppCard(
-                  padding: EdgeInsets.zero,
-                  child: Column(
-                    children: [
-                      _AttentionRow(
-                        icon: 'user_check',
-                        title: L.of(context).adashAttnPending('2'),
-                        sub: 'Jana K., Tomáš H.',
-                        accent: true,
-                        onTap: () => nav('approval'),
-                      ),
-                      _divider(),
-                      _AttentionRow(
-                        icon: 'alert',
-                        title: L.of(context).adashAttnOverdue('2'),
-                        sub: L.of(context).adashAttnOverdueSub('David, Petr'),
-                        warn: true,
-                        onTap: () => nav('list', arg: {'filterPreset': 'error'}),
-                      ),
-                      _divider(),
-                      _AttentionRow(
-                        icon: 'calendar',
-                        title: L.of(context).adashAttnEndingSoon('5'),
-                        sub: L.of(context).adashAttnEndingSoonSub,
-                        onTap: () => nav('list', arg: {'filterPreset': 'warn'}),
-                      ),
-                    ],
-                  ),
+                  padding: attention.isEmpty
+                      ? const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 18)
+                      : EdgeInsets.zero,
+                  child: attention.isEmpty
+                      ? Row(
+                          children: [
+                            const AppIcon('check',
+                                size: 18, color: T.ok),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                L.of(context).adashAttnAllClear,
+                                style: AppType.ui(
+                                    size: 14, color: T.text2),
+                              ),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          children: [
+                            for (var i = 0; i < attention.length; i++) ...[
+                              if (i > 0) _divider(),
+                              attention[i],
+                            ],
+                          ],
+                        ),
                 ),
 
                 // Revenue chart

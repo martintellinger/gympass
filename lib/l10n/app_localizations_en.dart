@@ -591,6 +591,9 @@ class LEn extends L {
   String get adashAttnEndingSoonSub => 'This week';
 
   @override
+  String get adashAttnAllClear => 'Nothing waiting — you\'re all caught up.';
+
+  @override
   String get adashQuickActions => 'Quick actions';
 
   @override

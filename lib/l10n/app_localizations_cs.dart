@@ -589,6 +589,9 @@ class LCs extends L {
   String get adashAttnEndingSoonSub => 'Tento týden';
 
   @override
+  String get adashAttnAllClear => 'Nic nečeká — máš hotovo.';
+
+  @override
   String get adashQuickActions => 'Rychlé akce';
 
   @override

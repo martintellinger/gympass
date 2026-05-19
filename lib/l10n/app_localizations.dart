@@ -1159,6 +1159,12 @@ abstract class L {
   /// **'Tento týden'**
   String get adashAttnEndingSoonSub;
 
+  /// No description provided for @adashAttnAllClear.
+  ///
+  /// In cs, this message translates to:
+  /// **'Nic nečeká — máš hotovo.'**
+  String get adashAttnAllClear;
+
   /// No description provided for @adashQuickActions.
   ///
   /// In cs, this message translates to:

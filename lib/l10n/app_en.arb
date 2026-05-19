@@ -184,6 +184,7 @@
   "adashAttnOverdueSub": "{names} · pay as soon as possible",
   "adashAttnEndingSoon": "{count} ending soon",
   "adashAttnEndingSoonSub": "This week",
+  "adashAttnAllClear": "Nothing waiting — you're all caught up.",
   "adashQuickActions": "Quick actions",
   "adashActionSendMessage": "Send message",
   "adashActionPayments": "Payments",
