@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/tokens.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/store/store.dart';
+import '../../core/data/data_providers.dart';
 import '../../core/routing/nav.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
@@ -16,7 +16,8 @@ class AdminMoreScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final store = ref.watch(storeProvider);
+    final memberCount =
+        ref.watch(membersProvider).value?.length ?? 0;
     final nav = navCb(context);
     final l = L.of(context);
 
@@ -101,7 +102,7 @@ class AdminMoreScreen extends ConsumerWidget {
                   _MoreRow(
                     icon: 'megaphone',
                     label: l.amoreBroadcastLabel,
-                    sub: l.amoreBroadcastSub(store.members.length),
+                    sub: l.amoreBroadcastSub(memberCount),
                     onTap: () => nav('broadcast'),
                   ),
                 ]),

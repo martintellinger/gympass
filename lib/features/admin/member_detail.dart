@@ -4,15 +4,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/format.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/routing/nav.dart';
+import '../../core/data/data_providers.dart';
+import '../../core/data/gym_repository_provider.dart';
 import '../../core/store/models.dart';
-import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../shared/widgets/app_button.dart';
 import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
+import '../../shared/widgets/load_error.dart';
 import '../../shared/widgets/screen_frame.dart';
+import '../../shared/widgets/skeleton.dart';
 import '../../shared/widgets/status_pill.dart';
 
 /// Member Detail 12 — port of MemberDetail.jsx.
@@ -22,12 +25,30 @@ class MemberDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final store = ref.watch(storeProvider);
+    final mAsync = ref.watch(memberByIdProvider(memberId));
     final nav = navCb(context);
+    final repo = ref.read(gymRepositoryProvider);
 
-    final Member m = store.memberById(memberId) ??
-        store.memberById('pavel') ??
-        store.members.first;
+    if (mAsync.isLoading && !mAsync.hasValue) {
+      return const ScreenFrame(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(20, 24, 20, 0),
+          child: SkeletonList(rows: 6),
+        ),
+      );
+    }
+    if ((mAsync.hasError || mAsync.value == null) && !mAsync.isLoading) {
+      return ScreenFrame(
+        child: LoadError(
+            onRetry: () => ref.invalidate(memberByIdProvider(memberId))),
+      );
+    }
+    final Member m = mAsync.value!;
+
+    Future<void> refresh() async {
+      ref.invalidate(memberByIdProvider(memberId));
+      ref.invalidate(membersProvider);
+    }
 
     final l = L.of(context);
     final stateLabel = m.state == 'ok'
@@ -38,10 +59,11 @@ class MemberDetailScreen extends ConsumerWidget {
                 ? l.mdetStateOverdue(m.daysNum.abs())
                 : l.mdetStateSuspended;
 
-    final memberPayments = store.payments
-        .where((p) => p.memberId == m.id)
-        .toList()
-      ..sort((a, b) => b.date.compareTo(a.date));
+    final memberPayments =
+        (ref.watch(paymentsProvider).value ?? const <Payment>[])
+            .where((p) => p.memberId == m.id)
+            .toList()
+          ..sort((a, b) => b.date.compareTo(a.date));
 
     final pillState = statusFromKey(m.state == 'muted' ? 'muted' : m.state);
 
@@ -397,27 +419,27 @@ class MemberDetailScreen extends ConsumerWidget {
                       icon: 'refresh',
                       label: l.mdetResumeLabel,
                       sub: l.mdetResumeSub,
-                      onTap: () => store.resumeMembership(
-                        m.id,
-                        notice: l.resumeByOwnerNotice,
-                      ),
+                      onTap: () async {
+                        await repo.resumeMembership(
+                          m.id,
+                          notice: l.resumeByOwnerNotice,
+                        );
+                        await refresh();
+                      },
                     )
                   else
                     _ActionRow(
                       icon: 'pause',
                       label: l.mdetSuspendLabel,
                       sub: l.mdetSuspendSub,
-                      onTap: () {
-                        // Owner pause mid-term: stamp pausedAt so the frozen
-                        // expiry (domain expiryAfterPause) can be computed.
-                        store.updateMember(
+                      onTap: () async {
+                        // Owner pause mid-term — pauseMembership stamps
+                        // paused_at so the frozen-expiry domain calc applies.
+                        await repo.pauseMembership(
                           m.id,
-                          (mm) => mm.copyWith(
-                            state: 'muted',
-                            suspended: true,
-                            pausedAt: kNow,
-                          ),
+                          notice: l.pauseOwnerNoticeNoReason,
                         );
+                        await refresh();
                       },
                     ),
                   const SizedBox(height: 8),
@@ -426,7 +448,7 @@ class MemberDetailScreen extends ConsumerWidget {
                     label: l.mdetDeleteLabel,
                     sub: l.mdetDeleteSub,
                     danger: true,
-                    onTap: () => _confirmDelete(context, store, m, nav),
+                    onTap: () => _confirmDelete(context, ref, m, nav),
                   ),
                 ],
               ),
@@ -439,11 +461,12 @@ class MemberDetailScreen extends ConsumerWidget {
 
   void _confirmDelete(
     BuildContext context,
-    GymStore store,
+    WidgetRef ref,
     Member m,
     NavCb nav,
   ) {
     final l = L.of(context);
+    final repo = ref.read(gymRepositoryProvider);
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -477,9 +500,10 @@ class MemberDetailScreen extends ConsumerWidget {
             ),
           ),
           TextButton(
-            onPressed: () {
-              store.removeMember(m.id);
-              Navigator.of(ctx).pop();
+            onPressed: () async {
+              await repo.removeMember(m.id);
+              ref.invalidate(membersProvider);
+              if (ctx.mounted) Navigator.of(ctx).pop();
               nav('back');
             },
             child: Text(
