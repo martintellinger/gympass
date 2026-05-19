@@ -1255,6 +1255,30 @@ abstract class L {
   /// **'Vyplň jméno'**
   String get addmFieldNameError;
 
+  /// No description provided for @addmFieldFirst.
+  ///
+  /// In cs, this message translates to:
+  /// **'Jméno'**
+  String get addmFieldFirst;
+
+  /// No description provided for @addmFieldFirstPlaceholder.
+  ///
+  /// In cs, this message translates to:
+  /// **'např. Pavel'**
+  String get addmFieldFirstPlaceholder;
+
+  /// No description provided for @addmFieldLast.
+  ///
+  /// In cs, this message translates to:
+  /// **'Příjmení'**
+  String get addmFieldLast;
+
+  /// No description provided for @addmFieldLastPlaceholder.
+  ///
+  /// In cs, this message translates to:
+  /// **'např. Novák'**
+  String get addmFieldLastPlaceholder;
+
   /// No description provided for @addmFieldEmail.
   ///
   /// In cs, this message translates to:
@@ -2172,6 +2196,18 @@ abstract class L {
   /// In cs, this message translates to:
   /// **'Zkontroluj: '**
   String get apprCheckPrefix;
+
+  /// No description provided for @apprEmptyTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Žádné čekající registrace'**
+  String get apprEmptyTitle;
+
+  /// No description provided for @apprEmptyBody.
+  ///
+  /// In cs, this message translates to:
+  /// **'Až se někdo zaregistruje svým jménem, objeví se tu ke schválení.'**
+  String get apprEmptyBody;
 
   /// No description provided for @apprApplicantNote.
   ///

@@ -643,6 +643,18 @@ class LCs extends L {
   String get addmFieldNameError => 'Vyplň jméno';
 
   @override
+  String get addmFieldFirst => 'Jméno';
+
+  @override
+  String get addmFieldFirstPlaceholder => 'např. Pavel';
+
+  @override
+  String get addmFieldLast => 'Příjmení';
+
+  @override
+  String get addmFieldLastPlaceholder => 'např. Novák';
+
+  @override
   String get addmFieldEmail => 'E-mail';
 
   @override
@@ -1254,6 +1266,13 @@ class LCs extends L {
 
   @override
   String get apprCheckPrefix => 'Zkontroluj: ';
+
+  @override
+  String get apprEmptyTitle => 'Žádné čekající registrace';
+
+  @override
+  String get apprEmptyBody =>
+      'Až se někdo zaregistruje svým jménem, objeví se tu ke schválení.';
 
   @override
   String get apprApplicantNote => 'POZNÁMKA OD ŽADATELE';

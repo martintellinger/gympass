@@ -645,6 +645,18 @@ class LEn extends L {
   String get addmFieldNameError => 'Enter a name';
 
   @override
+  String get addmFieldFirst => 'First name';
+
+  @override
+  String get addmFieldFirstPlaceholder => 'e.g. Pavel';
+
+  @override
+  String get addmFieldLast => 'Surname';
+
+  @override
+  String get addmFieldLastPlaceholder => 'e.g. Novák';
+
+  @override
   String get addmFieldEmail => 'Email';
 
   @override
@@ -1245,6 +1257,13 @@ class LEn extends L {
 
   @override
   String get apprCheckPrefix => 'Check: ';
+
+  @override
+  String get apprEmptyTitle => 'No registrations waiting';
+
+  @override
+  String get apprEmptyBody =>
+      'When someone registers with their name, they\'ll show up here for approval.';
 
   @override
   String get apprApplicantNote => 'NOTE FROM APPLICANT';

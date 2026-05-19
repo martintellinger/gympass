@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/data/data_providers.dart';
+import '../../core/data/gym_repository_provider.dart';
 import '../../core/routing/nav.dart';
+import '../../core/store/models.dart';
 import '../../core/utils/app_toast.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/app_icon.dart';
+import '../../shared/widgets/load_error.dart';
 import '../../shared/widgets/screen_frame.dart';
+import '../../shared/widgets/skeleton.dart';
 
 /// Approval Queue 13 — schvalování nových registrací.
 ///
@@ -56,64 +61,135 @@ class _Applicant {
 }
 
 class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
-  // Sample applicant data straight from ApprovalQueue.jsx (the "1 / 2" counter
-  // implies a second applicant in the queue behind Jana).
-  final List<_Applicant> _queue = [
-    const _Applicant(
-      name: 'Jana Kovářová',
-      shortName: 'Jana K.',
-      submitted: 'žádost odeslána 14. 5. 2026 v 18:22',
-      email: 'jana.kovarova@email.cz',
-      phone: '+420 605 218 731',
-      tarif: 'Student',
-      pill: 'ISIC',
-      gdpr: 'Udělen 14. 5. 2026',
-      isicMeta: '1242 × 1860 px · 2.1 MB',
-      isicUpload: 'FOTO ISIC · UPLOAD 14.5.2026',
-      isicCheck: 'jméno na ISICu sedí, platnost do 30. 9. 2026.',
-      note:
-          '„Ahoj, doporučil mě Pavel. Chtěla bych začít hned od pondělí, pokud to půjde."',
-    ),
-    const _Applicant(
-      name: 'Tomáš Marek',
-      shortName: 'Tomáš M.',
-      submitted: 'žádost odeslána 15. 5. 2026 v 09:07',
-      email: 'tomas.marek@email.cz',
-      phone: '+420 728 904 552',
-      tarif: 'Standard',
-      pill: '',
-      gdpr: 'Udělen 15. 5. 2026',
-      isicMeta: '1242 × 1860 px · 1.8 MB',
-      isicUpload: 'FOTO ISIC · UPLOAD 15.5.2026',
-      isicCheck: 'jméno na ISICu sedí, platnost do 30. 9. 2026.',
-      note: '„Dobrý den, chtěl bych si zacvičit po práci, většinou kolem 18:00."',
-    ),
-  ];
+  static String _short(String name) {
+    final p = name.trim().split(RegExp(r'\s+'));
+    if (p.length < 2) return name;
+    return '${p.first} ${p[1][0]}.';
+  }
 
-  final int _index = 0;
+  _Applicant _toApplicant(Member m) => _Applicant(
+        name: m.name,
+        shortName: _short(m.name),
+        submitted: '',
+        email: m.email == '—' ? '' : m.email,
+        phone: m.phone == '—' ? '' : m.phone,
+        tarif: m.tariff,
+        pill: m.isic ? 'ISIC' : '',
+        gdpr: '',
+        isicMeta: '',
+        isicUpload: '',
+        isicCheck: '',
+        note: '',
+      );
 
-  void _decide({required String toast}) {
-    final isLast = _index >= _queue.length - 1;
-    if (isLast) {
-      navCb(context)('admin', toast: toast);
-      return;
+  Future<void> _decide({
+    required String id,
+    required bool approve,
+    required String toast,
+  }) async {
+    final repo = ref.read(gymRepositoryProvider);
+    if (approve) {
+      await repo.approveMember(id);
+    } else {
+      await repo.rejectMember(id);
     }
-    setState(() {
-      _queue.removeAt(_index);
-      // _index stays — now points at the next applicant.
-    });
-    // Surface the decision toast (top-anchored) while the queue stays alive
-    // for the remaining applicants — mirrors the JSX onNav('admin',{toast}).
-    showAppToast(context, toast);
+    ref.invalidate(pendingMembersProvider);
+    ref.invalidate(membersProvider);
+    if (mounted) showAppToast(context, toast);
+  }
+
+  Widget _emptyState(BuildContext context, NavCb nav) {
+    final l = L.of(context);
+    return ScreenFrame(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () => nav('back'),
+                  child: const Padding(
+                    padding: EdgeInsets.all(6),
+                    child: AppIcon('back', size: 20, color: T.text),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: T.okSoft,
+                        borderRadius: BorderRadius.circular(Radii.pill),
+                      ),
+                      child:
+                          const AppIcon('check', size: 26, color: T.ok),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      l.apprEmptyTitle,
+                      textAlign: TextAlign.center,
+                      style: AppType.ui(
+                        size: 16,
+                        weight: FontWeight.w700,
+                        color: T.text,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      l.apprEmptyBody,
+                      textAlign: TextAlign.center,
+                      style: AppType.ui(
+                        size: 13.5,
+                        color: T.text2,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final nav = navCb(context);
-    final a = _queue[_index];
-    // 1-based position over the original queue size (matches "1 / 2").
-    final total = _queue.length + _index; // shrinks as we approve/reject
-    final pos = _index + 1;
+    final pendingAsync = ref.watch(pendingMembersProvider);
+
+    if (pendingAsync.isLoading && !pendingAsync.hasValue) {
+      return const ScreenFrame(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(20, 24, 20, 0),
+          child: SkeletonList(rows: 5),
+        ),
+      );
+    }
+    if (pendingAsync.hasError && !pendingAsync.hasValue) {
+      return ScreenFrame(
+        child: LoadError(
+            onRetry: () => ref.invalidate(pendingMembersProvider)),
+      );
+    }
+    final members = pendingAsync.value ?? const <Member>[];
+    if (members.isEmpty) return _emptyState(context, nav);
+
+    final current = members.first;
+    final a = _toApplicant(current);
+    final total = members.length;
+    const pos = 1;
 
     return ScreenFrame(
       child: Column(
@@ -432,6 +508,8 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
                     fg: T.error,
                     borderColor: const Color(0x4DFF3B30), // rgba(255,59,48,0.3)
                     onTap: () => _decide(
+                        id: current.id,
+                        approve: false,
                         toast: L.of(context).apprRejectedToast(a.shortName)),
                   ),
                 ),
@@ -445,6 +523,8 @@ class _ApprovalQueueScreenState extends ConsumerState<ApprovalQueueScreen> {
                     bg: T.accent,
                     icon: AppIcon('check', size: 18, color: Colors.white),
                     onTap: () => _decide(
+                        id: current.id,
+                        approve: true,
                         toast: L.of(context).apprApprovedToast(a.shortName)),
                   ),
                 ),

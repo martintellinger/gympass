@@ -25,7 +25,13 @@ class AddMemberScreen extends ConsumerStatefulWidget {
 }
 
 class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
-  final _nameCtrl = TextEditingController();
+  final _firstCtrl = TextEditingController();
+  final _lastCtrl = TextEditingController();
+
+  /// Full display name composed from the two inputs (DB stores them split,
+  /// like the Excel; the view Member carries the joined form).
+  String get _fullName =>
+      '${_firstCtrl.text.trim()} ${_lastCtrl.text.trim()}'.trim();
   final _emailCtrl = TextEditingController();
   final _phoneCtrl = TextEditingController();
   final _priceCtrl = TextEditingController();
@@ -47,7 +53,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
   bool get _isCustomActive => _customOn && _monthly != _tariffDefault;
 
   bool get _ok {
-    final name = _nameCtrl.text.trim();
+    final name = _fullName;
     final email = _emailCtrl.text;
     final phone = _phoneCtrl.text;
     return name.length >= 2 &&
@@ -59,7 +65,8 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
   void initState() {
     super.initState();
     _priceCtrl.text = _price.toString();
-    _nameCtrl.addListener(() => setState(() {}));
+    _firstCtrl.addListener(() => setState(() {}));
+    _lastCtrl.addListener(() => setState(() {}));
     _emailCtrl.addListener(() => setState(() {}));
     _phoneCtrl.addListener(() => setState(() {}));
     if (_isEdit) {
@@ -69,7 +76,10 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
           .then((existing) {
         if (existing == null || !mounted) return;
         setState(() {
-          _nameCtrl.text = existing.name;
+          final parts = existing.name.trim().split(RegExp(r'\s+'));
+          _firstCtrl.text = parts.isEmpty ? '' : parts.first;
+          _lastCtrl.text =
+              parts.length > 1 ? parts.sublist(1).join(' ') : '';
           _emailCtrl.text = existing.email == '—' ? '' : existing.email;
           _phoneCtrl.text = existing.phone == '—' ? '' : existing.phone;
           _tariff = existing.tariff == 'Student' ? 'Student' : 'Standard';
@@ -87,7 +97,8 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
 
   @override
   void dispose() {
-    _nameCtrl.dispose();
+    _firstCtrl.dispose();
+    _lastCtrl.dispose();
     _emailCtrl.dispose();
     _phoneCtrl.dispose();
     _priceCtrl.dispose();
@@ -119,7 +130,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
     final repo = ref.read(gymRepositoryProvider);
     final nav = navCb(context);
 
-    final name = _nameCtrl.text.trim();
+    final name = _fullName;
     final email = _emailCtrl.text.trim();
     final phone = _phoneCtrl.text.trim();
 
@@ -177,8 +188,9 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final nameTrim = _nameCtrl.text.trim();
-    final nameInvalid = _submitted && nameTrim.length < 2;
+    final nameTrim = _fullName;
+    final nameInvalid = _submitted &&
+        (_firstCtrl.text.trim().isEmpty || _lastCtrl.text.trim().isEmpty);
 
     return ScreenFrame(
       child: Column(
@@ -271,13 +283,21 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
                     label: L.of(context).addmSectionBasic,
                     children: [
                       _Field(
-                        label: L.of(context).addmFieldName,
-                        controller: _nameCtrl,
-                        placeholder: L.of(context).addmFieldNamePlaceholder,
+                        label: L.of(context).addmFieldFirst,
+                        controller: _firstCtrl,
+                        placeholder:
+                            L.of(context).addmFieldFirstPlaceholder,
                         invalid: nameInvalid,
                         hint: nameInvalid
                             ? L.of(context).addmFieldNameError
                             : null,
+                      ),
+                      _Field(
+                        label: L.of(context).addmFieldLast,
+                        controller: _lastCtrl,
+                        placeholder:
+                            L.of(context).addmFieldLastPlaceholder,
+                        invalid: nameInvalid,
                       ),
                       _Field(
                         label: L.of(context).addmFieldEmail,
