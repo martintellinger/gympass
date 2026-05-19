@@ -1,18 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/data/data_providers.dart';
+import '../../core/data/gym_repository.dart';
+import '../../core/data/gym_repository_provider.dart';
 import '../../core/format.dart';
 import '../../core/routing/nav.dart';
 import '../../core/store/models.dart';
-import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_button.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
+import '../../shared/widgets/load_error.dart';
 import '../../shared/widgets/round_icon_button.dart';
 import '../../shared/widgets/screen_frame.dart';
+import '../../shared/widgets/skeleton.dart';
 
 /// Admin Payments 14 — monthly summary, status filters, search, payment list.
 class AdminPaymentsScreen extends ConsumerStatefulWidget {
@@ -34,14 +38,32 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
     super.dispose();
   }
 
-  String _memberName(GymStore s, String id) => s.memberById(id)?.name ?? '—';
-
   @override
   Widget build(BuildContext context) {
-    final store = ref.watch(storeProvider);
     final nav = navCb(context);
+    final repo = ref.read(gymRepositoryProvider);
+    final paymentsAsync = ref.watch(paymentsProvider);
 
-    final payments = store.payments;
+    if (paymentsAsync.isLoading && !paymentsAsync.hasValue) {
+      return const ScreenFrame(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(20, 24, 20, 0),
+          child: SkeletonList(rows: 7),
+        ),
+      );
+    }
+    if (paymentsAsync.hasError && !paymentsAsync.hasValue) {
+      return ScreenFrame(
+        child:
+            LoadError(onRetry: () => ref.invalidate(paymentsProvider)),
+      );
+    }
+
+    final payments = paymentsAsync.value ?? const <Payment>[];
+    final members =
+        ref.watch(membersProvider).value ?? const <Member>[];
+    final nameById = {for (final m in members) m.id: m.name};
+    String memberName(String id) => nameById[id] ?? '—';
 
     int countFor(bool Function(Payment) test) => payments.where(test).length;
     final counts = {
@@ -54,7 +76,7 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
     final filtered = payments.where((p) {
       if (_filter != 'all' && p.state != _filter) return false;
       if (_q.isNotEmpty &&
-          !_memberName(store, p.memberId)
+          !memberName(p.memberId)
               .toLowerCase()
               .contains(_q.toLowerCase())) {
         return false;
@@ -101,7 +123,7 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                           background: T.accent,
                           iconColor: Colors.white,
                           bordered: false,
-                          onTap: () => _showAddPayment(context, store, nav),
+                          onTap: () => _showAddPayment(context, repo, members, nav),
                         ),
                       ],
                     ),
@@ -336,24 +358,26 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                       ...filtered.map((p) => _PaymentRow(
                             payment: p,
                             memberName:
-                                _memberName(store, p.memberId),
+                                memberName(p.memberId),
                             onTap: () => nav('detail',
                                 arg: p.memberId),
-                            onConfirm: () {
-                              store.confirmPayment(p.id);
-                              nav('payments',
-                                  toast: L.of(context).apayToastMarkedPaid);
+                            onConfirm: () async {
+                              final paid =
+                                  L.of(context).apayToastMarkedPaid;
+                              await repo.confirmPayment(p.id);
+                              ref.invalidate(paymentsProvider);
+                              nav('payments', toast: paid);
                             },
-                            onRemind: () {
-                              store.sendMessage(
-                                p.memberId,
-                                L.of(context).apayReminderMessage(
-                                    groupThousands(p.amount)),
-                              );
+                            onRemind: () async {
+                              final msg = L.of(context).apayReminderMessage(
+                                  groupThousands(p.amount));
+                              final sent =
+                                  L.of(context).apayToastReminderSent;
+                              await repo.sendOwnerMessage(p.memberId, msg,
+                                  from: 'olda');
+                              ref.invalidate(adminThreadsProvider);
                               nav('thread',
-                                  arg: p.memberId,
-                                  toast: L.of(context)
-                                      .apayToastReminderSent);
+                                  arg: p.memberId, toast: sent);
                             },
                           )),
                   ],
@@ -663,19 +687,22 @@ const _kTariffOptions = <_TariffOption>[
   _TariffOption('Student', 3, 1950),
 ];
 
-void _showAddPayment(BuildContext context, GymStore store, NavCb nav) {
+void _showAddPayment(BuildContext context, GymRepository repo,
+    List<Member> members, NavCb nav) {
   showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (_) => _AddPaymentSheet(store: store, nav: nav),
+    builder: (_) => _AddPaymentSheet(repo: repo, members: members, nav: nav),
   );
 }
 
 class _AddPaymentSheet extends StatefulWidget {
-  final GymStore store;
+  final GymRepository repo;
+  final List<Member> members;
   final NavCb nav;
-  const _AddPaymentSheet({required this.store, required this.nav});
+  const _AddPaymentSheet(
+      {required this.repo, required this.members, required this.nav});
 
   @override
   State<_AddPaymentSheet> createState() => _AddPaymentSheetState();
@@ -688,7 +715,7 @@ class _AddPaymentSheetState extends State<_AddPaymentSheet> {
   @override
   Widget build(BuildContext context) {
     final l = L.of(context);
-    final members = [...widget.store.members]
+    final members = [...widget.members]
       ..sort((a, b) => a.name.compareTo(b.name));
     final canSave = _memberId != null;
 
@@ -806,9 +833,11 @@ class _AddPaymentSheetState extends State<_AddPaymentSheet> {
                 ? const AppIcon('check', size: 20, color: Colors.white)
                 : null,
             onTap: canSave
-                ? () {
+                ? () async {
                     final opt = _kTariffOptions[_optIdx];
-                    widget.store.addManualPayment(
+                    final nav = widget.nav;
+                    final added = l.apayToastPaymentAdded;
+                    await widget.repo.addManualPayment(
                       memberId: _memberId!,
                       amount: opt.amount,
                       tariff: opt.tariff,
@@ -818,9 +847,8 @@ class _AddPaymentSheetState extends State<_AddPaymentSheet> {
                         groupThousands(opt.amount),
                       ),
                     );
-                    Navigator.of(context).pop();
-                    widget.nav('payments',
-                        toast: l.apayToastPaymentAdded);
+                    if (context.mounted) Navigator.of(context).pop();
+                    nav('payments', toast: added);
                   }
                 : null,
           ),
