@@ -88,11 +88,16 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
     int sumFor(bool Function(Payment) test) =>
         payments.where(test).fold(0, (acc, p) => acc + p.amount);
 
+    final now = DateTime.now();
     final monthRevenue = sumFor((p) =>
-        p.state == 'ok' && p.date.month == 5 && p.date.year == 2026);
+        p.state == 'ok' &&
+        p.date.month == now.month &&
+        p.date.year == now.year);
     final ytdRevenue =
-        sumFor((p) => p.state == 'ok' && p.date.year == 2026);
+        sumFor((p) => p.state == 'ok' && p.date.year == now.year);
     final overdueTotal = sumFor((p) => p.state == 'overdue');
+    final monthLabel =
+        MaterialLocalizations.of(context).formatMonthYear(now).toUpperCase();
 
     return ScreenFrame(
       child: ListView(
@@ -154,7 +159,7 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                                 MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                L.of(context).apayMonthLabel,
+                                monthLabel,
                                 style: AppType.ui(
                                   size: 11.5,
                                   weight: FontWeight.w600,
@@ -899,6 +904,7 @@ class _AddPaymentSheetState extends State<_AddPaymentSheet> {
                         memberId: _memberId!,
                         amount: opt.amount,
                         tariff: opt.tariff,
+                        months: opt.months,
                         type: l.apayAddTariffOption(
                           opt.tariff,
                           opt.months,

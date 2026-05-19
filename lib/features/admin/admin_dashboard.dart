@@ -26,6 +26,19 @@ String _joinNames(Iterable<String> names, {int max = 3}) {
   return '${list.take(max).join(', ')} +${list.length - max}';
 }
 
+const _czMonAbbr = [
+  'LED', 'ÚNO', 'BŘE', 'DUB', 'KVĚ', 'ČVN',
+  'ČVC', 'SRP', 'ZÁŘ', 'ŘÍJ', 'LIS', 'PRO',
+];
+const _czMonName = [
+  'leden', 'únor', 'březen', 'duben', 'květen', 'červen',
+  'červenec', 'srpen', 'září', 'říjen', 'listopad', 'prosinec',
+];
+
+/// Compact CZK label for a chart bar — "28 950" → "29k", "850" → "850".
+String _compactK(int v) =>
+    v >= 1000 ? '${(v / 1000).round()}k' : '$v';
+
 /// Admin Dashboard 10 — denní pohled majitele.
 class AdminDashboardScreen extends ConsumerWidget {
   const AdminDashboardScreen({super.key});
@@ -49,6 +62,21 @@ class AdminDashboardScreen extends ConsumerWidget {
     final now = DateTime.now();
     final monthRevenue =
         revenueSum(payments, year: now.year, month: now.month);
+
+    // Last 6 months of confirmed revenue, oldest → current.
+    final series = <(String, int)>[];
+    for (var k = 5; k >= 0; k--) {
+      final d = DateTime(now.year, now.month - k, 1);
+      series.add((
+        _czMonAbbr[d.month - 1],
+        revenueSum(payments, year: d.year, month: d.month),
+      ));
+    }
+    final thisM = series.last.$2;
+    final lastM = series[series.length - 2].$2;
+    final double? trendPct =
+        lastM > 0 ? (thisM - lastM) / lastM * 100 : null;
+    final monthName = _czMonName[now.month - 1];
 
     // Attention rows are built dynamically — a zero count means the row is
     // simply absent, not shown as "0" (that was the stale hardcoded bug).
@@ -225,7 +253,7 @@ class AdminDashboardScreen extends ConsumerWidget {
                         textBaseline: TextBaseline.alphabetic,
                         children: [
                           Text(
-                            '28 950',
+                            groupThousands(thisM),
                             style: AppType.mono(
                               size: 28,
                               weight: FontWeight.w700,
@@ -236,38 +264,34 @@ class AdminDashboardScreen extends ConsumerWidget {
                           const SizedBox(width: 8),
                           Flexible(
                             child: Text(
-                              L.of(context).adashRevenueMonth('květen'),
+                              L.of(context).adashRevenueMonth(monthName),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppType.ui(size: 13, color: T.text2),
                             ),
                           ),
                           const Spacer(),
-                          Text(
-                            '+8,5 %',
-                            style: AppType.mono(
-                              size: 12,
-                              weight: FontWeight.w600,
-                              color: T.ok,
+                          if (trendPct != null)
+                            Text(
+                              '${trendPct >= 0 ? '+' : '−'}'
+                              '${trendPct.abs().toStringAsFixed(1).replaceAll('.', ',')} %',
+                              style: AppType.mono(
+                                size: 12,
+                                weight: FontWeight.w600,
+                                color: trendPct >= 0 ? T.ok : T.error,
+                              ),
                             ),
-                          ),
                         ],
                       ),
-                      const _RevenueChart(),
+                      _RevenueChart(
+                          values: [for (final s in series) s.$2]),
                       const SizedBox(height: 6),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          for (final m in const [
-                            'PRO',
-                            'LED',
-                            'ÚNO',
-                            'BŘE',
-                            'DUB',
-                            'KVĚ',
-                          ])
+                          for (final s in series)
                             Text(
-                              m,
+                              s.$1,
                               style: AppType.mono(
                                 size: 10.5,
                                 weight: FontWeight.w500,
@@ -458,12 +482,14 @@ class _AttentionRow extends StatelessWidget {
 }
 
 class _RevenueChart extends StatelessWidget {
-  const _RevenueChart();
+  final List<int> values;
+  const _RevenueChart({required this.values});
 
   @override
   Widget build(BuildContext context) {
-    const data = [21500, 24200, 22800, 25400, 26700, 28950];
-    final max = data.reduce((a, b) => a > b ? a : b);
+    final data = values;
+    final peak = data.fold(0, (a, b) => a > b ? a : b);
+    final max = peak == 0 ? 1 : peak;
     return Padding(
       padding: const EdgeInsets.only(top: 16),
       child: SizedBox(
@@ -477,6 +503,7 @@ class _RevenueChart extends StatelessWidget {
                 child: _Bar(
                   fraction: data[i] / max,
                   last: i == data.length - 1,
+                  label: _compactK(data[i]),
                 ),
               ),
             ],
@@ -490,7 +517,8 @@ class _RevenueChart extends StatelessWidget {
 class _Bar extends StatelessWidget {
   final double fraction;
   final bool last;
-  const _Bar({required this.fraction, required this.last});
+  final String label;
+  const _Bar({required this.fraction, required this.last, required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -513,7 +541,7 @@ class _Bar extends StatelessWidget {
               Positioned(
                 bottom: h + 4,
                 child: Text(
-                  '29k',
+                  label,
                   style: AppType.mono(size: 10, color: T.text2),
                 ),
               ),

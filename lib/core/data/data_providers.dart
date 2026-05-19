@@ -9,6 +9,7 @@ library;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../features/auth/application/auth_notifier.dart';
+import '../domain/opening_hours.dart';
 import '../store/models.dart';
 import '../store/store.dart' show kCurrentMemberId;
 import 'gym_repository_provider.dart';
@@ -49,6 +50,12 @@ final conversationProvider = FutureProvider.autoDispose
 /// Noticeboard posts (member + admin board).
 final boardPostsProvider = FutureProvider.autoDispose<List<BoardPost>>(
   (ref) => ref.watch(gymRepositoryProvider).boardPosts(),
+);
+
+/// Club opening hours (7 entries, 0 = Mon … 6 = Sun) — drives the board
+/// header open/closed indicator (§14–§15).
+final openingHoursProvider = FutureProvider.autoDispose<List<DayHours>>(
+  (ref) => ref.watch(gymRepositoryProvider).openingHours(),
 );
 
 /// Registrations awaiting the owner's approval.

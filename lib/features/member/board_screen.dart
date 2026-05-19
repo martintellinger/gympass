@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/data/data_providers.dart';
 import '../../core/data/gym_repository_provider.dart';
+import '../../core/domain/opening_hours.dart';
 import '../../core/routing/nav.dart';
 import '../../core/store/models.dart';
 import '../../core/theme/app_theme.dart';
@@ -86,6 +87,8 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
   Widget build(BuildContext context) {
     final isOwner =
         GoRouterState.of(context).matchedLocation == '/admin/board';
+    final hours = ref.watch(openingHoursProvider).value;
+    final club = _clubIndicator(context, hours, DateTime.now());
     final boardAsync = ref.watch(boardPostsProvider);
     if (boardAsync.isLoading && !boardAsync.hasValue) {
       return const ScreenFrame(
@@ -188,14 +191,14 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
                               Container(
                                 width: 6,
                                 height: 6,
-                                decoration: const BoxDecoration(
-                                  color: T.ok,
+                                decoration: BoxDecoration(
+                                  color: club.color,
                                   shape: BoxShape.circle,
                                 ),
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                L.of(context).boardStatusOpen,
+                                club.label,
                                 style: AppType.ui(size: 12, color: T.text2),
                               ),
                               if (isOwner) ...[

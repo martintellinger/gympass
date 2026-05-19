@@ -3,6 +3,8 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/legacy.dart';
 
+import '../domain/membership.dart' as membership;
+import '../domain/opening_hours.dart';
 import 'models.dart';
 
 /// "Now" anchor — store.jsx fixes the clock to 2026-05-16 09:41.
@@ -198,6 +200,19 @@ class GymStore extends ChangeNotifier {
   void setBoardPostPinned(String id, bool pinned) =>
       updateBoardPost(id, pinned: pinned);
 
+  /// Club opening hours, indexed by `DateTime.weekday - 1` (0 = Mon …
+  /// 6 = Sun). Mirrors the live `opening_hours` defaults: weekdays
+  /// 06:00–22:00, weekends 08:00–20:00. Informational only (§14–§15).
+  final List<DayHours> openingHours = const [
+    DayHours(6 * 60, 22 * 60), // Mon
+    DayHours(6 * 60, 22 * 60), // Tue
+    DayHours(6 * 60, 22 * 60), // Wed
+    DayHours(6 * 60, 22 * 60), // Thu
+    DayHours(6 * 60, 22 * 60), // Fri
+    DayHours(8 * 60, 20 * 60), // Sat
+    DayHours(8 * 60, 20 * 60), // Sun
+  ];
+
   Member? memberById(String id) {
     for (final m in members) {
       if (m.id == id) return m;
@@ -231,6 +246,7 @@ class GymStore extends ChangeNotifier {
     required int amount,
     required String tariff,
     required String type,
+    required int months,
   }) {
     payments.add(Payment(
       id: 'p${DateTime.now().millisecondsSinceEpoch}',
@@ -241,7 +257,37 @@ class GymStore extends ChangeNotifier {
       tariff: tariff,
       state: 'ok',
     ));
+    // Extend the membership so the pill / days-left reflect the payment
+    // (§2–§4), mirroring the Supabase repository.
+    final i = members.indexWhere((m) => m.id == memberId);
+    if (i != -1) {
+      final m = members[i];
+      final newExpiry = membership.nextExpiration(
+        now: kNow,
+        currentExpiry: _parseCzDate(m.expiresAt),
+        months: months,
+      );
+      final days = membership.daysLeft(newExpiry, kNow);
+      members[i] = m.copyWith(
+        expiresAt: '${newExpiry.day}. ${newExpiry.month}. ${newExpiry.year}',
+        daysNum: days,
+        state: days < 0
+            ? 'error'
+            : days <= 7
+                ? 'warn'
+                : 'ok',
+        overdue: false,
+      );
+    }
     notifyListeners();
+  }
+
+  /// Parses a CZ display date (`23. 6. 2026`); null if unparseable / "—".
+  static DateTime? _parseCzDate(String s) {
+    final mm = RegExp(r'(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})').firstMatch(s);
+    if (mm == null) return null;
+    return DateTime(int.parse(mm.group(3)!), int.parse(mm.group(2)!),
+        int.parse(mm.group(1)!));
   }
 
   Member addMember(Member partial) {

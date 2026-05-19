@@ -45,6 +45,7 @@ void main() {
         memberId: 'pavel',
         amount: 2250,
         tariff: 'Standard',
+        months: 3,
         type: 'Standard · 3 měsíce · 2 250 Kč',
       );
 
@@ -55,6 +56,32 @@ void main() {
           p.type == 'Standard · 3 měsíce · 2 250 Kč');
       expect(added.state, 'ok');
       expect(added.tariff, 'Standard');
+    });
+
+    test('addManualPayment extends the membership (§2–§4) — the '
+        '"still v expiraci after paying" regression', () async {
+      final store = GymStore();
+      final repo = MockGymRepository(store);
+
+      // 'petr' is seeded lapsed: state 'error', daysNum -12.
+      final before = (await repo.members()).firstWhere((m) => m.id == 'petr');
+      expect(before.state, 'error');
+      expect(before.daysNum, lessThan(0));
+
+      await repo.addManualPayment(
+        memberId: 'petr',
+        amount: 2250,
+        tariff: 'Standard',
+        months: 3,
+        type: 'Standard · 3 měsíce · 2 250 Kč',
+      );
+
+      final after = (await repo.members()).firstWhere((m) => m.id == 'petr');
+      expect(after.daysNum, greaterThan(0),
+          reason: 'paying must push the expiry into the future');
+      expect(after.state, 'ok');
+      expect(after.overdue, isFalse);
+      expect(after.expiresAt, isNot(before.expiresAt));
     });
   });
 
