@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/data/data_providers.dart';
+import '../../core/data/gym_repository_provider.dart';
 import '../../core/format.dart';
 import '../../core/routing/nav.dart';
 import '../../core/store/models.dart';
-import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
+import '../../shared/widgets/load_error.dart';
 import '../../shared/widgets/screen_frame.dart';
+import '../../shared/widgets/skeleton.dart';
 
 /// Member Messages — the logged-in member's inbox: the owner conversation
 /// (always shown) plus every member↔member thread, newest first. The "+"
@@ -21,11 +24,33 @@ class MemberMessagesScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = L.of(context);
-    final store = ref.watch(storeProvider);
     final nav = navCb(context);
+    final inboxAsync = ref.watch(memberInboxProvider);
+    final repo = ref.read(gymRepositoryProvider);
+    final meId = ref.watch(currentMemberIdProvider);
 
-    final convos = store.memberInbox(kCurrentMemberId);
-    final unread = store.memberUnreadTotal(kCurrentMemberId);
+    if (inboxAsync.isLoading && !inboxAsync.hasValue) {
+      return const ScreenFrame(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(20, 24, 20, 0),
+          child: SkeletonList(rows: 6),
+        ),
+      );
+    }
+    if (inboxAsync.hasError && !inboxAsync.hasValue) {
+      return ScreenFrame(
+        child: LoadError(
+            onRetry: () => ref.invalidate(memberInboxProvider)),
+      );
+    }
+
+    final convos = inboxAsync.value ?? const <MemberConvo>[];
+    final unread = convos.fold<int>(0, (s, c) => s + c.unread);
+    final allMembers =
+        ref.watch(membersProvider).value ?? const <Member>[];
+    final nameById = {for (final m in allMembers) m.id: m.name};
+    final others = allMembers.where((m) => m.id != meId).toList()
+      ..sort((a, b) => a.name.compareTo(b.name));
 
     return ScreenFrame(
       child: ListView(
@@ -61,7 +86,7 @@ class MemberMessagesScreen extends ConsumerWidget {
                 ),
                 GestureDetector(
                   behavior: HitTestBehavior.opaque,
-                  onTap: () => _openCompose(context, store, nav),
+                  onTap: () => _openCompose(context, others, nav),
                   child: Container(
                     width: 40,
                     height: 40,
@@ -86,9 +111,10 @@ class MemberMessagesScreen extends ConsumerWidget {
                     convo: c,
                     name: c.isOwner
                         ? l.mthrOwnerName
-                        : (store.memberById(c.peerId)?.name ?? '—'),
-                    onTap: () {
-                      store.memberMarkRead(kCurrentMemberId, c.peerId);
+                        : (nameById[c.peerId] ?? '—'),
+                    onTap: () async {
+                      await repo.memberMarkRead(meId, c.peerId);
+                      ref.invalidate(memberInboxProvider);
                       nav('mthread', arg: c.peerId);
                     },
                   ),
@@ -100,11 +126,8 @@ class MemberMessagesScreen extends ConsumerWidget {
     );
   }
 
-  void _openCompose(BuildContext context, GymStore store, NavCb nav) {
-    final others = store.members
-        .where((m) => m.id != kCurrentMemberId)
-        .toList()
-      ..sort((a, b) => a.name.compareTo(b.name));
+  void _openCompose(
+      BuildContext context, List<Member> others, NavCb nav) {
     showModalBottomSheet<void>(
       context: context,
       // Render above the shell so the floating bottom-nav bar doesn't sit on

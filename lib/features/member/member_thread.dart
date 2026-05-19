@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/data/data_providers.dart';
+import '../../core/data/gym_repository_provider.dart';
 import '../../core/format.dart';
 import '../../core/routing/nav.dart';
-import '../../core/store/store.dart';
+import '../../core/store/models.dart';
+import '../../core/store/store.dart' show kOwnerId;
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
+import '../../shared/widgets/load_error.dart';
 import '../../shared/widgets/screen_frame.dart';
+import '../../shared/widgets/skeleton.dart';
 
 /// Member Thread — one conversation from the logged-in member's side.
 /// [peerId] is the sentinel `kOwnerId` ('olda') for the owner conversation,
@@ -32,10 +37,15 @@ class _MemberThreadScreenState extends ConsumerState<MemberThreadScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref
-          .read(storeProvider)
-          .memberMarkRead(kCurrentMemberId, widget.peerId);
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref.read(gymRepositoryProvider).memberMarkRead(
+            ref.read(currentMemberIdProvider),
+            widget.peerId,
+          );
+      if (mounted) {
+        ref.invalidate(conversationProvider(widget.peerId));
+        ref.invalidate(memberInboxProvider);
+      }
     });
   }
 
@@ -46,14 +56,18 @@ class _MemberThreadScreenState extends ConsumerState<MemberThreadScreen> {
     super.dispose();
   }
 
-  void _send() {
+  Future<void> _send() async {
     final t = _ctrl.text.trim();
     if (t.isEmpty) return;
-    ref
-        .read(storeProvider)
-        .memberSend(kCurrentMemberId, widget.peerId, t);
     _ctrl.clear();
-    setState(() {});
+    await ref.read(gymRepositoryProvider).memberSend(
+          ref.read(currentMemberIdProvider),
+          widget.peerId,
+          t,
+        );
+    if (!mounted) return;
+    ref.invalidate(conversationProvider(widget.peerId));
+    ref.invalidate(memberInboxProvider);
   }
 
   void _scrollToEnd() {
@@ -67,17 +81,43 @@ class _MemberThreadScreenState extends ConsumerState<MemberThreadScreen> {
   @override
   Widget build(BuildContext context) {
     final l = L.of(context);
-    final store = ref.watch(storeProvider);
     final nav = navCb(context);
 
-    final peer = store.memberById(widget.peerId);
+    final convoAsync = ref.watch(conversationProvider(widget.peerId));
+    if (convoAsync.isLoading && !convoAsync.hasValue) {
+      return const ScreenFrame(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(20, 24, 20, 0),
+          child: SkeletonList(rows: 5),
+        ),
+      );
+    }
+    if (convoAsync.hasError && !convoAsync.hasValue) {
+      return ScreenFrame(
+        child: LoadError(
+          onRetry: () =>
+              ref.invalidate(conversationProvider(widget.peerId)),
+        ),
+      );
+    }
+
+    Member? peer;
+    if (!_isOwner) {
+      for (final m in ref.watch(membersProvider).value ?? const <Member>[]) {
+        if (m.id == widget.peerId) {
+          peer = m;
+          break;
+        }
+      }
+    }
     final peerName = _isOwner ? l.mthrOwnerName : (peer?.name ?? '—');
     final peerSub = _isOwner
         ? l.mthrOwnerRole
         : (peer != null ? '${peer.tariff} · ${l.mthrMemberRole}' : '');
     final firstName = peerName.split(' ').first;
 
-    final msgs = store.memberThread(kCurrentMemberId, widget.peerId);
+    final msgs = convoAsync.value ??
+        const <({bool mine, String text, DateTime at})>[];
     if (_lastLen != msgs.length) {
       _lastLen = msgs.length;
       _scrollToEnd();
