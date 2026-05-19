@@ -15,6 +15,7 @@ import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
 import '../../shared/widgets/screen_frame.dart';
+import '../../shared/widgets/skeleton.dart';
 import '../../shared/widgets/status_pill.dart';
 
 /// Profile 08 — profil člena (údaje, nastavení, klíč, odhlášení).
@@ -45,7 +46,25 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
   Widget build(BuildContext context) {
     final nav = navCb(context);
     final me = ref.watch(currentMemberProvider).value;
-    final paused = me?.isPaused ?? false;
+
+    if (me == null) {
+      return const ScreenFrame(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(24, 28, 24, 0),
+          child: SkeletonList(rows: 6),
+        ),
+      );
+    }
+
+    final paused = me.isPaused;
+    final l = L.of(context);
+    final stateLabel = paused
+        ? l.profPaused
+        : me.state == 'warn'
+            ? l.mdetStateEnding(me.daysNum)
+            : me.state == 'error'
+                ? l.mdetStateOverdue(me.daysNum.abs())
+                : l.mdetStateActive(me.daysNum);
 
     return ScreenFrame(
       child: SingleChildScrollView(
@@ -58,14 +77,16 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                   padding: const EdgeInsets.only(top: 8),
                   child: Row(
                     children: [
-                      const Avatar(name: 'Pavel Novák', size: 64),
+                      Avatar(name: me.name, size: 64),
                       const SizedBox(width: 14),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Pavel Novák',
+                              me.name,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: AppType.ui(
                                 size: 20,
                                 weight: FontWeight.w700,
@@ -75,7 +96,7 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              L.of(context).profMemberSince,
+                              l.cardJoinedSince(me.joined),
                               style: AppType.ui(
                                 size: 13,
                                 weight: FontWeight.w400,
@@ -85,15 +106,12 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                             const SizedBox(height: 8),
                             Align(
                               alignment: Alignment.centerLeft,
-                              child: paused
-                                  ? StatusPill(
-                                      state: StatusState.muted,
-                                      label: L.of(context).profPaused,
-                                    )
-                                  : StatusPill(
-                                      state: StatusState.ok,
-                                      label: L.of(context).profActiveDays,
-                                    ),
+                              child: StatusPill(
+                                state: paused
+                                    ? StatusState.muted
+                                    : statusFromKey(me.state),
+                                label: stateLabel,
+                              ),
                             ),
                           ],
                         ),
@@ -125,32 +143,44 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
 
                 // Kontakt
                 _section(L.of(context).profSectionContact, [
-                  _row(icon: 'message', label: L.of(context).profEmail, value: 'pavel.novak@email.cz'),
+                  _row(
+                      icon: 'message',
+                      label: L.of(context).profEmail,
+                      value: me.email),
                   _divider(),
                   _row(
                     icon: 'bell',
                     label: L.of(context).profPhone,
-                    value: '+420 728 451 209',
+                    value: me.phone,
                     mono: true,
                   ),
                 ]),
 
                 // Členství
                 _section(L.of(context).profSectionMembership, [
-                  _row(icon: 'dumbbell', label: L.of(context).profTariff, value: L.of(context).profTariffValue),
+                  _row(
+                      icon: 'dumbbell',
+                      label: L.of(context).profTariff,
+                      value:
+                          '${me.tariff}${me.isic ? ' · ISIC' : ''}'),
                   _divider(),
                   _row(
                     icon: 'calendar',
                     label: L.of(context).profValidUntil,
-                    value: '23. 6. 2026',
+                    value: me.expiresAt,
                     mono: true,
                   ),
                   _divider(),
                   _row(
                     icon: 'key',
                     label: L.of(context).profKey,
-                    value: L.of(context).profKeyValue,
-                    pill: const StatusPill(state: StatusState.ok, label: '100 Kč'),
+                    value: me.hasKey
+                        ? L.of(context).profKeyValue
+                        : L.of(context).cardKeyAtReception,
+                    pill: me.hasKey
+                        ? const StatusPill(
+                            state: StatusState.ok, label: '100 Kč')
+                        : null,
                   ),
                   _divider(),
                   if (paused)
@@ -163,7 +193,7 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
                       locked: true,
                       onTap: () => navCb(context)('mthread', arg: 'olda'),
                     )
-                  else if ((me?.daysNum ?? 1) <= 0)
+                  else if (me.daysNum <= 0)
                     // Self-pause is only allowed once the prepaid period has
                     // run out; pausing mid-term is the owner's call.
                     _actionRow(

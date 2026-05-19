@@ -1,55 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/data/data_providers.dart';
+import '../../core/data/gym_repository_provider.dart';
+import '../../core/routing/nav.dart';
 import '../../core/store/models.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
+import '../../core/utils/app_toast.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_icon.dart';
+import '../../shared/widgets/board_post_style.dart';
 import '../../shared/widgets/load_error.dart';
 import '../../shared/widgets/screen_frame.dart';
 import '../../shared/widgets/skeleton.dart';
-
-const Color _eventColor = T.event;
-
-class _PostType {
-  final String label;
-  final Color color;
-  final String icon;
-  const _PostType(this.label, this.color, this.icon);
-}
-
-const Map<String, _PostType> _postTypes = {
-  'pinned': _PostType('Připnuto', T.accent, 'pin'),
-  'outage': _PostType('Mimo provoz', T.error, 'tool'),
-  'warning': _PostType('Pozor', T.warn, 'alert'),
-  'promo': _PostType('Akce', T.ok, 'tag'),
-  'event': _PostType('Událost', _eventColor, 'calendar'),
-  'fixed': _PostType('Opraveno', T.ok, 'check'),
-  'info': _PostType('Info', T.text2, 'megaphone'),
-};
-
-String _postTypeLabel(BuildContext context, String type) {
-  final l = L.of(context);
-  switch (type) {
-    case 'pinned':
-      return l.boardTypePinned;
-    case 'outage':
-      return l.boardTypeOutage;
-    case 'warning':
-      return l.boardTypeWarning;
-    case 'promo':
-      return l.boardTypePromo;
-    case 'event':
-      return l.boardTypeEvent;
-    case 'fixed':
-      return l.boardTypeFixed;
-    case 'info':
-    default:
-      return l.boardTypeInfo;
-  }
-}
 
 String _filterLabel(BuildContext context, String key) {
   final l = L.of(context);
@@ -103,7 +68,7 @@ const List<_Filter> _filters = [
   _Filter('outage', 'Výpadky', T.error),
   _Filter('warning', 'Pozor', T.warn),
   _Filter('promo', 'Akce', T.ok),
-  _Filter('event', 'Události', _eventColor),
+  _Filter('event', 'Události', T.event),
 ];
 
 /// Board 07 — nástěnka klubu (port of BoardScreen.jsx).
@@ -119,6 +84,8 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
 
   @override
   Widget build(BuildContext context) {
+    final isOwner =
+        GoRouterState.of(context).matchedLocation == '/admin/board';
     final boardAsync = ref.watch(boardPostsProvider);
     if (boardAsync.isLoading && !boardAsync.hasValue) {
       return const ScreenFrame(
@@ -168,6 +135,24 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
+                      // Back affordance — only when this screen was *pushed*
+                      // (owner opening the board from "Více"). As a member tab
+                      // it's reached via `go`, so canPop is false and no
+                      // button shows, matching the prototype.
+                      if (context.canPop())
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: GestureDetector(
+                            onTap: () => navCb(context)('back'),
+                            behavior: HitTestBehavior.opaque,
+                            child: const Padding(
+                              padding: EdgeInsets.only(
+                                  top: 2, bottom: 10, right: 8),
+                              child:
+                                  AppIcon('back', size: 20, color: T.text),
+                            ),
+                          ),
+                        ),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.baseline,
                         textBaseline: TextBaseline.alphabetic,
@@ -213,6 +198,25 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
                                 L.of(context).boardStatusOpen,
                                 style: AppType.ui(size: 12, color: T.text2),
                               ),
+                              if (isOwner) ...[
+                                const SizedBox(width: 12),
+                                GestureDetector(
+                                  onTap: () => navCb(context)('broadcast'),
+                                  behavior: HitTestBehavior.opaque,
+                                  child: Container(
+                                    width: 34,
+                                    height: 34,
+                                    alignment: Alignment.center,
+                                    decoration: BoxDecoration(
+                                      color: T.accent,
+                                      borderRadius:
+                                          BorderRadius.circular(Radii.md),
+                                    ),
+                                    child: const AppIcon('plus',
+                                        size: 18, color: T.bg),
+                                  ),
+                                ),
+                              ],
                             ],
                           ),
                         ],
@@ -259,7 +263,12 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
                         ),
                       for (var i = 0; i < filtered.length; i++) ...[
                         if (i > 0) const SizedBox(height: 12),
-                        _BoardPost(post: filtered[i]),
+                        _BoardPost(
+                          post: filtered[i],
+                          onMenu: isOwner
+                              ? () => _ownerMenu(filtered[i])
+                              : null,
+                        ),
                       ],
                     ],
                   ),
@@ -269,6 +278,159 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
           ),
     );
   }
+
+  void _ownerMenu(_Post p) {
+    final l = L.of(context);
+    showModalBottomSheet<void>(
+      context: context,
+      useRootNavigator: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: T.scrimSheet,
+      builder: (sheetCtx) => SafeArea(
+        child: Container(
+          margin: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+          decoration: BoxDecoration(
+            color: T.surface,
+            borderRadius: BorderRadius.circular(Radii.xl),
+            border: Border.all(color: T.border),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _SheetItem(
+                icon: 'edit',
+                label: l.boardOwnerEdit,
+                onTap: () {
+                  Navigator.of(sheetCtx).pop();
+                  navCb(context)('broadcast', arg: p.id);
+                },
+              ),
+              const _SheetDivider(),
+              _SheetItem(
+                icon: 'pin',
+                label: p.pinned ? l.boardOwnerUnpin : l.boardOwnerPin,
+                onTap: () async {
+                  Navigator.of(sheetCtx).pop();
+                  await ref
+                      .read(gymRepositoryProvider)
+                      .setBoardPostPinned(p.id, !p.pinned);
+                  ref.invalidate(boardPostsProvider);
+                  if (!mounted) return;
+                  showAppToast(
+                      context,
+                      p.pinned
+                          ? l.boardUnpinnedToast
+                          : l.boardPinnedToast);
+                },
+              ),
+              const _SheetDivider(),
+              _SheetItem(
+                icon: 'trash',
+                label: l.boardOwnerDelete,
+                danger: true,
+                onTap: () {
+                  Navigator.of(sheetCtx).pop();
+                  _confirmDeletePost(p);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _confirmDeletePost(_Post p) {
+    final l = L.of(context);
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: T.surface,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(Radii.xl),
+          side: const BorderSide(color: T.border),
+        ),
+        title: Text(
+          l.boardDeleteTitle,
+          style: AppType.ui(
+              size: 17, weight: FontWeight.w700, color: T.text),
+        ),
+        content: Text(
+          l.boardDeleteBody(p.title),
+          style: AppType.ui(size: 14, color: T.text2),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(
+              l.boardDeleteCancel,
+              style: AppType.ui(
+                  size: 14, weight: FontWeight.w600, color: T.text2),
+            ),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.of(ctx).pop();
+              await ref
+                  .read(gymRepositoryProvider)
+                  .deleteBoardPost(p.id);
+              ref.invalidate(boardPostsProvider);
+              if (!mounted) return;
+              showAppToast(context, l.boardDeletedToast);
+            },
+            child: Text(
+              l.boardDeleteConfirm,
+              style: AppType.ui(
+                  size: 14, weight: FontWeight.w600, color: T.error),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SheetItem extends StatelessWidget {
+  final String icon;
+  final String label;
+  final bool danger;
+  final VoidCallback onTap;
+  const _SheetItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.danger = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final color = danger ? T.error : T.text;
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+        child: Row(
+          children: [
+            AppIcon(icon, size: 18, color: color),
+            const SizedBox(width: 14),
+            Text(
+              label,
+              style: AppType.ui(
+                  size: 15, weight: FontWeight.w500, color: color),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _SheetDivider extends StatelessWidget {
+  const _SheetDivider();
+  @override
+  Widget build(BuildContext context) =>
+      Container(height: 1, color: T.divider);
 }
 
 class _BChip extends StatelessWidget {
@@ -328,11 +490,12 @@ class _BChip extends StatelessWidget {
 
 class _BoardPost extends StatelessWidget {
   final _Post post;
-  const _BoardPost({required this.post});
+  final VoidCallback? onMenu;
+  const _BoardPost({required this.post, this.onMenu});
 
   @override
   Widget build(BuildContext context) {
-    final meta = _postTypes[post.type] ?? _postTypes['info']!;
+    final meta = boardPostStyle(post.type);
     final c = meta.color;
 
     return ClipRRect(
@@ -379,7 +542,7 @@ class _BoardPost extends StatelessWidget {
                               const SizedBox(width: 6),
                               Flexible(
                                 child: Text(
-                                  _postTypeLabel(context, post.type)
+                                  boardPostLabel(context, post.type)
                                       .toUpperCase(),
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -400,6 +563,15 @@ class _BoardPost extends StatelessWidget {
                         post.date,
                         style: AppType.mono(size: 11.5, color: T.text3),
                       ),
+                      if (onMenu != null)
+                        GestureDetector(
+                          onTap: onMenu,
+                          behavior: HitTestBehavior.opaque,
+                          child: const Padding(
+                            padding: EdgeInsets.only(left: 8),
+                            child: AppIcon('more', size: 18, color: T.text3),
+                          ),
+                        ),
                     ],
                   ),
                   const SizedBox(height: 10),

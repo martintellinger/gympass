@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/data/data_providers.dart';
+import '../../core/format.dart';
 import '../../core/routing/nav.dart';
+import '../../core/store/models.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../l10n/app_localizations.dart';
@@ -10,7 +12,17 @@ import '../../shared/widgets/app_button.dart';
 import '../../shared/widgets/app_card.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/screen_frame.dart';
+import '../../shared/widgets/skeleton.dart';
 import '../../shared/widgets/status_pill.dart';
+
+/// Parses the member's `expiresAt` display string ("23. 6. 2026") back to a
+/// date for the timeline math. Returns null for "—" / unparseable.
+DateTime? _parseCzDate(String s) {
+  final m = RegExp(r'(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})').firstMatch(s);
+  if (m == null) return null;
+  return DateTime(
+      int.parse(m.group(3)!), int.parse(m.group(2)!), int.parse(m.group(1)!));
+}
 
 /// Member Dashboard 04 — home screen for the logged-in member.
 /// Port of docs/design/gympass/project/screens/MemberDashboard.jsx.
@@ -21,7 +33,46 @@ class MemberDashboardScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final nav = navCb(context);
     final member = ref.watch(currentMemberProvider).value;
-    final firstName = (member?.name ?? '').split(' ').first;
+
+    if (member == null) {
+      return const ScreenFrame(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(24, 28, 24, 0),
+          child: SkeletonList(rows: 6),
+        ),
+      );
+    }
+
+    final firstName = member.name.split(' ').first;
+    final days = member.daysNum < 0 ? 0 : member.daysNum;
+
+    final myPayments =
+        (ref.watch(paymentsProvider).value ?? const <Payment>[])
+            .where((p) => p.memberId == member.id && p.state == 'ok')
+            .toList()
+          ..sort((a, b) => b.date.compareTo(a.date));
+
+    final posts = ref.watch(boardPostsProvider).value ?? const <BoardPost>[];
+    final BoardPost? topPost = posts.isEmpty
+        ? null
+        : (posts.firstWhere((p) => p.pinned, orElse: () => posts.first));
+
+    // Timeline: period start = most recent payment, end = expiry date.
+    final now = DateTime.now();
+    final lastPay = myPayments.isNotEmpty ? myPayments.first.date : null;
+    final expiryD = _parseCzDate(member.expiresAt);
+    Widget? timeline;
+    if (lastPay != null &&
+        expiryD != null &&
+        expiryD.isAfter(lastPay)) {
+      final total = expiryD.difference(lastPay).inDays;
+      final elapsed = now.difference(lastPay).inDays;
+      timeline = _MembershipTimeline(
+        startLabel: '${lastPay.day}. ${lastPay.month}.',
+        endLabel: '${expiryD.day}. ${expiryD.month}.',
+        progress: total <= 0 ? 1.0 : elapsed / total,
+      );
+    }
 
     return ScreenFrame(
       child: SingleChildScrollView(
@@ -80,7 +131,7 @@ class MemberDashboardScreen extends ConsumerWidget {
                               textBaseline: TextBaseline.alphabetic,
                               children: [
                                 Text(
-                                  '23',
+                                  '$days',
                                   style: AppType.ui(
                                     size: 64,
                                     weight: FontWeight.w700,
@@ -115,7 +166,7 @@ class MemberDashboardScreen extends ConsumerWidget {
                                 size: 14, color: T.text2),
                             const SizedBox(width: 6),
                             Text(
-                              L.of(context).dashExpiryDate,
+                              member.expiresAt,
                               style: AppType.mono(
                                 size: 14,
                                 weight: FontWeight.w500,
@@ -127,13 +178,10 @@ class MemberDashboardScreen extends ConsumerWidget {
                       ),
 
                       // Membership timeline — visual progress until expiry
-                      const SizedBox(height: 18),
-                      const _MembershipTimeline(
-                        startLabel: '23. 3.',
-                        endLabel: '23. 6.',
-                        // 90-day period, 23 days remaining → 67 elapsed
-                        progress: 67 / 90,
-                      ),
+                      if (timeline != null) ...[
+                        const SizedBox(height: 18),
+                        timeline,
+                      ],
 
                       // Primary CTA
                       const SizedBox(height: 24),
@@ -158,7 +206,12 @@ class MemberDashboardScreen extends ConsumerWidget {
                       const SizedBox(height: 28),
                       _SectionLabel(text: L.of(context).dashYourCard),
                       const SizedBox(height: 12),
-                      _MemberCardPreview(onTap: () => nav('card')),
+                      _MemberCardPreview(
+                        name: member.name,
+                        state: member.state,
+                        hasKey: member.hasKey,
+                        onTap: () => nav('card'),
+                      ),
 
                       // Poslední aktivity
                       const SizedBox(height: 24),
@@ -175,55 +228,59 @@ class MemberDashboardScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 12),
                       AppCard(
-                        padding: EdgeInsets.zero,
-                        child: Column(
-                          children: const [
-                            _ActivityRow(
-                              icon: 'refresh',
-                              title: 'Prodloužení (3 měsíce)',
-                              date: '23. 3. 2026',
-                              amount: '+90 dní',
-                              amountSub: '2 250 Kč',
-                            ),
-                            _ActivityDivider(),
-                            _ActivityRow(
-                              icon: 'refresh',
-                              title: 'Prodloužení (3 měsíce)',
-                              date: '22. 12. 2025',
-                              amount: '+90 dní',
-                              amountSub: '2 250 Kč',
-                            ),
-                            _ActivityDivider(),
-                            _ActivityRow(
-                              icon: 'key',
-                              title: 'Vydán klíč + kauce',
-                              date: '14. 9. 2025',
-                              amount: '100 Kč',
-                              amountSub: '',
-                              muted: true,
-                            ),
-                          ],
-                        ),
+                        padding: myPayments.isEmpty
+                            ? const EdgeInsets.all(Space.s14)
+                            : EdgeInsets.zero,
+                        child: myPayments.isEmpty
+                            ? Text(
+                                L.of(context).histEmptyFilter,
+                                style: AppType.ui(
+                                    size: 13.5, color: T.text3),
+                              )
+                            : Column(
+                                children: [
+                                  for (var i = 0;
+                                      i <
+                                          (myPayments.length > 4
+                                              ? 4
+                                              : myPayments.length);
+                                      i++) ...[
+                                    if (i > 0) const _ActivityDivider(),
+                                    _ActivityRow(
+                                      icon: 'refresh',
+                                      title: myPayments[i].type,
+                                      date:
+                                          '${myPayments[i].date.day}. ${myPayments[i].date.month}. ${myPayments[i].date.year}',
+                                      amount:
+                                          '${groupThousands(myPayments[i].amount)} Kč',
+                                      amountSub: myPayments[i].tariff,
+                                    ),
+                                  ],
+                                ],
+                              ),
                       ),
 
                       // Nástěnka preview
-                      const SizedBox(height: 24),
-                      _SectionLabel(
-                        text: L.of(context).dashBoard,
-                        right: GestureDetector(
-                          onTap: () => nav('board'),
-                          child: Text(
-                            L.of(context).dashBoardAll,
-                            style: AppType.ui(
-                              size: 12.5,
-                              color: T.accent,
-                              letterSpacing: -0.2,
+                      if (topPost != null) ...[
+                        const SizedBox(height: 24),
+                        _SectionLabel(
+                          text: L.of(context).dashBoard,
+                          right: GestureDetector(
+                            onTap: () => nav('board'),
+                            child: Text(
+                              L.of(context).dashBoardAll,
+                              style: AppType.ui(
+                                size: 12.5,
+                                color: T.accent,
+                                letterSpacing: -0.2,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      _BoardPreview(onTap: () => nav('board')),
+                        const SizedBox(height: 12),
+                        _BoardPreview(
+                            post: topPost, onTap: () => nav('board')),
+                      ],
                     ],
                   ),
                 ),
@@ -366,8 +423,16 @@ class _MembershipTimeline extends StatelessWidget {
 
 /// Member card preview — gradient card with dumbbell icon + status.
 class _MemberCardPreview extends StatelessWidget {
+  final String name;
+  final String state;
+  final bool hasKey;
   final VoidCallback onTap;
-  const _MemberCardPreview({required this.onTap});
+  const _MemberCardPreview({
+    required this.name,
+    required this.state,
+    required this.hasKey,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -425,7 +490,9 @@ class _MemberCardPreview extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Pavel Novák',
+                            name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: AppType.ui(
                               size: 15,
                               weight: FontWeight.w600,
@@ -437,23 +504,26 @@ class _MemberCardPreview extends StatelessWidget {
                           Row(
                             children: [
                               StatusPill(
-                                  state: StatusState.ok,
+                                  state: statusFromKey(state),
                                   label: L.of(context).dashStatusActive),
-                              const SizedBox(width: 6),
-                              const AppIcon('key', size: 12, color: T.text2),
-                              const SizedBox(width: 4),
-                              Flexible(
-                                child: Text(
-                                  L.of(context).dashKeyWithYou,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: AppType.ui(
-                                    size: 12,
-                                    color: T.text2,
-                                    letterSpacing: -0.2,
+                              if (hasKey) ...[
+                                const SizedBox(width: 6),
+                                const AppIcon('key',
+                                    size: 12, color: T.text2),
+                                const SizedBox(width: 4),
+                                Flexible(
+                                  child: Text(
+                                    L.of(context).dashKeyWithYou,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppType.ui(
+                                      size: 12,
+                                      color: T.text2,
+                                      letterSpacing: -0.2,
+                                    ),
                                   ),
                                 ),
-                              ),
+                              ],
                             ],
                           ),
                         ],
@@ -478,7 +548,6 @@ class _ActivityRow extends StatelessWidget {
   final String date;
   final String amount;
   final String amountSub;
-  final bool muted;
 
   const _ActivityRow({
     required this.icon,
@@ -486,7 +555,6 @@ class _ActivityRow extends StatelessWidget {
     required this.date,
     required this.amount,
     required this.amountSub,
-    this.muted = false,
   });
 
   @override
@@ -507,7 +575,7 @@ class _ActivityRow extends StatelessWidget {
               icon,
               size: 16,
               stroke: 1.8,
-              color: muted ? T.text2 : T.text,
+              color: T.text,
             ),
           ),
           const SizedBox(width: 12),
@@ -544,7 +612,7 @@ class _ActivityRow extends StatelessWidget {
                 style: AppType.mono(
                   size: 14,
                   weight: FontWeight.w600,
-                  color: muted ? T.text2 : T.text,
+                  color: T.text,
                 ),
               ),
               if (amountSub.isNotEmpty) ...[
@@ -582,8 +650,9 @@ class _ActivityDivider extends StatelessWidget {
 
 /// Nástěnka preview card — pinned post with accent rail.
 class _BoardPreview extends StatelessWidget {
+  final BoardPost post;
   final VoidCallback onTap;
-  const _BoardPreview({required this.onTap});
+  const _BoardPreview({required this.post, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -608,26 +677,28 @@ class _BoardPreview extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: Space.s6, vertical: 2),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: T.accent),
-                            borderRadius: BorderRadius.circular(Radii.xs),
-                          ),
-                          child: Text(
-                            L.of(context).dashPinned,
-                            style: AppType.ui(
-                              size: 9.5,
-                              weight: FontWeight.w700,
-                              color: T.accent,
-                              letterSpacing: 0.8,
+                        if (post.pinned) ...[
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: Space.s6, vertical: 2),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: T.accent),
+                              borderRadius: BorderRadius.circular(Radii.xs),
+                            ),
+                            child: Text(
+                              L.of(context).dashPinned,
+                              style: AppType.ui(
+                                size: 9.5,
+                                weight: FontWeight.w700,
+                                color: T.accent,
+                                letterSpacing: 0.8,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
+                          const SizedBox(width: 8),
+                        ],
                         Text(
-                          L.of(context).dashBoardTimeAgo,
+                          fmtRelDay(post.at, DateTime.now()),
                           style: AppType.mono(
                             size: 11.5,
                             weight: FontWeight.w500,
@@ -638,7 +709,7 @@ class _BoardPreview extends StatelessWidget {
                     ),
                     const SizedBox(height: 6),
                     Text(
-                      L.of(context).dashBoardPostTitle,
+                      post.title,
                       style: AppType.ui(
                         size: 15,
                         weight: FontWeight.w600,
@@ -648,7 +719,9 @@ class _BoardPreview extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      L.of(context).dashBoardPostBody,
+                      post.body,
+                      maxLines: 3,
+                      overflow: TextOverflow.ellipsis,
                       style: AppType.ui(
                         size: 13.5,
                         color: T.text2,

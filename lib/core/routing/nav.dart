@@ -49,7 +49,9 @@ String routeToPath(String route, {Object? arg}) {
           ? '/admin/add'
           : '/admin/add?id=$arg';
     case 'broadcast':
-      return '/admin/broadcast';
+      return arg == null || '$arg'.isEmpty
+          ? '/admin/broadcast'
+          : '/admin/broadcast?id=$arg';
     case 'excelImport':
       return '/admin/import';
     case 'detail':

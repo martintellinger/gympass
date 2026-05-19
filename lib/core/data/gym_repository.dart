@@ -37,6 +37,7 @@ abstract interface class GymRepository {
   /// Noticeboard posts, newest first (pinned still sort by date here; the
   /// screen pins separately).
   Future<List<BoardPost>> boardPosts();
+  Future<BoardPost?> boardPostById(String id);
 
   /// Members who registered (claimed a roster row) and await the owner's
   /// approval — `status = 'pending'`.
@@ -57,6 +58,25 @@ abstract interface class GymRepository {
     required String tariff,
     required String type,
   });
+  /// Create a noticeboard post (owner only). Returns the created post.
+  Future<BoardPost> addBoardPost({
+    required String type,
+    required String title,
+    required String body,
+    bool pinned,
+  });
+
+  /// Patch a noticeboard post. Null fields are left unchanged.
+  Future<void> updateBoardPost(
+    String id, {
+    String? type,
+    String? title,
+    String? body,
+    bool? pinned,
+  });
+  Future<void> deleteBoardPost(String id);
+  Future<void> setBoardPostPinned(String id, bool pinned);
+
   Future<Member> addMember(Member partial);
   Future<void> updateMember(String id, Member Function(Member) patch);
   Future<void> removeMember(String id);
