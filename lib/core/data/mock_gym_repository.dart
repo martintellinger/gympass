@@ -35,6 +35,13 @@ class MockGymRepository implements GymRepository {
       _store.memberInbox(meId);
 
   @override
+  Future<List<ThreadSummary>> adminThreads() async =>
+      _store.threadsSorted();
+
+  @override
+  Future<int> totalUnread() async => _store.totalUnread();
+
+  @override
   Future<List<({bool mine, String text, DateTime at})>> conversation(
           String meId, String peerId) async =>
       _store.memberThread(meId, peerId);
@@ -42,6 +49,20 @@ class MockGymRepository implements GymRepository {
   @override
   Future<void> confirmPayment(String paymentId) async =>
       _store.confirmPayment(paymentId);
+
+  @override
+  Future<void> addManualPayment({
+    required String memberId,
+    required int amount,
+    required String tariff,
+    required String type,
+  }) async =>
+      _store.addManualPayment(
+        memberId: memberId,
+        amount: amount,
+        tariff: tariff,
+        type: type,
+      );
 
   @override
   Future<Member> addMember(Member partial) async => _store.addMember(partial);

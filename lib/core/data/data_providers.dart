@@ -46,6 +46,12 @@ final conversationProvider = FutureProvider.autoDispose
   },
 );
 
+/// Owner inbox — every member↔owner thread, newest first (admin messages).
+final adminThreadsProvider =
+    FutureProvider.autoDispose<List<ThreadSummary>>(
+  (ref) => ref.watch(gymRepositoryProvider).adminThreads(),
+);
+
 /// Owner↔member thread messages (admin thread screen).
 final ownerThreadProvider =
     FutureProvider.autoDispose.family<List<Message>, String>(

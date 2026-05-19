@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/data/data_providers.dart';
+import '../../core/data/gym_repository.dart';
+import '../../core/data/gym_repository_provider.dart';
 import '../../core/format.dart';
 import '../../core/routing/nav.dart';
 import '../../core/store/models.dart';
-import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../l10n/app_localizations.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
+import '../../shared/widgets/load_error.dart';
 import '../../shared/widgets/screen_frame.dart';
+import '../../shared/widgets/skeleton.dart';
 
 /// Admin Messages 15 — 1:1 thread inbox (owner Olda <-> members).
 /// Port of docs/design/gympass/project/screens/AdminMessages.jsx.
@@ -34,10 +38,26 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final store = ref.watch(storeProvider);
     final nav = navCb(context);
+    final repo = ref.read(gymRepositoryProvider);
+    final threadsAsync = ref.watch(adminThreadsProvider);
 
-    final threads = store.threadsSorted();
+    if (threadsAsync.isLoading && !threadsAsync.hasValue) {
+      return const ScreenFrame(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(20, 24, 20, 0),
+          child: SkeletonList(rows: 7),
+        ),
+      );
+    }
+    if (threadsAsync.hasError && !threadsAsync.hasValue) {
+      return ScreenFrame(
+        child: LoadError(
+            onRetry: () => ref.invalidate(adminThreadsProvider)),
+      );
+    }
+
+    final threads = threadsAsync.value ?? const <ThreadSummary>[];
     final filtered = _q.isEmpty
         ? threads
         : threads
@@ -45,7 +65,9 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
                 t.member.name.toLowerCase().contains(_q.toLowerCase()))
             .toList();
 
-    final totalUnread = store.totalUnread();
+    final allMembers =
+        ref.watch(membersProvider).value ?? const <Member>[];
+    final totalUnread = threads.fold<int>(0, (s, t) => s + t.unread);
     final unreadThreads = threads.where((t) => t.unread > 0).length;
 
     return ScreenFrame(
@@ -81,7 +103,7 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
                         ),
                         GestureDetector(
                           behavior: HitTestBehavior.opaque,
-                          onTap: () => _openCompose(store, nav),
+                          onTap: () => _openCompose(allMembers, nav),
                           child: Container(
                             width: 40,
                             height: 40,
@@ -147,7 +169,7 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
                             child: _QuickPill(
                               icon: 'megaphone',
                               label: L.of(context).amsgBulkAll,
-                              onTap: () => _openBroadcast(store, nav),
+                              onTap: () => _openBroadcast(allMembers, repo, nav),
                             ),
                           ),
                           const SizedBox(width: 8),
@@ -155,13 +177,19 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
                             child: _QuickPill(
                               icon: 'alert',
                               label: L.of(context).amsgRemindDebtors,
-                              onTap: () {
-                                for (final id in ['david', 'petr']) {
-                                  store.sendMessage(id,
-                                      L.of(context).amsgPaymentReminderMsg);
+                              onTap: () async {
+                                final msg =
+                                    L.of(context).amsgPaymentReminderMsg;
+                                final sentToast =
+                                    L.of(context).amsgRemindersSent;
+                                final debtors = allMembers
+                                    .where((m) => m.state == 'error');
+                                for (final m in debtors) {
+                                  await repo.sendOwnerMessage(m.id, msg,
+                                      from: 'olda');
                                 }
-                                nav('messages',
-                                    toast: L.of(context).amsgRemindersSent);
+                                ref.invalidate(adminThreadsProvider);
+                                nav('messages', toast: sentToast);
                               },
                             ),
                           ),
@@ -208,8 +236,9 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
                     else
                       ...filtered.map((t) => _ThreadRow(
                             thread: t,
-                            onTap: () {
-                              store.markRead(t.member.id);
+                            onTap: () async {
+                              await repo.markOwnerThreadRead(t.member.id);
+                              ref.invalidate(adminThreadsProvider);
                               nav('thread', arg: t.member.id);
                             },
                           )),
@@ -243,7 +272,7 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
     );
   }
 
-  void _openCompose(GymStore store, NavCb nav) {
+  void _openCompose(List<Member> members, NavCb nav) {
     showModalBottomSheet<void>(
       context: context,
       // Above the shell — keep the floating bottom-nav bar from overlapping.
@@ -252,7 +281,7 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
       barrierColor: Colors.black.withValues(alpha: 0.5),
       isScrollControlled: true,
       builder: (_) => _ComposeSheet(
-        members: store.members,
+        members: members,
         onPick: (id) {
           // Sheet is on the root navigator (useRootNavigator) — pop that.
           Navigator.of(context, rootNavigator: true).pop();
@@ -262,7 +291,7 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
     );
   }
 
-  void _openBroadcast(GymStore store, NavCb nav) {
+  void _openBroadcast(List<Member> members, GymRepository repo, NavCb nav) {
     showModalBottomSheet<void>(
       context: context,
       // Above the shell — keep the floating bottom-nav bar from overlapping.
@@ -271,8 +300,8 @@ class _AdminMessagesScreenState extends ConsumerState<AdminMessagesScreen> {
       barrierColor: Colors.black.withValues(alpha: 0.5),
       isScrollControlled: true,
       builder: (_) => _BroadcastSheet(
-        members: store.members,
-        store: store,
+        members: members,
+        repo: repo,
         onSent: (count) {
           // Sheet is on the root navigator (useRootNavigator) — pop that.
           Navigator.of(context, rootNavigator: true).pop();
@@ -639,12 +668,12 @@ class _ComposeSheetState extends State<_ComposeSheet> {
 // ─── Broadcast sheet ──────────────────────────────────────────────────────
 class _BroadcastSheet extends StatefulWidget {
   final List<Member> members;
-  final GymStore store;
+  final GymRepository repo;
   final ValueChanged<int> onSent;
 
   const _BroadcastSheet({
     required this.members,
-    required this.store,
+    required this.repo,
     required this.onSent,
   });
 
@@ -680,12 +709,12 @@ class _BroadcastSheetState extends State<_BroadcastSheet> {
   List<Member> get _recipients =>
       widget.members.where(_targets[_target]!.filter).toList();
 
-  void _send() {
+  Future<void> _send() async {
     final t = _textCtrl.text.trim();
     final recipients = _recipients;
     if (t.isEmpty || recipients.isEmpty) return;
     for (final m in recipients) {
-      widget.store.sendMessage(m.id, t, from: 'olda');
+      await widget.repo.sendOwnerMessage(m.id, t, from: 'olda');
     }
     widget.onSent(recipients.length);
   }

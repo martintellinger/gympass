@@ -28,6 +28,12 @@ abstract interface class GymRepository {
   /// Member-side inbox (owner conversation + member↔member threads).
   Future<List<MemberConvo>> memberInbox(String meId);
 
+  /// Owner inbox — every member↔owner thread, newest first.
+  Future<List<ThreadSummary>> adminThreads();
+
+  /// Total unread across the owner inbox (nav badge).
+  Future<int> totalUnread();
+
   /// Normalised bubble list for [meId]'s view of a conversation with
   /// [peerId] ([kOwnerId] for the owner thread).
   Future<List<({bool mine, String text, DateTime at})>> conversation(
@@ -35,6 +41,12 @@ abstract interface class GymRepository {
 
   // ── Mutations ────────────────────────────────────────────────────────
   Future<void> confirmPayment(String paymentId);
+  Future<void> addManualPayment({
+    required String memberId,
+    required int amount,
+    required String tariff,
+    required String type,
+  });
   Future<Member> addMember(Member partial);
   Future<void> updateMember(String id, Member Function(Member) patch);
   Future<void> removeMember(String id);

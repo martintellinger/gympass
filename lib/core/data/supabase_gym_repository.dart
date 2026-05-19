@@ -170,6 +170,65 @@ class SupabaseGymRepository implements GymRepository {
         .toList();
   }
 
+  @override
+  Future<List<ThreadSummary>> adminThreads() async {
+    final rows = await _c
+        .from('threads')
+        .select('member_id, members(*), messages(from_role, body, '
+            'read_at, created_at)');
+    final now = _now;
+    final out = <ThreadSummary>[];
+    for (final t in rows) {
+      final mj = t['members'];
+      if (mj == null) continue;
+      final member =
+          memberFromRow(MemberRow.fromMap(mj as Map<String, dynamic>),
+              now: now);
+      final rawMsgs = ((t['messages'] as List?) ?? const [])
+          .cast<Map<String, dynamic>>()
+        ..sort((a, b) => DateTime.parse(a['created_at'] as String)
+            .compareTo(DateTime.parse(b['created_at'] as String)));
+      if (rawMsgs.isEmpty) continue;
+      final msgs = rawMsgs
+          .map((m) => Message(
+                from: (m['from_role'] == 'admin') ? 'olda' : 'member',
+                text: (m['body'] ?? '') as String,
+                at: DateTime.parse(m['created_at'] as String).toLocal(),
+                read: m['read_at'] != null,
+              ))
+          .toList();
+      out.add(ThreadSummary(
+        member: member,
+        msgs: msgs,
+        last: msgs.last,
+        unread: _trailingUnread(msgs, (m) => m.from == 'member'),
+      ));
+    }
+    out.sort((a, b) => b.last.at.compareTo(a.last.at));
+    return out;
+  }
+
+  @override
+  Future<int> totalUnread() async {
+    final threads = await adminThreads();
+    return threads.fold<int>(0, (s, t) => s + t.unread);
+  }
+
+  @override
+  Future<void> addManualPayment({
+    required String memberId,
+    required int amount,
+    required String tariff,
+    required String type,
+  }) async {
+    await _c.from('payments').insert({
+      'member_id': memberId,
+      'amount': amount,
+      'tariff': tariff,
+      'method': 'manual',
+    });
+  }
+
   static int _trailingUnread(
       List<Message> msgs, bool Function(Message) fromOther) {
     var c = 0;
