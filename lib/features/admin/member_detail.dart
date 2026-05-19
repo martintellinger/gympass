@@ -161,22 +161,6 @@ class MemberDetailScreen extends ConsumerWidget {
                       const SizedBox(width: 8),
                       Expanded(
                         child: _DetailQuick(
-                          icon: 'cash',
-                          label: l.mdetQuickPayment,
-                          onTap: () => showAddPaymentSheet(
-                            context, repo, [m], nav,
-                            preselectMemberId: m.id,
-                            onSaved: () {
-                              ref.invalidate(paymentsProvider);
-                              ref.invalidate(
-                                  memberByIdProvider(memberId));
-                            },
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: _DetailQuick(
                           icon: 'refresh',
                           label: l.mdetQuickExtend,
                           onTap: () => showAddPaymentSheet(
