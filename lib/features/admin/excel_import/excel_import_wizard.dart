@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/data/data_providers.dart';
+import '../../../core/data/gym_repository_provider.dart';
 import '../../../core/routing/nav.dart';
 import '../../../core/store/models.dart';
-import '../../../core/store/store.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../core/utils/haptics.dart';
@@ -96,8 +97,8 @@ class _ExcelImportWizardState extends ConsumerState<ExcelImportWizard> {
     // A 34-row sheet parses with a perceptible delay in production — exercise
     // the skeleton path rather than faking instant data.
     await Future<void>.delayed(const Duration(milliseconds: 1400));
+    final members = await ref.read(gymRepositoryProvider).members();
     if (!mounted) return;
-    final members = ref.read(storeProvider).members;
     final rows = _syntheticSheet(members);
     final entries = diffImport(rows, members);
     // Sensible defaults: bring in new people and safe field changes; leave
@@ -154,7 +155,7 @@ class _ExcelImportWizardState extends ConsumerState<ExcelImportWizard> {
         monthlyPrice: r.monthlyPrice,
       );
 
-  void _apply() {
+  Future<void> _apply() async {
     final additions = <Member>[];
     final updates = <String, Member>{};
     for (var i = 0; i < _entries.length; i++) {
@@ -177,10 +178,12 @@ class _ExcelImportWizardState extends ConsumerState<ExcelImportWizard> {
           break;
       }
     }
-    ref
-        .read(storeProvider)
+    await ref
+        .read(gymRepositoryProvider)
         .importMembers(additions: additions, updates: updates);
+    ref.invalidate(membersProvider);
     Haptics.success();
+    if (!mounted) return;
     setState(() {
       _applied = additions.length + updates.length;
       _step = _Step.done;
