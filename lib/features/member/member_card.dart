@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/data/data_providers.dart';
 import '../../core/routing/nav.dart';
-import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../shared/widgets/app_icon.dart';
+import '../../shared/widgets/load_error.dart';
 import '../../shared/widgets/screen_frame.dart';
+import '../../shared/widgets/skeleton.dart';
 import '../../shared/widgets/status_pill.dart';
 import '../../l10n/app_localizations.dart';
 
@@ -17,15 +19,30 @@ class MemberCardScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final store = ref.watch(storeProvider);
-    final member = store.memberById('pavel');
+    final memberAsync = ref.watch(currentMemberProvider);
+    if (memberAsync.isLoading && !memberAsync.hasValue) {
+      return const ScreenFrame(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(20, 40, 20, 0),
+          child: SkeletonList(rows: 4),
+        ),
+      );
+    }
+    if ((memberAsync.hasError || memberAsync.value == null) &&
+        !memberAsync.isLoading) {
+      return ScreenFrame(
+        child: LoadError(
+            onRetry: () => ref.invalidate(currentMemberProvider)),
+      );
+    }
+    final member = memberAsync.value!;
 
-    final name = member?.name ?? 'Pavel Novák';
-    final joined = member?.joined ?? '9 · 2025';
-    final expiresAt = member?.expiresAt ?? '23. 6. 2026';
-    final tariff = member?.tariff ?? 'Standard';
-    final hasKey = member?.hasKey ?? true;
-    final state = statusFromKey(member?.state ?? 'ok');
+    final name = member.name;
+    final joined = member.joined;
+    final expiresAt = member.expiresAt;
+    final tariff = member.tariff;
+    final hasKey = member.hasKey;
+    final state = statusFromKey(member.state);
 
     // JSX: "člen od 9 · 2025" — joined string is "M · YYYY".
     final joinedLabel = L.of(context).cardJoinedSince(joined);

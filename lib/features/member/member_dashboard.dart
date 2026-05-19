@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/data/data_providers.dart';
 import '../../core/routing/nav.dart';
-import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../l10n/app_localizations.dart';
@@ -20,9 +20,8 @@ class MemberDashboardScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final nav = navCb(context);
-    final store = ref.watch(storeProvider);
-    final member = store.memberById('pavel');
-    final firstName = (member?.name ?? 'Pavel Novák').split(' ').first;
+    final member = ref.watch(currentMemberProvider).value;
+    final firstName = (member?.name ?? '').split(' ').first;
 
     return ScreenFrame(
       child: SingleChildScrollView(

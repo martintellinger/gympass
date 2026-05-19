@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/data/data_providers.dart';
+import '../../core/data/gym_repository_provider.dart';
 import '../../core/routing/nav.dart';
-import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/theme/tokens.dart';
@@ -41,7 +42,7 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
   @override
   Widget build(BuildContext context) {
     final nav = navCb(context);
-    final me = ref.watch(storeProvider).memberById(kCurrentMemberId);
+    final me = ref.watch(currentMemberProvider).value;
     final paused = me?.isPaused ?? false;
 
     return ScreenFrame(
@@ -701,13 +702,14 @@ class _ProfileScreenViewState extends ConsumerState<ProfileScreenView> {
     );
     if (confirmed != true || !mounted) return;
     final reasonLabel = selected != null ? reasons[selected] : null;
-    ref.read(storeProvider).pauseMembership(
-          kCurrentMemberId,
+    await ref.read(gymRepositoryProvider).pauseMembership(
+          ref.read(currentMemberIdProvider),
           reason: selected,
           notice: reasonLabel != null
               ? l.pauseOwnerNotice(reasonLabel)
               : l.pauseOwnerNoticeNoReason,
         );
+    ref.invalidate(currentMemberProvider);
     if (mounted) navCb(context)('profile', toast: l.pausedToast);
   }
 
