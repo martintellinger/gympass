@@ -8,6 +8,7 @@
 /// one-line provider override.
 library;
 
+import '../domain/opening_hours.dart';
 import '../store/models.dart';
 import '../store/store.dart';
 import 'gym_repository.dart';
@@ -60,6 +61,10 @@ class MockGymRepository implements GymRepository {
       _store.boardPostById(id);
 
   @override
+  Future<List<DayHours>> openingHours() async =>
+      List.unmodifiable(_store.openingHours);
+
+  @override
   Future<BoardPost> addBoardPost({
     required String type,
     required String title,
@@ -103,12 +108,14 @@ class MockGymRepository implements GymRepository {
     required int amount,
     required String tariff,
     required String type,
+    required int months,
   }) async =>
       _store.addManualPayment(
         memberId: memberId,
         amount: amount,
         tariff: tariff,
         type: type,
+        months: months,
       );
 
   @override

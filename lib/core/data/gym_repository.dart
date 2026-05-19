@@ -14,6 +14,7 @@
 /// every implementation yields the exact shape the UI already expects.
 library;
 
+import '../domain/opening_hours.dart';
 import '../store/models.dart';
 
 abstract interface class GymRepository {
@@ -39,6 +40,10 @@ abstract interface class GymRepository {
   Future<List<BoardPost>> boardPosts();
   Future<BoardPost?> boardPostById(String id);
 
+  /// Club opening hours, exactly 7 entries indexed by `DateTime.weekday - 1`
+  /// (0 = Monday … 6 = Sunday). Informational only (CLAUDE.md §14–§15).
+  Future<List<DayHours>> openingHours();
+
   /// Members who registered (claimed a roster row) and await the owner's
   /// approval — `status = 'pending'`.
   Future<List<Member>> pendingMembers();
@@ -52,11 +57,15 @@ abstract interface class GymRepository {
 
   // ── Mutations ────────────────────────────────────────────────────────
   Future<void> confirmPayment(String paymentId);
+  /// Records a confirmed payment **and** extends the member's membership by
+  /// [months] (CLAUDE.md §2–§4: stacks on a still-valid expiry, otherwise
+  /// starts from today; billing day preserved).
   Future<void> addManualPayment({
     required String memberId,
     required int amount,
     required String tariff,
     required String type,
+    required int months,
   });
   /// Create a noticeboard post (owner only). Returns the created post.
   Future<BoardPost> addBoardPost({

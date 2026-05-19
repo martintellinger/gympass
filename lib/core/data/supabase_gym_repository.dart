@@ -12,6 +12,8 @@ library;
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../domain/membership.dart' as membership;
+import '../domain/opening_hours.dart';
 import '../store/models.dart';
 import '../store/store.dart' show kOwnerId;
 import 'dto/db_rows.dart';
@@ -257,6 +259,35 @@ class SupabaseGymRepository implements GymRepository {
   }
 
   @override
+  Future<List<DayHours>> openingHours() async {
+    final rows = await _c
+        .from('opening_hours')
+        .select('weekday, open_time, close_time');
+    // 0 = Monday … 6 = Sunday (DB convention), default closed.
+    final week = List<DayHours>.filled(7, DayHours.closed);
+    for (final r in rows) {
+      final wd = (r['weekday'] as num).toInt();
+      if (wd < 0 || wd > 6) continue;
+      week[wd] = DayHours(
+        _minutesFromSqlTime(r['open_time'] as String?),
+        _minutesFromSqlTime(r['close_time'] as String?),
+      );
+    }
+    return week;
+  }
+
+  /// "HH:MM:SS" / "HH:MM" → minutes from midnight, or null when unset.
+  int? _minutesFromSqlTime(String? t) {
+    if (t == null || t.isEmpty) return null;
+    final parts = t.split(':');
+    if (parts.length < 2) return null;
+    final h = int.tryParse(parts[0]);
+    final m = int.tryParse(parts[1]);
+    if (h == null || m == null) return null;
+    return h * 60 + m;
+  }
+
+  @override
   Future<BoardPost> addBoardPost({
     required String type,
     required String title,
@@ -311,6 +342,7 @@ class SupabaseGymRepository implements GymRepository {
     required int amount,
     required String tariff,
     required String type,
+    required int months,
   }) async {
     await _c.from('payments').insert({
       'member_id': memberId,
@@ -318,6 +350,34 @@ class SupabaseGymRepository implements GymRepository {
       'tariff': tariff,
       'method': 'manual',
     });
+
+    // Extend the membership: the status pill and "days left" are derived
+    // purely from `membership_expires_at`, so recording the payment row is
+    // not enough — without this the member stays "v expiraci" (§2–§4).
+    final j = await _c
+        .from('members')
+        .select('membership_expires_at, billing_day_of_month, status')
+        .eq('id', memberId)
+        .maybeSingle();
+    if (j == null) return;
+    final rawExpiry = j['membership_expires_at'];
+    final currentExpiry = rawExpiry == null
+        ? null
+        : DateTime.parse(rawExpiry as String).toLocal();
+    final newExpiry = membership.nextExpiration(
+      now: _now,
+      currentExpiry: currentExpiry,
+      months: months,
+      billingDay: (j['billing_day_of_month'] as num?)?.toInt(),
+    );
+    await _c.from('members').update({
+      'membership_expires_at':
+          DateTime(newExpiry.year, newExpiry.month, newExpiry.day)
+              .toIso8601String(),
+      // A lapsed member who pays is active again; never override a
+      // suspended/paused row from here (owner handles those explicitly).
+      if (j['status'] == 'inactive') 'status': 'active',
+    }).eq('id', memberId);
   }
 
   @override
