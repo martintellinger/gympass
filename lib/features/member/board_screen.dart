@@ -282,6 +282,34 @@ class _BoardScreenViewState extends ConsumerState<BoardScreenView> {
     );
   }
 
+  /// Header open/closed indicator (§14–§15). Informational only — key
+  /// holders have 24/7 access regardless of these hours.
+  ({Color color, String label}) _clubIndicator(
+      BuildContext context, List<DayHours>? hours, DateTime now) {
+    final l = L.of(context);
+    if (hours == null || hours.length != 7) {
+      // Still loading — neutral, no misleading state.
+      return (color: T.text3, label: l.boardStatusClosed);
+    }
+    final today = hours[now.weekday - 1];
+    switch (clubStatus(today, now)) {
+      case ClubStatus.open:
+        return (color: T.ok, label: l.boardStatusOpen);
+      case ClubStatus.closedOpensLater:
+        final mins = today.openMinutes ?? 0;
+        final hh = mins ~/ 60;
+        final mm = (mins % 60).toString().padLeft(2, '0');
+        return (
+          color: T.warn,
+          label: l.boardStatusOpensAt('$hh:$mm'),
+        );
+      case ClubStatus.closedForToday:
+        return (color: T.text3, label: l.boardStatusClosed);
+      case ClubStatus.closedAllDay:
+        return (color: T.error, label: l.boardStatusClosedToday);
+    }
+  }
+
   void _ownerMenu(_Post p) {
     final l = L.of(context);
     showModalBottomSheet<void>(
