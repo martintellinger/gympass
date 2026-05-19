@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/data/data_providers.dart';
+import '../../core/data/gym_repository_provider.dart';
 import '../../core/routing/nav.dart';
 import '../../core/store/models.dart';
-import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../l10n/app_localizations.dart';
@@ -57,25 +58,31 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
   @override
   void initState() {
     super.initState();
-    if (_isEdit) {
-      final existing = ref.read(storeProvider).memberById(widget.editMemberId!);
-      if (existing != null) {
-        _nameCtrl.text = existing.name;
-        _emailCtrl.text = existing.email == '—' ? '' : existing.email;
-        _phoneCtrl.text = existing.phone == '—' ? '' : existing.phone;
-        _tariff = existing.tariff == 'Student' ? 'Student' : 'Standard';
-        _isic = existing.isic;
-        _hasKey = existing.hasKey;
-        final defaultPrice = _tariff == 'Student' ? 500 : 750;
-        final price = existing.monthlyPrice ?? defaultPrice;
-        _customOn = price != defaultPrice;
-        _price = price;
-      }
-    }
     _priceCtrl.text = _price.toString();
     _nameCtrl.addListener(() => setState(() {}));
     _emailCtrl.addListener(() => setState(() {}));
     _phoneCtrl.addListener(() => setState(() {}));
+    if (_isEdit) {
+      ref
+          .read(gymRepositoryProvider)
+          .memberById(widget.editMemberId!)
+          .then((existing) {
+        if (existing == null || !mounted) return;
+        setState(() {
+          _nameCtrl.text = existing.name;
+          _emailCtrl.text = existing.email == '—' ? '' : existing.email;
+          _phoneCtrl.text = existing.phone == '—' ? '' : existing.phone;
+          _tariff = existing.tariff == 'Student' ? 'Student' : 'Standard';
+          _isic = existing.isic;
+          _hasKey = existing.hasKey;
+          final defaultPrice = _tariff == 'Student' ? 500 : 750;
+          final price = existing.monthlyPrice ?? defaultPrice;
+          _customOn = price != defaultPrice;
+          _price = price;
+          _priceCtrl.text = _price.toString();
+        });
+      });
+    }
   }
 
   @override
@@ -106,10 +113,10 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
     });
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     setState(() => _submitted = true);
     if (!_ok) return;
-    final store = ref.read(storeProvider);
+    final repo = ref.read(gymRepositoryProvider);
     final nav = navCb(context);
 
     final name = _nameCtrl.text.trim();
@@ -117,7 +124,7 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
     final phone = _phoneCtrl.text.trim();
 
     if (_isEdit) {
-      store.updateMember(
+      await repo.updateMember(
         widget.editMemberId!,
         (mm) => mm.copyWith(
           name: name,
@@ -129,11 +136,13 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
           monthlyPrice: _monthly,
         ),
       );
-      nav('back', toast: L.of(context).addmMemberSavedToast(name));
+      ref.invalidate(membersProvider);
+      ref.invalidate(memberByIdProvider(widget.editMemberId!));
+      if (mounted) nav('back', toast: L.of(context).addmMemberSavedToast(name));
       return;
     }
 
-    final created = store.addMember(Member(
+    final created = await repo.addMember(Member(
       id: '',
       name: name,
       email: email.isEmpty ? '—' : email,
@@ -147,8 +156,11 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen> {
       joined: '5 · 2026',
       expiresAt: '~ ${_length * 30} dní',
     ));
-    nav('list',
-        toast: L.of(context).addmMemberAddedToast(created.name, _length));
+    ref.invalidate(membersProvider);
+    if (mounted) {
+      nav('list',
+          toast: L.of(context).addmMemberAddedToast(created.name, _length));
+    }
   }
 
   void _cancel() => navCb(context)(_isEdit ? 'back' : 'list');
