@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/data/data_providers.dart';
+import '../../core/data/gym_repository_provider.dart';
 import '../../core/routing/nav.dart';
-import '../../core/store/store.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
 import '../../shared/widgets/app_button.dart';
@@ -47,20 +48,22 @@ class _FaultReportScreenState extends ConsumerState<FaultReportScreen> {
     return n == 0 ? l.faultPhotoOptional : l.faultPhotoCount(n);
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!_canSubmit) return;
     final text = _ctrl.text.trim();
     final photoSuffix = _photoCount > 0
         ? '  (${_photoLabel(context, _photoCount)})'
         : '';
-    ref
-        .read(storeProvider)
-        .sendMessage(
-          'pavel',
-          L.of(context).faultMessageBody('$text$photoSuffix'),
-          from: 'pavel',
+    final body = L.of(context).faultMessageBody('$text$photoSuffix');
+    final sentToast = L.of(context).faultSentToast;
+    final nav = navCb(context);
+    await ref.read(gymRepositoryProvider).sendOwnerMessage(
+          ref.read(currentMemberIdProvider),
+          body,
+          from: 'member',
         );
-    navCb(context)('board', toast: L.of(context).faultSentToast);
+    if (!mounted) return;
+    nav('board', toast: sentToast);
   }
 
   @override
