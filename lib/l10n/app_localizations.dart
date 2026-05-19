@@ -2101,6 +2101,12 @@ abstract class L {
   /// **'Platba přidána'**
   String get apayToastPaymentAdded;
 
+  /// No description provided for @apayToastActionFailed.
+  ///
+  /// In cs, this message translates to:
+  /// **'Nepodařilo se uložit. Zkus to znovu.'**
+  String get apayToastActionFailed;
+
   /// No description provided for @apayAddTitle.
   ///
   /// In cs, this message translates to:

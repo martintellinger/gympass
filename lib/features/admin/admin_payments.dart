@@ -123,8 +123,14 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                           background: T.accent,
                           iconColor: Colors.white,
                           bordered: false,
-                          onTap: () =>
-                              showAddPaymentSheet(context, repo, members, nav),
+                          onTap: () => showAddPaymentSheet(
+                            context,
+                            repo,
+                            members,
+                            nav,
+                            onSaved: () =>
+                                ref.invalidate(paymentsProvider),
+                          ),
                         ),
                       ],
                     ),
@@ -365,7 +371,17 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                             onConfirm: () async {
                               final paid =
                                   L.of(context).apayToastMarkedPaid;
-                              await repo.confirmPayment(p.id);
+                              final failed = L
+                                  .of(context)
+                                  .apayToastActionFailed;
+                              try {
+                                await repo.confirmPayment(p.id);
+                              } catch (_) {
+                                if (!context.mounted) return;
+                                nav('payments', toast: failed);
+                                return;
+                              }
+                              if (!context.mounted) return;
                               ref.invalidate(paymentsProvider);
                               nav('payments', toast: paid);
                             },
@@ -374,8 +390,19 @@ class _AdminPaymentsScreenState extends ConsumerState<AdminPaymentsScreen> {
                                   groupThousands(p.amount));
                               final sent =
                                   L.of(context).apayToastReminderSent;
-                              await repo.sendOwnerMessage(p.memberId, msg,
-                                  from: 'olda');
+                              final failed = L
+                                  .of(context)
+                                  .apayToastActionFailed;
+                              try {
+                                await repo.sendOwnerMessage(
+                                    p.memberId, msg,
+                                    from: 'olda');
+                              } catch (_) {
+                                if (!context.mounted) return;
+                                nav('payments', toast: failed);
+                                return;
+                              }
+                              if (!context.mounted) return;
                               ref.invalidate(adminThreadsProvider);
                               nav('thread',
                                   arg: p.memberId, toast: sent);
@@ -697,6 +724,7 @@ void showAddPaymentSheet(
   List<Member> members,
   NavCb nav, {
   String? preselectMemberId,
+  VoidCallback? onSaved,
 }) {
   showModalBottomSheet<void>(
     context: context,
@@ -707,6 +735,7 @@ void showAddPaymentSheet(
       members: members,
       nav: nav,
       preselectMemberId: preselectMemberId,
+      onSaved: onSaved,
     ),
   );
 }
@@ -716,11 +745,13 @@ class _AddPaymentSheet extends StatefulWidget {
   final List<Member> members;
   final NavCb nav;
   final String? preselectMemberId;
+  final VoidCallback? onSaved;
   const _AddPaymentSheet({
     required this.repo,
     required this.members,
     required this.nav,
     this.preselectMemberId,
+    this.onSaved,
   });
 
   @override
@@ -862,16 +893,24 @@ class _AddPaymentSheetState extends State<_AddPaymentSheet> {
                     final opt = _kTariffOptions[_optIdx];
                     final nav = widget.nav;
                     final added = l.apayToastPaymentAdded;
-                    await widget.repo.addManualPayment(
-                      memberId: _memberId!,
-                      amount: opt.amount,
-                      tariff: opt.tariff,
-                      type: l.apayAddTariffOption(
-                        opt.tariff,
-                        opt.months,
-                        groupThousands(opt.amount),
-                      ),
-                    );
+                    final failed = l.apayToastActionFailed;
+                    try {
+                      await widget.repo.addManualPayment(
+                        memberId: _memberId!,
+                        amount: opt.amount,
+                        tariff: opt.tariff,
+                        type: l.apayAddTariffOption(
+                          opt.tariff,
+                          opt.months,
+                          groupThousands(opt.amount),
+                        ),
+                      );
+                    } catch (_) {
+                      if (context.mounted) Navigator.of(context).pop();
+                      nav('payments', toast: failed);
+                      return;
+                    }
+                    widget.onSaved?.call();
                     if (context.mounted) Navigator.of(context).pop();
                     nav('payments', toast: added);
                   }

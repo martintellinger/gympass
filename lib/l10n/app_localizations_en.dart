@@ -1195,6 +1195,9 @@ class LEn extends L {
   String get apayToastPaymentAdded => 'Payment added';
 
   @override
+  String get apayToastActionFailed => 'Couldn\'t save. Try again.';
+
+  @override
   String get apayAddTitle => 'Add payment';
 
   @override

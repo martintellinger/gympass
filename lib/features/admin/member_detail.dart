@@ -166,6 +166,11 @@ class MemberDetailScreen extends ConsumerWidget {
                           onTap: () => showAddPaymentSheet(
                             context, repo, [m], nav,
                             preselectMemberId: m.id,
+                            onSaved: () {
+                              ref.invalidate(paymentsProvider);
+                              ref.invalidate(
+                                  memberByIdProvider(memberId));
+                            },
                           ),
                         ),
                       ),
@@ -177,6 +182,11 @@ class MemberDetailScreen extends ConsumerWidget {
                           onTap: () => showAddPaymentSheet(
                             context, repo, [m], nav,
                             preselectMemberId: m.id,
+                            onSaved: () {
+                              ref.invalidate(paymentsProvider);
+                              ref.invalidate(
+                                  memberByIdProvider(memberId));
+                            },
                           ),
                         ),
                       ),

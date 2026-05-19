@@ -374,6 +374,7 @@
   "apayMarkPaid": "Mark as paid",
   "apayToastMarkedPaid": "Payment confirmed",
   "apayToastPaymentAdded": "Payment added",
+  "apayToastActionFailed": "Couldn't save. Try again.",
   "apayAddTitle": "Add payment",
   "apayAddMember": "Member",
   "apayAddPickMember": "Select member",

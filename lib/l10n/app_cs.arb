@@ -502,6 +502,7 @@
   "apayMarkPaid": "Označit zaplaceno",
   "apayToastMarkedPaid": "Platba potvrzena",
   "apayToastPaymentAdded": "Platba přidána",
+  "apayToastActionFailed": "Nepodařilo se uložit. Zkus to znovu.",
   "apayAddTitle": "Přidat platbu",
   "apayAddMember": "Člen",
   "apayAddPickMember": "Vyber člena",

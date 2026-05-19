@@ -1202,6 +1202,9 @@ class LCs extends L {
   String get apayToastPaymentAdded => 'Platba přidána';
 
   @override
+  String get apayToastActionFailed => 'Nepodařilo se uložit. Zkus to znovu.';
+
+  @override
   String get apayAddTitle => 'Přidat platbu';
 
   @override

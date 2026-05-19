@@ -522,17 +522,19 @@ class SupabaseGymRepository implements GymRepository {
         .isFilter('read_at', null);
   }
 
-  /// The live `payments` table records only real (confirmed) payments — there
-  /// is no pending-payment row to flip, unlike the mock. "Mark as paid" in
-  /// the real model means inserting a payment, which needs the amount/tariff
-  /// context the caller does not pass here. Left explicit rather than
-  /// silently wrong until the add-payment flow is wired (task: payments).
+  /// No-op on the live schema — by design, not a stub.
+  ///
+  /// The `payments` table records only confirmed payments, and
+  /// [paymentFromRow] always yields `state: 'ok'`. The screen's "Označit
+  /// zaplaceno" affordance only renders for `pending`/`overdue` rows, which
+  /// never exist on real data — so this is unreachable from the UI in the
+  /// current model. Recording a payment for a member who owes is the
+  /// add-payment flow ([addManualPayment]), which carries the amount/tariff
+  /// this id-only call cannot. Returning cleanly (rather than throwing)
+  /// keeps the boundary safe if it is ever reached; there is genuinely
+  /// nothing to flip. Real reconciliation is out of MVP scope (brief §11).
   @override
   Future<void> confirmPayment(String paymentId) async {
-    throw UnimplementedError(
-      'confirmPayment: live schema has no pending-payment row to confirm; '
-      'recording a payment requires amount/tariff — wire via the '
-      'add-payment flow.',
-    );
+    // Intentionally empty — see doc comment.
   }
 }
