@@ -2395,6 +2395,132 @@ abstract class L {
   /// **'Odesláno · {count, plural, one{{count} členovi} few{{count} členům} other{{count} členům}}'**
   String bcastSentToast(num count);
 
+  /// No description provided for @bcastHeaderNew.
+  ///
+  /// In cs, this message translates to:
+  /// **'Nový příspěvek'**
+  String get bcastHeaderNew;
+
+  /// No description provided for @bcastHeaderEdit.
+  ///
+  /// In cs, this message translates to:
+  /// **'Upravit příspěvek'**
+  String get bcastHeaderEdit;
+
+  /// No description provided for @bcastSectionType.
+  ///
+  /// In cs, this message translates to:
+  /// **'TYP PŘÍSPĚVKU'**
+  String get bcastSectionType;
+
+  /// No description provided for @bcastPin.
+  ///
+  /// In cs, this message translates to:
+  /// **'Připnout na vrch'**
+  String get bcastPin;
+
+  /// No description provided for @bcastPinSub.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zůstane nahoře, dokud ho neodepneš'**
+  String get bcastPinSub;
+
+  /// No description provided for @bcastPublish.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zveřejnit na nástěnce'**
+  String get bcastPublish;
+
+  /// No description provided for @bcastSaveEdit.
+  ///
+  /// In cs, this message translates to:
+  /// **'Uložit změny'**
+  String get bcastSaveEdit;
+
+  /// No description provided for @bcastPublishedToast.
+  ///
+  /// In cs, this message translates to:
+  /// **'Příspěvek zveřejněn'**
+  String get bcastPublishedToast;
+
+  /// No description provided for @bcastUpdatedToast.
+  ///
+  /// In cs, this message translates to:
+  /// **'Příspěvek upraven'**
+  String get bcastUpdatedToast;
+
+  /// No description provided for @bcastPushNote.
+  ///
+  /// In cs, this message translates to:
+  /// **'Pošle se i jako oznámení členům (push).'**
+  String get bcastPushNote;
+
+  /// No description provided for @boardOwnerEdit.
+  ///
+  /// In cs, this message translates to:
+  /// **'Upravit'**
+  String get boardOwnerEdit;
+
+  /// No description provided for @boardOwnerPin.
+  ///
+  /// In cs, this message translates to:
+  /// **'Připnout na vrch'**
+  String get boardOwnerPin;
+
+  /// No description provided for @boardOwnerUnpin.
+  ///
+  /// In cs, this message translates to:
+  /// **'Odepnout'**
+  String get boardOwnerUnpin;
+
+  /// No description provided for @boardOwnerDelete.
+  ///
+  /// In cs, this message translates to:
+  /// **'Smazat příspěvek'**
+  String get boardOwnerDelete;
+
+  /// No description provided for @boardDeleteTitle.
+  ///
+  /// In cs, this message translates to:
+  /// **'Smazat příspěvek?'**
+  String get boardDeleteTitle;
+
+  /// No description provided for @boardDeleteBody.
+  ///
+  /// In cs, this message translates to:
+  /// **'„{title}“ zmizí z nástěnky všem členům.'**
+  String boardDeleteBody(Object title);
+
+  /// No description provided for @boardDeleteCancel.
+  ///
+  /// In cs, this message translates to:
+  /// **'Zrušit'**
+  String get boardDeleteCancel;
+
+  /// No description provided for @boardDeleteConfirm.
+  ///
+  /// In cs, this message translates to:
+  /// **'Smazat'**
+  String get boardDeleteConfirm;
+
+  /// No description provided for @boardDeletedToast.
+  ///
+  /// In cs, this message translates to:
+  /// **'Příspěvek smazán'**
+  String get boardDeletedToast;
+
+  /// No description provided for @boardPinnedToast.
+  ///
+  /// In cs, this message translates to:
+  /// **'Příspěvek připnut na vrch'**
+  String get boardPinnedToast;
+
+  /// No description provided for @boardUnpinnedToast.
+  ///
+  /// In cs, this message translates to:
+  /// **'Příspěvek odepnut'**
+  String get boardUnpinnedToast;
+
   /// No description provided for @mdetTitle.
   ///
   /// In cs, this message translates to:

@@ -1405,6 +1405,71 @@ class LCs extends L {
   }
 
   @override
+  String get bcastHeaderNew => 'Nový příspěvek';
+
+  @override
+  String get bcastHeaderEdit => 'Upravit příspěvek';
+
+  @override
+  String get bcastSectionType => 'TYP PŘÍSPĚVKU';
+
+  @override
+  String get bcastPin => 'Připnout na vrch';
+
+  @override
+  String get bcastPinSub => 'Zůstane nahoře, dokud ho neodepneš';
+
+  @override
+  String get bcastPublish => 'Zveřejnit na nástěnce';
+
+  @override
+  String get bcastSaveEdit => 'Uložit změny';
+
+  @override
+  String get bcastPublishedToast => 'Příspěvek zveřejněn';
+
+  @override
+  String get bcastUpdatedToast => 'Příspěvek upraven';
+
+  @override
+  String get bcastPushNote => 'Pošle se i jako oznámení členům (push).';
+
+  @override
+  String get boardOwnerEdit => 'Upravit';
+
+  @override
+  String get boardOwnerPin => 'Připnout na vrch';
+
+  @override
+  String get boardOwnerUnpin => 'Odepnout';
+
+  @override
+  String get boardOwnerDelete => 'Smazat příspěvek';
+
+  @override
+  String get boardDeleteTitle => 'Smazat příspěvek?';
+
+  @override
+  String boardDeleteBody(Object title) {
+    return '„$title“ zmizí z nástěnky všem členům.';
+  }
+
+  @override
+  String get boardDeleteCancel => 'Zrušit';
+
+  @override
+  String get boardDeleteConfirm => 'Smazat';
+
+  @override
+  String get boardDeletedToast => 'Příspěvek smazán';
+
+  @override
+  String get boardPinnedToast => 'Příspěvek připnut na vrch';
+
+  @override
+  String get boardUnpinnedToast => 'Příspěvek odepnut';
+
+  @override
   String get mdetTitle => 'Detail člena';
 
   @override

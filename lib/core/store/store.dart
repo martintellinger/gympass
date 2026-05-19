@@ -108,6 +108,96 @@ class GymStore extends ChangeNotifier {
     Payment(id: 'p15', memberId: 'petr', date: DateTime(2026, 5, 4), amount: 2250, type: 'Po lhůtě 12 dní', tariff: 'Standard', state: 'overdue'),
   ];
 
+  /// Noticeboard posts (owner-authored only — members don't post). Newest
+  /// first; the board screen pins separately.
+  final List<BoardPost> board = [
+    BoardPost(
+      id: 'b1',
+      type: 'pinned',
+      pinned: true,
+      title: 'Vítej v BýtFit Klubu',
+      body: 'Tady se objeví oznámení od Oldy — výpadky, akce, události.',
+      at: _ago(60 * 24 * 6),
+      author: 'Olda',
+    ),
+    BoardPost(
+      id: 'b2',
+      type: 'outage',
+      pinned: false,
+      title: 'Sprcha č. 3 mimo provoz',
+      body: 'Teče málo, řeším to. Dejte zatím přednost sprchám 1 a 2.',
+      at: _ago(60 * 26),
+      author: 'Olda',
+    ),
+    BoardPost(
+      id: 'b3',
+      type: 'promo',
+      pinned: false,
+      title: 'Nová sada kotoučů',
+      body: 'Přibyly olympijské kotouče 1,25–25 kg. Užijte si je.',
+      at: _ago(60 * 24 * 2),
+      author: 'Olda',
+    ),
+  ];
+
+  BoardPost? boardPostById(String id) {
+    for (final p in board) {
+      if (p.id == id) return p;
+    }
+    return null;
+  }
+
+  BoardPost addBoardPost({
+    required String type,
+    required String title,
+    required String body,
+    bool pinned = false,
+  }) {
+    final post = BoardPost(
+      id: 'b${DateTime.now().microsecondsSinceEpoch}',
+      type: type,
+      pinned: pinned,
+      title: title.trim(),
+      body: body.trim(),
+      at: DateTime.now(),
+      author: 'Olda',
+    );
+    board.insert(0, post);
+    notifyListeners();
+    return post;
+  }
+
+  void updateBoardPost(
+    String id, {
+    String? type,
+    String? title,
+    String? body,
+    bool? pinned,
+  }) {
+    final i = board.indexWhere((p) => p.id == id);
+    if (i == -1) return;
+    final cur = board[i];
+    board[i] = BoardPost(
+      id: cur.id,
+      type: type ?? cur.type,
+      pinned: pinned ?? cur.pinned,
+      title: (title ?? cur.title).trim(),
+      body: (body ?? cur.body).trim(),
+      at: cur.at,
+      author: cur.author,
+      cta: cur.cta,
+    );
+    notifyListeners();
+  }
+
+  void deleteBoardPost(String id) {
+    board.removeWhere((p) => p.id == id);
+    notifyListeners();
+  }
+
+  void setBoardPostPinned(String id, bool pinned) =>
+      updateBoardPost(id, pinned: pinned);
+
   Member? memberById(String id) {
     for (final m in members) {
       if (m.id == id) return m;

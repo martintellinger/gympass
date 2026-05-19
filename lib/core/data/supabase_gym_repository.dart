@@ -222,24 +222,88 @@ class SupabaseGymRepository implements GymRepository {
             'published_at, created_at, members:author_id(first_name, '
             'last_name)')
         .order('created_at', ascending: false);
-    return rows.map((r) {
-      final a = r['members'] as Map<String, dynamic>?;
-      final author = a == null
-          ? '—'
-          : '${a['first_name'] ?? ''} ${a['last_name'] ?? ''}'.trim();
-      final ts = (r['published_at'] ?? r['created_at']) as String;
-      return BoardPost(
-        id: r['id'] as String,
-        type: (r['type'] ?? 'info') as String,
-        pinned: (r['is_pinned'] ?? false) as bool,
-        title: (r['title'] ?? '') as String,
-        body: (r['body'] ?? '') as String,
-        at: DateTime.parse(ts).toLocal(),
-        author: author.isEmpty ? '—' : author,
-        cta: r['cta_label'] as String?,
-      );
-    }).toList();
+    return rows.map(_boardFromRow).toList();
   }
+
+  static const _boardCols = 'id, type, title, body, is_pinned, cta_label, '
+      'published_at, created_at, members:author_id(first_name, last_name)';
+
+  BoardPost _boardFromRow(Map<String, dynamic> r) {
+    final a = r['members'] as Map<String, dynamic>?;
+    final author = a == null
+        ? '—'
+        : '${a['first_name'] ?? ''} ${a['last_name'] ?? ''}'.trim();
+    final ts = (r['published_at'] ?? r['created_at']) as String;
+    return BoardPost(
+      id: r['id'] as String,
+      type: (r['type'] ?? 'info') as String,
+      pinned: (r['is_pinned'] ?? false) as bool,
+      title: (r['title'] ?? '') as String,
+      body: (r['body'] ?? '') as String,
+      at: DateTime.parse(ts).toLocal(),
+      author: author.isEmpty ? '—' : author,
+      cta: r['cta_label'] as String?,
+    );
+  }
+
+  @override
+  Future<BoardPost?> boardPostById(String id) async {
+    final r = await _c
+        .from('board_posts')
+        .select(_boardCols)
+        .eq('id', id)
+        .maybeSingle();
+    return r == null ? null : _boardFromRow(r);
+  }
+
+  @override
+  Future<BoardPost> addBoardPost({
+    required String type,
+    required String title,
+    required String body,
+    bool pinned = false,
+  }) async {
+    final authorId = await _c.rpc('current_member_id') as String?;
+    final inserted = await _c
+        .from('board_posts')
+        .insert({
+          'author_id': authorId,
+          'type': type,
+          'title': title.trim(),
+          'body': body.trim(),
+          'is_pinned': pinned,
+          'published_at': DateTime.now().toUtc().toIso8601String(),
+        })
+        .select(_boardCols)
+        .single();
+    return _boardFromRow(inserted);
+  }
+
+  @override
+  Future<void> updateBoardPost(
+    String id, {
+    String? type,
+    String? title,
+    String? body,
+    bool? pinned,
+  }) async {
+    final patch = <String, dynamic>{
+      'type': ?type,
+      'title': ?title?.trim(),
+      'body': ?body?.trim(),
+      'is_pinned': ?pinned,
+    };
+    if (patch.isEmpty) return;
+    await _c.from('board_posts').update(patch).eq('id', id);
+  }
+
+  @override
+  Future<void> deleteBoardPost(String id) async =>
+      _c.from('board_posts').delete().eq('id', id);
+
+  @override
+  Future<void> setBoardPostPinned(String id, bool pinned) async =>
+      _c.from('board_posts').update({'is_pinned': pinned}).eq('id', id);
 
   @override
   Future<void> addManualPayment({

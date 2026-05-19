@@ -185,7 +185,8 @@ final appRouter = GoRouter(
         path: '/admin/import', builder: (c, s) => const ExcelImportWizard()),
     GoRoute(
         path: '/admin/broadcast',
-        builder: (c, s) => const BroadcastComposerScreen()),
+        builder: (c, s) => BroadcastComposerScreen(
+            editPostId: s.uri.queryParameters['id'])),
     GoRoute(
       path: '/admin/member/:id',
       builder: (c, s) =>

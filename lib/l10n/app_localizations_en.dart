@@ -1394,6 +1394,71 @@ class LEn extends L {
   }
 
   @override
+  String get bcastHeaderNew => 'New post';
+
+  @override
+  String get bcastHeaderEdit => 'Edit post';
+
+  @override
+  String get bcastSectionType => 'POST TYPE';
+
+  @override
+  String get bcastPin => 'Pin to top';
+
+  @override
+  String get bcastPinSub => 'Stays on top until you unpin it';
+
+  @override
+  String get bcastPublish => 'Publish to board';
+
+  @override
+  String get bcastSaveEdit => 'Save changes';
+
+  @override
+  String get bcastPublishedToast => 'Post published';
+
+  @override
+  String get bcastUpdatedToast => 'Post updated';
+
+  @override
+  String get bcastPushNote => 'Also sent to members as a notification (push).';
+
+  @override
+  String get boardOwnerEdit => 'Edit';
+
+  @override
+  String get boardOwnerPin => 'Pin to top';
+
+  @override
+  String get boardOwnerUnpin => 'Unpin';
+
+  @override
+  String get boardOwnerDelete => 'Delete post';
+
+  @override
+  String get boardDeleteTitle => 'Delete post?';
+
+  @override
+  String boardDeleteBody(Object title) {
+    return '“$title” will disappear from the board for all members.';
+  }
+
+  @override
+  String get boardDeleteCancel => 'Cancel';
+
+  @override
+  String get boardDeleteConfirm => 'Delete';
+
+  @override
+  String get boardDeletedToast => 'Post deleted';
+
+  @override
+  String get boardPinnedToast => 'Post pinned to top';
+
+  @override
+  String get boardUnpinnedToast => 'Post unpinned';
+
+  @override
   String get mdetTitle => 'Member detail';
 
   @override

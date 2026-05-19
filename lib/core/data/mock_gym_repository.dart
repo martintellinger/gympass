@@ -52,20 +52,41 @@ class MockGymRepository implements GymRepository {
   Future<void> rejectMember(String id) async {}
 
   @override
-  Future<List<BoardPost>> boardPosts() async {
-    final now = DateTime.now();
-    return [
-      BoardPost(
-        id: 'b1',
-        type: 'pinned',
-        pinned: true,
-        title: 'Vítej v BýtFit Klubu',
-        body: 'Tady se objeví oznámení od Oldy — výpadky, akce, události.',
-        at: now,
-        author: 'Olda',
-      ),
-    ];
-  }
+  Future<List<BoardPost>> boardPosts() async =>
+      List.unmodifiable(_store.board);
+
+  @override
+  Future<BoardPost?> boardPostById(String id) async =>
+      _store.boardPostById(id);
+
+  @override
+  Future<BoardPost> addBoardPost({
+    required String type,
+    required String title,
+    required String body,
+    bool pinned = false,
+  }) async =>
+      _store.addBoardPost(
+          type: type, title: title, body: body, pinned: pinned);
+
+  @override
+  Future<void> updateBoardPost(
+    String id, {
+    String? type,
+    String? title,
+    String? body,
+    bool? pinned,
+  }) async =>
+      _store.updateBoardPost(id,
+          type: type, title: title, body: body, pinned: pinned);
+
+  @override
+  Future<void> deleteBoardPost(String id) async =>
+      _store.deleteBoardPost(id);
+
+  @override
+  Future<void> setBoardPostPinned(String id, bool pinned) async =>
+      _store.setBoardPostPinned(id, pinned);
 
   @override
   Future<List<({bool mine, String text, DateTime at})>> conversation(
