@@ -3,14 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme/tokens.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/data/data_providers.dart';
+import '../../core/data/gym_repository_provider.dart';
 import '../../core/format.dart';
 import '../../core/routing/nav.dart';
-import '../../core/store/store.dart';
 import '../../core/store/models.dart';
 import '../../shared/widgets/app_icon.dart';
 import '../../shared/widgets/avatar.dart';
-import '../../shared/widgets/status_pill.dart';
+import '../../shared/widgets/load_error.dart';
 import '../../shared/widgets/screen_frame.dart';
+import '../../shared/widgets/skeleton.dart';
+import '../../shared/widgets/status_pill.dart';
 import '../../l10n/app_localizations.dart';
 
 /// Admin Thread 16 — jedna konverzace majitel ↔ člen.
@@ -32,15 +35,12 @@ class _AdminThreadScreenState extends ConsumerState<AdminThreadScreen> {
   void initState() {
     super.initState();
     // Označit přečtené při otevření.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(storeProvider).markRead(_resolveMemberId());
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref
+          .read(gymRepositoryProvider)
+          .markOwnerThreadRead(widget.memberId);
+      if (mounted) ref.invalidate(ownerThreadProvider(widget.memberId));
     });
-  }
-
-  String _resolveMemberId() {
-    final store = ref.read(storeProvider);
-    final m = store.memberById(widget.memberId);
-    return m?.id ?? 'david';
   }
 
   @override
@@ -50,12 +50,14 @@ class _AdminThreadScreenState extends ConsumerState<AdminThreadScreen> {
     super.dispose();
   }
 
-  void _send(Member member) {
+  Future<void> _send(Member member) async {
     final t = _ctrl.text.trim();
     if (t.isEmpty) return;
-    ref.read(storeProvider).sendMessage(member.id, t, from: 'olda');
     _ctrl.clear();
-    setState(() {});
+    await ref
+        .read(gymRepositoryProvider)
+        .sendOwnerMessage(member.id, t, from: 'olda');
+    if (mounted) ref.invalidate(ownerThreadProvider(member.id));
   }
 
   void _scrollToEnd() {
@@ -68,12 +70,27 @@ class _AdminThreadScreenState extends ConsumerState<AdminThreadScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final store = ref.watch(storeProvider);
     final nav = navCb(context);
 
-    final member =
-        store.memberById(widget.memberId) ?? store.memberById('david')!;
-    final msgs = store.threadFor(member.id);
+    final mAsync = ref.watch(memberByIdProvider(widget.memberId));
+    if (mAsync.isLoading && !mAsync.hasValue) {
+      return const ScreenFrame(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(20, 24, 20, 0),
+          child: SkeletonList(rows: 5),
+        ),
+      );
+    }
+    if ((mAsync.hasError || mAsync.value == null) && !mAsync.isLoading) {
+      return ScreenFrame(
+        child: LoadError(
+            onRetry: () =>
+                ref.invalidate(memberByIdProvider(widget.memberId))),
+      );
+    }
+    final member = mAsync.value!;
+    final msgs = ref.watch(ownerThreadProvider(member.id)).value ??
+        const <Message>[];
 
     if (_lastLen != msgs.length) {
       _lastLen = msgs.length;

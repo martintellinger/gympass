@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/data/data_providers.dart';
+import '../../core/data/gym_repository_provider.dart';
 import '../../core/routing/nav.dart';
-import '../../core/store/store.dart';
+import '../../core/store/models.dart';
 import '../../l10n/app_localizations.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/tokens.dart';
@@ -47,16 +49,16 @@ class _BroadcastComposerScreenState
 
   @override
   Widget build(BuildContext context) {
-    final store = ref.watch(storeProvider);
-    final active = store.members.where((m) => m.state != 'muted').length;
-    final overdue = store.members.where((m) => m.state == 'error').length;
-    final ending = store.members.where((m) => m.state == 'warn').length;
+    final members = ref.watch(membersProvider).value ?? const <Member>[];
+    final active = members.where((m) => m.state != 'muted').length;
+    final overdue = members.where((m) => m.state == 'error').length;
+    final ending = members.where((m) => m.state == 'warn').length;
     final l = L.of(context);
     final targets = <(String, int)>[
       (l.bcastTargetActive, active),
       (l.bcastTargetOverdue, overdue),
       (l.bcastTargetEnding, ending),
-      (l.bcastTargetAll, store.members.length),
+      (l.bcastTargetAll, members.length),
     ];
     final recipients = targets[_target].$2;
     final canSend = _body.text.trim().isNotEmpty && recipients > 0;
@@ -234,10 +236,12 @@ class _BroadcastComposerScreenState
                   size: 18, color: canSend ? Colors.white : T.text3),
               onTap: !canSend
                   ? null
-                  : () {
-                      for (final m in _recipientsList(store)) {
-                        store.sendMessage(m.id,
-                            '${_title.text.trim().isEmpty ? '' : '${_title.text.trim()}\n'}${_body.text.trim()}',
+                  : () async {
+                      final repo = ref.read(gymRepositoryProvider);
+                      final text =
+                          '${_title.text.trim().isEmpty ? '' : '${_title.text.trim()}\n'}${_body.text.trim()}';
+                      for (final m in _recipientsList(members)) {
+                        await repo.sendOwnerMessage(m.id, text,
                             from: 'olda');
                       }
                       nav('messages',
@@ -250,16 +254,16 @@ class _BroadcastComposerScreenState
     );
   }
 
-  Iterable _recipientsList(GymStore store) {
+  Iterable<Member> _recipientsList(List<Member> members) {
     switch (_target) {
       case 1:
-        return store.members.where((m) => m.state == 'error');
+        return members.where((m) => m.state == 'error');
       case 2:
-        return store.members.where((m) => m.state == 'warn');
+        return members.where((m) => m.state == 'warn');
       case 3:
-        return store.members;
+        return members;
       default:
-        return store.members.where((m) => m.state != 'muted');
+        return members.where((m) => m.state != 'muted');
     }
   }
 
