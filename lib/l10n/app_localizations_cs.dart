@@ -111,6 +111,17 @@ class LCs extends L {
   String get boardStatusOpen => 'otevřeno';
 
   @override
+  String get boardStatusClosed => 'zavřeno';
+
+  @override
+  String get boardStatusClosedToday => 'dnes zavřeno';
+
+  @override
+  String boardStatusOpensAt(Object time) {
+    return 'otevírá v $time';
+  }
+
+  @override
   String get boardEmptyFilter => 'Pro tento filtr nic není.';
 
   @override

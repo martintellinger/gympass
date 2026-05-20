@@ -111,6 +111,17 @@ class LEn extends L {
   String get boardStatusOpen => 'open';
 
   @override
+  String get boardStatusClosed => 'closed';
+
+  @override
+  String get boardStatusClosedToday => 'closed today';
+
+  @override
+  String boardStatusOpensAt(Object time) {
+    return 'opens at $time';
+  }
+
+  @override
   String get boardEmptyFilter => 'Nothing for this filter.';
 
   @override

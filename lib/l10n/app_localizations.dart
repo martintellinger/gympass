@@ -301,6 +301,24 @@ abstract class L {
   /// **'otevřeno'**
   String get boardStatusOpen;
 
+  /// No description provided for @boardStatusClosed.
+  ///
+  /// In cs, this message translates to:
+  /// **'zavřeno'**
+  String get boardStatusClosed;
+
+  /// No description provided for @boardStatusClosedToday.
+  ///
+  /// In cs, this message translates to:
+  /// **'dnes zavřeno'**
+  String get boardStatusClosedToday;
+
+  /// No description provided for @boardStatusOpensAt.
+  ///
+  /// In cs, this message translates to:
+  /// **'otevírá v {time}'**
+  String boardStatusOpensAt(Object time);
+
   /// No description provided for @boardEmptyFilter.
   ///
   /// In cs, this message translates to:
